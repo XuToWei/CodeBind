@@ -5,7 +5,7 @@
   "description": "better CodeBind",
   "repository": {
       "type": "git",
-      "url": "ssh://git@github.com:XuToWei/CodeBind.git"
+      "url": "https://github.com/XuToWei/CodeBind.git"
   },
   "unity": "2019.4",
   "documentationUrl": "https://github.com/XuToWei/CodeBind/blob/master/README.md",
