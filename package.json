@@ -1,0 +1,29 @@
+{
+  "name": "CodeBind",
+  "version": "1.0.0",
+  "displayName": "CodeBind",
+  "description": "better CodeBind",
+  "repository": {
+      "type": "git",
+      "url": "ssh://git@github.com:XuToWei/CodeBind.git"
+  },
+  "unity": "2019.4",
+  "documentationUrl": "https://github.com/XuToWei/CodeBind/blob/master/README.md",
+  "licensesUrl": "https://github.com/XuToWei/CodeBind/blob/master/LICENSE.md",
+  "dependencies": {
+  },
+  "keywords": [
+  ],
+  "author": {
+    "name": "Xu Wei",
+    "email": "",
+    "url": ""
+  },
+  "samples": [
+    {
+      "displayName": "Demo",
+      "description": "Contains CodeBind demo",
+      "path": "Samples~/Demo"
+    }
+  ]
+}
