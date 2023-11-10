@@ -29,6 +29,14 @@ namespace CodeBind.Editor
         
         protected BaseCodeBinder(MonoScript script, Transform rootTransform, char separatorChar)
         {
+            if (script == null)
+            {
+                throw new Exception("请设置需要绑定的脚本!");
+            }
+            if (script.name.EndsWith(".Bind"))
+            {
+                throw new Exception("不可以绑定“.Bind”结尾的脚本!");
+            }
             if (!script.text.Contains("partial"))
             {
                 throw new Exception($"please add key word 'partial' into {script.GetClass().FullName}!");
