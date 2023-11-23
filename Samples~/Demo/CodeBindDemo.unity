@@ -185,8 +185,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 253148094}
-  - component: {fileID: 253148095}
   - component: {fileID: 253148096}
+  - component: {fileID: 253148095}
   m_Layer: 0
   m_Name: test_CSCodeBindMono_ReferenceBindMono
   m_TagString: Untagged
@@ -219,25 +219,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 253148093}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35484dcc77f5cfa4682f0453f330c54b, type: 3}
+  m_Script: {fileID: 11500000, guid: 804d393d1d453f5448cd493372e9a1a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BindComponents:
-  - {fileID: 517383984}
-  - {fileID: 1279417644}
-  - {fileID: 1640880387}
-  - {fileID: 746566296}
-  - {fileID: 1215201790}
-  - {fileID: 1262308068}
-  m_SeparatorChar: 95
-  m_BindScript: {fileID: 11500000, guid: efed17576968aaf49ad4efc196ad22ff, type: 3}
-  m_BindComponentNames:
-  - otherAnimation
-  - selfTransform
-  - listAnimationArray
-  - listAnimationArray
-  - listAnimationArray
-  - listAnimationArray
+  m_BindNames:
+  - TestPrefab
+  m_BindGameObjects:
+  - {fileID: 1163687246830712436, guid: 1bbd5ed9be130da43b3a37ae9bc5ff20, type: 3}
 --- !u!114 &253148096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,13 +235,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 253148093}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e736837d933454548914c5d3dfbe5b2c, type: 3}
+  m_Script: {fileID: 11500000, guid: 5452a0c3619826c4f889a047605eef79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BindNames:
-  - Test
-  m_BindGameObjects:
-  - {fileID: 1163687246830712436, guid: 9b9faf4dbbabcbe468288163bdf95d4d, type: 3}
+  m_BindComponents:
+  - {fileID: 1279417644}
+  - {fileID: 517383984}
+  - {fileID: 1640880387}
+  - {fileID: 746566296}
+  - {fileID: 1215201790}
+  - {fileID: 1262308068}
+  m_SeparatorChar: 95
+  m_BindScript: {fileID: 11500000, guid: af79efec0e6b8e44f8f95a0516e9784a, type: 3}
+  m_BindComponentNames:
+  - selfTransform
+  - otherAnimation
+  - listAnimationArray
+  - listAnimationArray
+  - listAnimationArray
+  - listAnimationArray
 --- !u!1 &285049429
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,7 +416,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 727083143}
-  - component: {fileID: 727083142}
+  - component: {fileID: 727083144}
   m_Layer: 0
   m_Name: TestMono
   m_TagString: Untagged
@@ -424,48 +424,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &727083142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727083141}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 370e3ec0ab1088c469b00346ba8881c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _test2Animator: {fileID: 285049431}
-  _test2Transform: {fileID: 285049430}
-  _testAnimator: {fileID: 1664885869}
-  _testCSCodeBindMono: {fileID: 253148095}
-  _testReferenceBindMono: {fileID: 253148096}
-  _testTransform: {fileID: 1664885868}
-  _test2AnimatorArray:
-  - {fileID: 955000992}
-  - {fileID: 1829786443}
-  - {fileID: 1351314023}
-  - {fileID: 459711677}
-  - {fileID: 2132282598}
-  _test2TransformArray:
-  - {fileID: 1829786442}
-  - {fileID: 1351314022}
-  - {fileID: 459711676}
-  - {fileID: 2132282597}
-  - {fileID: 955000991}
-  _testAnimatorArray:
-  - {fileID: 1319921646}
-  - {fileID: 819198770}
-  - {fileID: 1793382482}
-  - {fileID: 44103784}
-  - {fileID: 798915803}
-  _testTransformArray:
-  - {fileID: 819198769}
-  - {fileID: 1793382481}
-  - {fileID: 44103783}
-  - {fileID: 1319921645}
-  - {fileID: 798915802}
 --- !u!4 &727083143
 Transform:
   m_ObjectHideFlags: 0
@@ -494,6 +452,48 @@ Transform:
   - {fileID: 253148094}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &727083144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727083141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcb4af7312c4dd1418dfa5e1d91f2c61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _testTransform: {fileID: 1664885868}
+  _testAnimator: {fileID: 1664885869}
+  _test2Transform: {fileID: 285049430}
+  _test2Animator: {fileID: 285049431}
+  _testCSCodeBindMono: {fileID: 253148096}
+  _testReferenceBindMono: {fileID: 253148095}
+  _test2AnimatorArray:
+  - {fileID: 2132282598}
+  - {fileID: 459711677}
+  - {fileID: 1351314023}
+  - {fileID: 1829786443}
+  - {fileID: 955000992}
+  _test2TransformArray:
+  - {fileID: 2132282597}
+  - {fileID: 459711676}
+  - {fileID: 1351314022}
+  - {fileID: 1829786442}
+  - {fileID: 955000991}
+  _testAnimatorArray:
+  - {fileID: 798915803}
+  - {fileID: 44103784}
+  - {fileID: 1793382482}
+  - {fileID: 819198770}
+  - {fileID: 1319921646}
+  _testTransformArray:
+  - {fileID: 798915802}
+  - {fileID: 44103783}
+  - {fileID: 1793382481}
+  - {fileID: 819198769}
+  - {fileID: 1319921645}
 --- !u!1 &746566294
 GameObject:
   m_ObjectHideFlags: 0

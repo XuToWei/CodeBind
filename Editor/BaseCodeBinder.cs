@@ -249,8 +249,6 @@ namespace CodeBind.Editor
             {
                 throw new Exception("绑定数量为0，生成失败。");
             }
-            this.m_BindDatas.Sort((a, b) => String.CompareOrdinal(a.BindName + a.BindPrefix, b.BindName + b.BindPrefix));
-            this.m_BindArrayDatas.Sort((a, b) => String.CompareOrdinal(a.BindName + a.BindPrefix, b.BindName + b.BindPrefix));
             for (int i = 0; i < this.m_BindArrayDatas.Count - 1; i++)
             {
                 CodeBindData firstBindData = this.m_BindArrayDatas[i];
