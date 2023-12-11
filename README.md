@@ -16,6 +16,9 @@
 
 6.自定义命名规则，CodeBindNameTypeAttribute来注入不能修改的代码，CodeBindNameAttribute方便处理业务代码中平凡修改的类型
 
+### 该项目依赖以下收费插件（请自行购买安装）：
+- [Odin Inspector](https://assetstore.unity.com/packages/tools/utilities/odin-inspector-and-serializer-89041) （编辑器扩展、工作流改善）
+
 ## 1.MonoBehaviour类型：
 
 添加特性[MonoCodeBind](../Runtime/CSCodeBindAttribute.cs)即可，指定分隔符参数（可选）
