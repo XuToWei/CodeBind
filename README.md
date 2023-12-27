@@ -16,6 +16,9 @@
 
 6.自定义命名规则，CodeBindNameTypeAttribute来注入不能修改的代码，CodeBindNameAttribute方便处理业务代码中平凡修改的类型
 
+### 安装方式：
+- Open Package Manager and Add package from git URL https://github.com/XuToWei/CodeBind.git.
+
 ### 该项目依赖以下收费插件（请自行购买安装）：
 - [Odin Inspector](https://assetstore.unity.com/packages/tools/utilities/odin-inspector-and-serializer-89041) （编辑器扩展、工作流改善）
 
