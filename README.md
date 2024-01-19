@@ -2,6 +2,8 @@
 
 只需要添加简单的特性或脚本就能自动生成与预制体绑定的脚本代码，快捷易用，对原来的脚本没有任何入侵性，适用范围更广，同时支持Mono和CS两种模式，基于节点命名规则自动生成，支持子节点嵌套和数组，自定义命名规则，支持模糊匹配，取名更省事
 
+## 交流QQ群：949482664
+
 ## 说明：
 
 1.节点名字识别支持模糊匹配，比如需要绑定一个变量名为Self的Transform组件，节点名字Self_Tr就可以识别Tr为Transform
@@ -14,7 +16,7 @@
 
 5.支持嵌套，对于带有MonoCodeBindAttribute和CodeBindAttribute脚本的节点的子节点不会识别，方便列表使用
 
-6.自定义命名规则，CodeBindNameTypeAttribute来注入不能修改的代码，CodeBindNameAttribute方便处理业务代码中平凡修改的类型
+6.自定义命名规则，CodeBindNameTypeAttribute来注入不能修改的代码，CodeBindNameAttribute方便处理业务代码中频繁修改的类型
 
 ### 安装方式：
 - Open Package Manager and Add package from git URL https://github.com/XuToWei/CodeBind.git.
