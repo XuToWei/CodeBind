@@ -40,12 +40,14 @@ namespace CodeBind.Editor
             //组件字段
             foreach (CodeBindData bindData in this.m_BindDatas)
             {
-                stringBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField] private {bindData.BindType.FullName} _{bindData.BindName}{bindData.BindPrefix};");
+                stringBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup(\"BindData\"), Sirenix.OdinInspector.ReadOnly]");
+                stringBuilder.AppendLine($"{indentation}\tprivate {bindData.BindType.FullName} _{bindData.BindName}{bindData.BindPrefix};");
             }
             stringBuilder.AppendLine("");
             foreach (KeyValuePair<string, List<CodeBindData>> kv in this.m_BindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField] private {kv.Value[0].BindType.FullName}[] _{kv.Key}Array;");
+                stringBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup(\"BindData\"), Sirenix.OdinInspector.ReadOnly]");
+                stringBuilder.AppendLine($"{indentation}\tprivate {kv.Value[0].BindType.FullName}[] _{kv.Key}Array;");
             }
             stringBuilder.AppendLine("");
             foreach (CodeBindData bindData in this.m_BindDatas)

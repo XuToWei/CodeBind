@@ -338,7 +338,11 @@ namespace CodeBind.Editor
                         for (int i = 1; i < strList.Count; i++)
                         {
                             string typeStr = strList[i];
-                        
+                            //有的命名会有局部重复，这里如果脚本存在了就不参加模糊匹配
+                            if (CodeBindNameTypeCollection.BindNameTypeDict.TryGetValue(typeStr, out var comType) && child.GetComponent(comType) != null)
+                            {
+                                continue;
+                            }
                             foreach (var kv in CodeBindNameTypeCollection.BindNameTypeDict)
                             {
                                 if ((kv.Key.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(kv.Key, StringComparison.OrdinalIgnoreCase)) && child.GetComponent(kv.Value) != null)
