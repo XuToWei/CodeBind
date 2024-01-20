@@ -1,6 +1,7 @@
 # Changelog
 
 ## [1.0.1] - 2024-1-20
+- support bind gameObject
 - fix binding partially duplicated components, the name may be modified.
 - add bind editor group view.
 

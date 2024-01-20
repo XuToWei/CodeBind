@@ -8,6 +8,7 @@ namespace CodeBind
         [CodeBindNameType]
         static Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>()
         {
+            { "GameObject", typeof (UnityEngine.GameObject) },
             { "Transform", typeof (UnityEngine.Transform) },
             { "Animation", typeof (UnityEngine.Animation) },
             { "Animator", typeof (UnityEngine.Animator) },

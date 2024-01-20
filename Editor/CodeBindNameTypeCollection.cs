@@ -36,10 +36,9 @@ namespace CodeBind.Editor
                 Dictionary<string, Type> bindNameTypeDict = (Dictionary<string, Type>)value;
                 foreach (var kv in bindNameTypeDict)
                 {
-                    if (kv.Value == null || !kv.Value.IsSubclassOf(typeof(Component)))
+                    if (kv.Value == null || !kv.Value.IsSubclassOf(typeof(Component)) && kv.Value != typeof(GameObject))
                     {
-                        Debug.LogError(
-                            $"Add BindNameType Fail! Type:{kv.Value} error! Only can bind sub class of 'Component'!");
+                        Debug.LogError($"Add BindNameType Fail! Type:{kv.Value} error! Only can bind sub class of 'Component'!");
                         continue;
                     }
                     if (BindNameTypeDict.TryGetValue(kv.Key, out Type type))

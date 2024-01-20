@@ -107,15 +107,14 @@ namespace CodeBind.Editor
                         //自动补齐所有存在的脚本
                         foreach (var kv in CodeBindNameTypeCollection.BindNameTypeDict)
                         {
-                            if (child.GetComponent(kv.Value) != null)
+                            if (TryGetBindTarget(child, kv.Value, out _))
                             {
                                 CodeBindData bindData = new CodeBindData(bindName, kv.Value, kv.Key, child);
                                 bindDatas.Add(bindData);
                             }
                         }
                     }
-                    else if (CodeBindNameTypeCollection.BindNameTypeDict.TryGetValue(typeStr, out Type type) &&
-                             child.GetComponent(type) != null)
+                    else if (CodeBindNameTypeCollection.BindNameTypeDict.TryGetValue(typeStr, out Type type) && TryGetBindTarget(child, type, out _))
                     {
                         CodeBindData bindData = new CodeBindData(bindName, type, typeStr, child);
                         bindDatas.Add(bindData);
@@ -188,14 +187,14 @@ namespace CodeBind.Editor
                         //自动补齐所有存在的脚本
                         foreach (var kv in CodeBindNameTypeCollection.BindNameTypeDict)
                         {
-                            if (child.GetComponent(kv.Value) != null)
+                            if (TryGetBindTarget(child, kv.Value, out _))
                             {
                                 CodeBindData bindData = new CodeBindData(bindName, kv.Value, kv.Key, child);
                                 bindDatas.Add(bindData);
                             }
                         }
                     }
-                    else if (CodeBindNameTypeCollection.BindNameTypeDict.TryGetValue(typeStr, out Type type) && child.GetComponent(type) != null)
+                    else if (CodeBindNameTypeCollection.BindNameTypeDict.TryGetValue(typeStr, out Type type) && TryGetBindTarget(child, type, out _))
                     {
                         CodeBindData bindData = new CodeBindData(bindName, type, typeStr, child);
                         bindDatas.Add(bindData);
@@ -339,13 +338,13 @@ namespace CodeBind.Editor
                         {
                             string typeStr = strList[i];
                             //有的命名会有局部重复，这里如果脚本存在了就不参加模糊匹配
-                            if (CodeBindNameTypeCollection.BindNameTypeDict.TryGetValue(typeStr, out var comType) && child.GetComponent(comType) != null)
+                            if (CodeBindNameTypeCollection.BindNameTypeDict.TryGetValue(typeStr, out var comType) && TryGetBindTarget(child, comType, out _))
                             {
                                 continue;
                             }
                             foreach (var kv in CodeBindNameTypeCollection.BindNameTypeDict)
                             {
-                                if ((kv.Key.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(kv.Key, StringComparison.OrdinalIgnoreCase)) && child.GetComponent(kv.Value) != null)
+                                if ((kv.Key.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(kv.Key, StringComparison.OrdinalIgnoreCase)) && TryGetBindTarget(child, kv.Value, out _))
                                 {
                                     strList[i] = kv.Key;
                                     break;
@@ -398,9 +397,20 @@ namespace CodeBind.Editor
             }
         }
 
+        protected bool TryGetBindTarget(Transform transform, Type type, out UnityEngine.Object target)
+        {
+            if (type == typeof(GameObject))
+            {
+                target = transform.gameObject;
+                return true;
+            }
+            target = transform.GetComponent(type);
+            return target != null;
+        }
+
         public void TryGenerateBindCode()
         {
-            this.AutoFixChildBindName();
+            AutoFixChildBindName();
             if (!TryGenerateNameMapTypeData())
             {
                 return;

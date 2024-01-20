@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
@@ -101,16 +100,24 @@ namespace CodeBind.Editor
         protected override void SetSerialization()
         {
             List<string> bindNames = new List<string>();
-            List<Component> bindComponents = new List<Component>();
+            List<UnityEngine.Object> bindComponents = new List<UnityEngine.Object>();
             foreach (CodeBindData bindData in this.m_BindDatas)
             {
                 bindNames.Add(bindData.BindName + bindData.BindPrefix);
-                bindComponents.Add(bindData.BindTransform.GetComponent(bindData.BindType));
+                if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
+                {
+                    throw new Exception($"Bind '{bindData.BindTransform} - {bindData.BindType}' fail!");
+                }
+                bindComponents.Add(target);
             }
             foreach (CodeBindData bindData in this.m_BindArrayDatas)
             {
                 bindNames.Add($"{bindData.BindName}{bindData.BindPrefix}Array");
-                bindComponents.Add(bindData.BindTransform.GetComponent(bindData.BindType));
+                if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
+                {
+                    throw new Exception($"Bind '{bindData.BindTransform} - {bindData.BindType}' fail!");
+                }
+                bindComponents.Add(target);
             }
             this.m_CsCodeBindMono.SetBindComponents(bindNames.ToArray(), bindComponents.ToArray());
         }

@@ -11,9 +11,9 @@ namespace CodeBind
         private static readonly CSCodeBindPool s_Pool = new CSCodeBindPool();
         
         [SerializeField]
-        private Component[] m_BindComponents;
+        private UnityEngine.Object[] m_BindComponents;
 
-        public Component[] bindComponents => this.m_BindComponents;
+        public UnityEngine.Object[] bindComponents => this.m_BindComponents;
 
         private ICSCodeBind m_CSCodeBindObject;
 
@@ -31,7 +31,7 @@ namespace CodeBind
         public UnityEditor.MonoScript bindScript => this.m_BindScript;
         public string[] bindComponentNames => this.m_BindComponentNames;
 
-        public void SetBindComponents(string[] names, Component[] components)
+        public void SetBindComponents(string[] names, UnityEngine.Object[] components)
         {
             if (names == null || components == null)
             {

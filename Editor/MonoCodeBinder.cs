@@ -74,7 +74,11 @@ namespace CodeBind.Editor
             foreach (CodeBindData bindData in this.m_BindDatas)
             {
                 FieldInfo fieldInfo = monoType.GetField($"_{bindData.BindName}{bindData.BindPrefix}", BindingFlags.NonPublic | BindingFlags.Instance);
-                fieldInfo.SetValue(this.m_MonoObj, bindData.BindTransform.GetComponent(bindData.BindType));
+                if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
+                {
+                    throw new Exception($"Bind '{bindData.BindTransform} - {bindData.BindType}' fail!");
+                }
+                fieldInfo.SetValue(this.m_MonoObj, target);
             }
             
             foreach (KeyValuePair<string, List<CodeBindData>> kv in this.m_BindArrayDataDict)
@@ -82,7 +86,11 @@ namespace CodeBind.Editor
                 List<object> components = new List<object>();
                 foreach (CodeBindData bindData in kv.Value)
                 {
-                    components.Add(bindData.BindTransform.GetComponent(bindData.BindType));
+                    if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
+                    {
+                        throw new Exception($"Bind '{bindData.BindTransform} - {bindData.BindType}' fail!");
+                    }
+                    components.Add(target);
                 }
                 FieldInfo fieldInfo = monoType.GetField($"_{kv.Key}Array", BindingFlags.NonPublic | BindingFlags.Instance);
                 Type type = fieldInfo.FieldType.GetElementType();
