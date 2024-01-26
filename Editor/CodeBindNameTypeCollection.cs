@@ -60,12 +60,12 @@ namespace CodeBind.Editor
                     continue;
                 }
                 CodeBindNameAttribute attribute = (CodeBindNameAttribute)type.GetCustomAttributes(typeof(CodeBindNameAttribute), false)[0];
-                if (BindNameTypeDict.TryGetValue(attribute.bindName, out Type bindType))
+                if (BindNameTypeDict.TryGetValue(attribute.BindName, out Type bindType))
                 {
-                    Debug.LogError($"Add BindNameType Fail! Type name:{attribute.bindName}({bindType}) exist!");
+                    Debug.LogError($"Add BindNameType Fail! Type name:{attribute.BindName}({bindType}) exist!");
                     continue;
                 }
-                BindNameTypeDict.Add(attribute.bindName, type);
+                BindNameTypeDict.Add(attribute.BindName, type);
             }
         }
     }

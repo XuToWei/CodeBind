@@ -4,8 +4,8 @@ namespace CodeBind
 {
     public interface ICSCodeBind
     {
-        CSCodeBindMono mono { get; }
-        Transform transform { get; }
+        CSCodeBindMono Mono { get; }
+        Transform Transform { get; }
         void InitBind(CSCodeBindMono csCodeBindMono);
         void ClearBind();
     }

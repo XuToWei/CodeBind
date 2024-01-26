@@ -15,12 +15,11 @@ namespace CodeBind.Editor
             
             propertyInfos.AddDelegate("Code Binder", (Action) (() => { }), -100000f, new Attribute[2]
             {
-                (Attribute) new InfoBoxAttribute($"Separator Char:{attribute.separatorChar}"),
+                (Attribute) new InfoBoxAttribute($"Separator Char:{attribute.SeparatorChar}"),
                 (Attribute) new OnInspectorGUIAttribute("@")
             });
 
             propertyInfos.AddDelegate("Generate Bind Code", TryGenerateBindCode, -100000f);
-            
             propertyInfos.AddDelegate("Generate Serialization", TrySetSerialization, -100000f);
         }
 
@@ -33,7 +32,7 @@ namespace CodeBind.Editor
                 throw new Exception($"{this.ValueEntry.SmartValue.GetType()} is not inherit from MonoBehaviour!");
             }
             MonoScript script = MonoScript.FromMonoBehaviour(mono);
-            MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.separatorChar);
+            MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
             codeBinder.TryGenerateBindCode();
         }
 
@@ -46,7 +45,7 @@ namespace CodeBind.Editor
                 throw new Exception($"{this.ValueEntry.SmartValue.GetType()} is not inherit from MonoBehaviour!");
             }
             MonoScript script = MonoScript.FromMonoBehaviour(mono);
-            MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.separatorChar);
+            MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
             codeBinder.TrySetSerialization();
         }
     }

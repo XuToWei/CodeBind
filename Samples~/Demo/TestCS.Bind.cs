@@ -4,36 +4,36 @@ namespace CodeBind.Demo
 {
     public partial class TestCS : CodeBind.ICSCodeBind
     {
-        public CodeBind.CSCodeBindMono mono { get; private set; }
-        public UnityEngine.Transform transform { get; private set; }
+        public CodeBind.CSCodeBindMono Mono { get; private set; }
+        public UnityEngine.Transform Transform { get; private set; }
 
-        public UnityEngine.Transform selfTransform { get; private set; }
-        public UnityEngine.Animation otherAnimation { get; private set; }
+        public UnityEngine.Transform SelfTransform { get; private set; }
+        public UnityEngine.Animation OtherAnimation { get; private set; }
 
-        public UnityEngine.Animation[] listAnimationArray { get; private set; }
+        public UnityEngine.Animation[] ListAnimationArray { get; private set; }
 
         public void InitBind(CodeBind.CSCodeBindMono mono)
         {
-            this.mono = mono;
-            this.transform = mono.transform;
-            this.selfTransform = this.mono.bindComponents[0] as UnityEngine.Transform;
-            this.otherAnimation = this.mono.bindComponents[1] as UnityEngine.Animation;
-            this.listAnimationArray = new UnityEngine.Animation[4]
+            Mono = mono;
+            Transform = mono.transform;
+            SelfTransform = Mono.BindComponents[0] as UnityEngine.Transform;
+            OtherAnimation = Mono.BindComponents[1] as UnityEngine.Animation;
+            ListAnimationArray = new UnityEngine.Animation[4]
             {
-                this.mono.bindComponents[2] as UnityEngine.Animation,
-                this.mono.bindComponents[3] as UnityEngine.Animation,
-                this.mono.bindComponents[4] as UnityEngine.Animation,
-                this.mono.bindComponents[5] as UnityEngine.Animation,
+                Mono.BindComponents[2] as UnityEngine.Animation,
+                Mono.BindComponents[3] as UnityEngine.Animation,
+                Mono.BindComponents[4] as UnityEngine.Animation,
+                Mono.BindComponents[5] as UnityEngine.Animation,
             };
         }
 
         public void ClearBind()
         {
-            this.mono = null;
-            this.transform = null;
-            this.selfTransform = null;
-            this.otherAnimation = null;
-            this.listAnimationArray = null;
+            Mono = null;
+            Transform = null;
+            SelfTransform = null;
+            OtherAnimation = null;
+            ListAnimationArray = null;
         }
     }
 }

@@ -5,16 +5,16 @@ namespace CodeBind
     [Conditional("UNITY_EDITOR")]
     public sealed class MonoCodeBindAttribute : CodeBindAttribute
     {
-        public readonly char separatorChar;
+        public readonly char SeparatorChar;
 
         public MonoCodeBindAttribute(char separatorChar)
         {
-            this.separatorChar = separatorChar;
+            this.SeparatorChar = separatorChar;
         }
         
         public MonoCodeBindAttribute()
         {
-            this.separatorChar = '_';
+            this.SeparatorChar = '_';
         }
     }
 }

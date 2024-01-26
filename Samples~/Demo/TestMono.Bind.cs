@@ -4,28 +4,44 @@ namespace CodeBind.Demo
 {
     public partial class TestMono
     {
-        [UnityEngine.SerializeField] private UnityEngine.Transform _testTransform;
-        [UnityEngine.SerializeField] private UnityEngine.Animator _testAnimator;
-        [UnityEngine.SerializeField] private UnityEngine.Transform _test2Transform;
-        [UnityEngine.SerializeField] private UnityEngine.Animator _test2Animator;
-        [UnityEngine.SerializeField] private CodeBind.CSCodeBindMono _testCSCodeBindMono;
-        [UnityEngine.SerializeField] private CodeBind.ReferenceBindMono _testReferenceBindMono;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Transform m_TestTransform;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Animator m_TestAnimator;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.GameObject m_Test2GameObject;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Transform m_Test2Transform;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Animator m_Test2Animator;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private CodeBind.CSCodeBindMono m_TestCSCodeBindMono;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private CodeBind.ReferenceBindMono m_TestReferenceBindMono;
 
-        [UnityEngine.SerializeField] private UnityEngine.Animator[] _test2AnimatorArray;
-        [UnityEngine.SerializeField] private UnityEngine.Transform[] _test2TransformArray;
-        [UnityEngine.SerializeField] private UnityEngine.Animator[] _testAnimatorArray;
-        [UnityEngine.SerializeField] private UnityEngine.Transform[] _testTransformArray;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Animator[] m_Test2AnimatorArray;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.GameObject[] m_Test2GameObjectArray;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Transform[] m_Test2TransformArray;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Animator[] m_TestAnimatorArray;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Transform[] m_TestTransformArray;
 
-        public UnityEngine.Transform testTransform => _testTransform;
-        public UnityEngine.Animator testAnimator => _testAnimator;
-        public UnityEngine.Transform test2Transform => _test2Transform;
-        public UnityEngine.Animator test2Animator => _test2Animator;
-        public CodeBind.CSCodeBindMono testCSCodeBindMono => _testCSCodeBindMono;
-        public CodeBind.ReferenceBindMono testReferenceBindMono => _testReferenceBindMono;
+        public UnityEngine.Transform TestTransform => m_TestTransform;
+        public UnityEngine.Animator TestAnimator => m_TestAnimator;
+        public UnityEngine.GameObject Test2GameObject => m_Test2GameObject;
+        public UnityEngine.Transform Test2Transform => m_Test2Transform;
+        public UnityEngine.Animator Test2Animator => m_Test2Animator;
+        public CodeBind.CSCodeBindMono TestCSCodeBindMono => m_TestCSCodeBindMono;
+        public CodeBind.ReferenceBindMono TestReferenceBindMono => m_TestReferenceBindMono;
 
-        public UnityEngine.Animator[] test2AnimatorArray => _test2AnimatorArray;
-        public UnityEngine.Transform[] test2TransformArray => _test2TransformArray;
-        public UnityEngine.Animator[] testAnimatorArray => _testAnimatorArray;
-        public UnityEngine.Transform[] testTransformArray => _testTransformArray;
+        public UnityEngine.Animator[] Test2AnimatorArray => m_Test2AnimatorArray;
+        public UnityEngine.GameObject[] Test2GameObjectArray => m_Test2GameObjectArray;
+        public UnityEngine.Transform[] Test2TransformArray => m_Test2TransformArray;
+        public UnityEngine.Animator[] TestAnimatorArray => m_TestAnimatorArray;
+        public UnityEngine.Transform[] TestTransformArray => m_TestTransformArray;
     }
 }

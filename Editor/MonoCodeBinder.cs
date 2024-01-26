@@ -13,8 +13,8 @@ namespace CodeBind.Editor
         
         public MonoCodeBinder(MonoScript script, Transform rootTransform, char separatorChar): base(script, rootTransform, separatorChar)
         {
-            this.m_MonoObj = rootTransform.GetComponent(script.GetClass()) as MonoBehaviour;
-            if (this.m_MonoObj == null)
+            m_MonoObj = rootTransform.GetComponent(script.GetClass()) as MonoBehaviour;
+            if (m_MonoObj == null)
             {
                 throw new Exception("MonoCodeBinder only can be used of MonoBehaviour!");
             }
@@ -26,38 +26,38 @@ namespace CodeBind.Editor
             stringBuilder.AppendLine("// This is an automatically generated class by CodeBind. Please do not modify it.");
             stringBuilder.AppendLine("");
             string indentation = string.Empty;
-            bool needNameSpace = !string.IsNullOrEmpty(this.m_ScriptNameSpace);
+            bool needNameSpace = !string.IsNullOrEmpty(m_ScriptNameSpace);
             //命名空间
             if (needNameSpace)
             {
-                stringBuilder.AppendLine($"namespace {this.m_ScriptNameSpace}");
+                stringBuilder.AppendLine($"namespace {m_ScriptNameSpace}");
                 stringBuilder.AppendLine("{");
                 indentation = "\t";
             }
             //类名
-            stringBuilder.AppendLine($"{indentation}public partial class {this.m_ScriptClassName}");
+            stringBuilder.AppendLine($"{indentation}public partial class {m_ScriptClassName}");
             stringBuilder.AppendLine($"{indentation}{{");
             //组件字段
-            foreach (CodeBindData bindData in this.m_BindDatas)
+            foreach (CodeBindData bindData in m_BindDatas)
             {
                 stringBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup(\"BindData\"), Sirenix.OdinInspector.ReadOnly]");
-                stringBuilder.AppendLine($"{indentation}\tprivate {bindData.BindType.FullName} _{bindData.BindName}{bindData.BindPrefix};");
+                stringBuilder.AppendLine($"{indentation}\tprivate {bindData.BindType.FullName} m_{bindData.BindName}{bindData.BindPrefix};");
             }
             stringBuilder.AppendLine("");
-            foreach (KeyValuePair<string, List<CodeBindData>> kv in this.m_BindArrayDataDict)
+            foreach (KeyValuePair<string, List<CodeBindData>> kv in m_BindArrayDataDict)
             {
                 stringBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup(\"BindData\"), Sirenix.OdinInspector.ReadOnly]");
-                stringBuilder.AppendLine($"{indentation}\tprivate {kv.Value[0].BindType.FullName}[] _{kv.Key}Array;");
+                stringBuilder.AppendLine($"{indentation}\tprivate {kv.Value[0].BindType.FullName}[] m_{kv.Key}Array;");
             }
             stringBuilder.AppendLine("");
-            foreach (CodeBindData bindData in this.m_BindDatas)
+            foreach (CodeBindData bindData in m_BindDatas)
             {
-                stringBuilder.AppendLine($"{indentation}\tpublic {bindData.BindType.FullName} {bindData.BindName}{bindData.BindPrefix} => _{bindData.BindName}{bindData.BindPrefix};");
+                stringBuilder.AppendLine($"{indentation}\tpublic {bindData.BindType.FullName} {bindData.BindName}{bindData.BindPrefix} => m_{bindData.BindName}{bindData.BindPrefix};");
             }
             stringBuilder.AppendLine("");
-            foreach (KeyValuePair<string, List<CodeBindData>> kv in this.m_BindArrayDataDict)
+            foreach (KeyValuePair<string, List<CodeBindData>> kv in m_BindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}\tpublic {kv.Value[0].BindType.FullName}[] {kv.Key}Array => _{kv.Key}Array;");
+                stringBuilder.AppendLine($"{indentation}\tpublic {kv.Value[0].BindType.FullName}[] {kv.Key}Array => m_{kv.Key}Array;");
             }
             
             stringBuilder.AppendLine($"{indentation}}}");
@@ -70,18 +70,18 @@ namespace CodeBind.Editor
 
         protected override void SetSerialization()
         {
-            Type monoType = this.m_MonoObj.GetType();
-            foreach (CodeBindData bindData in this.m_BindDatas)
+            Type monoType = m_MonoObj.GetType();
+            foreach (CodeBindData bindData in m_BindDatas)
             {
-                FieldInfo fieldInfo = monoType.GetField($"_{bindData.BindName}{bindData.BindPrefix}", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo fieldInfo = monoType.GetField($"m_{bindData.BindName}{bindData.BindPrefix}", BindingFlags.NonPublic | BindingFlags.Instance);
                 if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
                 {
                     throw new Exception($"Bind '{bindData.BindTransform} - {bindData.BindType}' fail!");
                 }
-                fieldInfo.SetValue(this.m_MonoObj, target);
+                fieldInfo.SetValue(m_MonoObj, target);
             }
             
-            foreach (KeyValuePair<string, List<CodeBindData>> kv in this.m_BindArrayDataDict)
+            foreach (KeyValuePair<string, List<CodeBindData>> kv in m_BindArrayDataDict)
             {
                 List<object> components = new List<object>();
                 foreach (CodeBindData bindData in kv.Value)
@@ -92,11 +92,11 @@ namespace CodeBind.Editor
                     }
                     components.Add(target);
                 }
-                FieldInfo fieldInfo = monoType.GetField($"_{kv.Key}Array", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo fieldInfo = monoType.GetField($"m_{kv.Key}Array", BindingFlags.NonPublic | BindingFlags.Instance);
                 Type type = fieldInfo.FieldType.GetElementType();
                 Array filledArray = Array.CreateInstance(type, kv.Value.Count);
                 Array.Copy(components.ToArray(), filledArray, kv.Value.Count);
-                fieldInfo.SetValue(this.m_MonoObj, filledArray);
+                fieldInfo.SetValue(m_MonoObj, filledArray);
             }
         }
     }

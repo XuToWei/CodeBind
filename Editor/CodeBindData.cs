@@ -27,10 +27,10 @@ namespace CodeBind.Editor
 
         public CodeBindData(string bindName, Type bindType, string bindPrefix, Transform bindTransform)
         {
-            this.BindName = bindName;
-            this.BindType = bindType;
-            this.BindPrefix = bindPrefix;
-            this.BindTransform = bindTransform;
+            BindName = bindName;
+            BindType = bindType;
+            BindPrefix = bindPrefix;
+            BindTransform = bindTransform;
         }
     }
 }

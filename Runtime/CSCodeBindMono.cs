@@ -9,11 +9,11 @@ namespace CodeBind
     public sealed class CSCodeBindMono : MonoBehaviour
     {
         private static readonly CSCodeBindPool s_Pool = new CSCodeBindPool();
-        
+
         [SerializeField]
         private UnityEngine.Object[] m_BindComponents;
 
-        public UnityEngine.Object[] bindComponents => this.m_BindComponents;
+        public UnityEngine.Object[] BindComponents => this.m_BindComponents;
 
         private ICSCodeBind m_CSCodeBindObject;
 
@@ -27,9 +27,9 @@ namespace CodeBind
         [SerializeField]
         private string[] m_BindComponentNames;
 
-        public char separatorChar => this.m_SeparatorChar;
-        public UnityEditor.MonoScript bindScript => this.m_BindScript;
-        public string[] bindComponentNames => this.m_BindComponentNames;
+        public char SeparatorChar => m_SeparatorChar;
+        public UnityEditor.MonoScript BindScript => m_BindScript;
+        public string[] BindComponentNames => m_BindComponentNames;
 
         public void SetBindComponents(string[] names, UnityEngine.Object[] components)
         {
@@ -41,8 +41,8 @@ namespace CodeBind
             {
                 throw new Exception("Name count must be same with Component count!");
             }
-            this.m_BindComponentNames = names;
-            this.m_BindComponents = components;
+            m_BindComponentNames = names;
+            m_BindComponents = components;
         }
 #endif
 

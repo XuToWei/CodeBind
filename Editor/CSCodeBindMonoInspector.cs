@@ -16,10 +16,10 @@ namespace CodeBind.Editor
         
         private void OnEnable()
         {
-            this.m_SeparatorChar = serializedObject.FindProperty("m_SeparatorChar");
-            this.m_BindScript = serializedObject.FindProperty("m_BindScript");
-            this.m_BindComponents = serializedObject.FindProperty("m_BindComponents");
-            this.m_BindComponentNames = serializedObject.FindProperty("m_BindComponentNames");
+            m_SeparatorChar = serializedObject.FindProperty("m_SeparatorChar");
+            m_BindScript = serializedObject.FindProperty("m_BindScript");
+            m_BindComponents = serializedObject.FindProperty("m_BindComponents");
+            m_BindComponentNames = serializedObject.FindProperty("m_BindComponentNames");
         }
 
         public override void OnInspectorGUI()
@@ -30,24 +30,24 @@ namespace CodeBind.Editor
             {
                 if (GUILayout.Button("Generate BindCode and Serialization"))
                 {
-                    CSCodeBinder codeBinder = new CSCodeBinder((MonoScript)this.m_BindScript.objectReferenceValue, ((MonoBehaviour)this.target).transform, (char)this.m_SeparatorChar.intValue);
+                    CSCodeBinder codeBinder = new CSCodeBinder((MonoScript)m_BindScript.objectReferenceValue, ((MonoBehaviour)target).transform, (char)m_SeparatorChar.intValue);
                     codeBinder.TryGenerateBindCode();
                     codeBinder.TrySetSerialization();
                 }
 
-                EditorGUILayout.PropertyField(this.m_SeparatorChar);
-                EditorGUILayout.PropertyField(this.m_BindScript);
+                EditorGUILayout.PropertyField(m_SeparatorChar);
+                EditorGUILayout.PropertyField(m_BindScript);
                 
                 if (GUILayout.Button("Clear Serialization"))
                 {
-                    this.m_BindComponentNames.ClearArray();
-                    this.m_BindComponents.ClearArray();
+                    m_BindComponentNames.ClearArray();
+                    m_BindComponents.ClearArray();
                     serializedObject.ApplyModifiedProperties();
                 }
                 
-                this.m_ShowBindComponents = EditorGUILayout.BeginFoldoutHeaderGroup(this.m_ShowBindComponents, $"Bind Data (count:{this.m_BindComponents.arraySize})");
+                m_ShowBindComponents = EditorGUILayout.BeginFoldoutHeaderGroup(m_ShowBindComponents, $"Bind Data (count:{m_BindComponents.arraySize})");
                 {
-                    if (this.m_ShowBindComponents)
+                    if (m_ShowBindComponents)
                     {
                         EditorGUI.BeginDisabledGroup(true);
                         {
@@ -55,12 +55,12 @@ namespace CodeBind.Editor
                             EditorGUILayout.LabelField("Name");
                             EditorGUILayout.LabelField("Component");
                             GUILayout.EndHorizontal();
-                            for (int i = 0; i < this.m_BindComponents.arraySize; i++)
+                            for (int i = 0; i < m_BindComponents.arraySize; i++)
                             {
                                 GUILayout.BeginHorizontal();
-                                string cName = this.m_BindComponentNames.GetArrayElementAtIndex(i).stringValue;
+                                string cName = m_BindComponentNames.GetArrayElementAtIndex(i).stringValue;
                                 EditorGUILayout.TextField(cName);
-                                EditorGUILayout.ObjectField(this.m_BindComponents.GetArrayElementAtIndex(i).objectReferenceValue, typeof (Component), true);
+                                EditorGUILayout.ObjectField(m_BindComponents.GetArrayElementAtIndex(i).objectReferenceValue, typeof (Component), true);
                                 GUILayout.EndHorizontal();
                             }
                         }
@@ -71,12 +71,6 @@ namespace CodeBind.Editor
             }
             EditorGUI.EndDisabledGroup();
             
-            serializedObject.ApplyModifiedProperties();
-        }
-
-        private void RefreshTypeNames()
-        {
-
             serializedObject.ApplyModifiedProperties();
         }
     }

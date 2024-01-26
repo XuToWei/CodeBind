@@ -10,14 +10,14 @@ namespace CodeBind
     [AttributeUsage(AttributeTargets.Class)]
     public class CodeBindNameAttribute : Attribute
     {
-        public string bindName
+        public string BindName
         {
             get;
         }
 
         public CodeBindNameAttribute(string bindName)
         {
-            this.bindName = bindName;
+            this.BindName = bindName;
         }
     }
 }

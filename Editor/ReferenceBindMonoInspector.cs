@@ -14,8 +14,8 @@ namespace CodeBind.Editor
 
         private void OnEnable()
         {
-            this.m_BindNames = serializedObject.FindProperty("m_BindNames");
-            this.m_BindGameObjects = serializedObject.FindProperty("m_BindGameObjects");
+            m_BindNames = serializedObject.FindProperty("m_BindNames");
+            m_BindGameObjects = serializedObject.FindProperty("m_BindGameObjects");
         }
 
         public override void OnInspectorGUI()
@@ -30,33 +30,33 @@ namespace CodeBind.Editor
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                this.m_AddBindName = EditorGUILayout.TextField(this.m_AddBindName);
-                this.m_AddBindGameObject = (GameObject)EditorGUILayout.ObjectField(this.m_AddBindGameObject, typeof(GameObject), true);
-                if (GUILayout.Button("+") && !string.IsNullOrEmpty(this.m_AddBindName))
+                m_AddBindName = EditorGUILayout.TextField(m_AddBindName);
+                m_AddBindGameObject = (GameObject)EditorGUILayout.ObjectField(m_AddBindGameObject, typeof(GameObject), true);
+                if (GUILayout.Button("+") && !string.IsNullOrEmpty(m_AddBindName))
                 {
                     bool isRepeated = false;
-                    for (int i = 0; i < this.m_BindNames.arraySize; i++)
+                    for (int i = 0; i < m_BindNames.arraySize; i++)
                     {
-                        string goName = this.m_BindNames.GetArrayElementAtIndex(i).stringValue;
-                        if (this.m_AddBindName == goName)
+                        string goName = m_BindNames.GetArrayElementAtIndex(i).stringValue;
+                        if (m_AddBindName == goName)
                         {
                             isRepeated = true;
-                            this.m_BindNames.GetArrayElementAtIndex(i).stringValue = this.m_AddBindName;
-                            this.m_BindGameObjects.GetArrayElementAtIndex(i).objectReferenceValue = this.m_AddBindGameObject;
-                            this.m_AddBindName = string.Empty;
-                            this.m_AddBindGameObject = null;
+                            m_BindNames.GetArrayElementAtIndex(i).stringValue = m_AddBindName;
+                            m_BindGameObjects.GetArrayElementAtIndex(i).objectReferenceValue = m_AddBindGameObject;
+                            m_AddBindName = string.Empty;
+                            m_AddBindGameObject = null;
                             break;
                         }
                     }
 
                     if (!isRepeated)
                     {
-                        this.m_BindNames.InsertArrayElementAtIndex(0);
-                        this.m_BindNames.GetArrayElementAtIndex(0).stringValue = this.m_AddBindName;
-                        this.m_BindGameObjects.InsertArrayElementAtIndex(0);
-                        this.m_BindGameObjects.GetArrayElementAtIndex(0).objectReferenceValue = this.m_AddBindGameObject;
-                        this.m_AddBindName = string.Empty;
-                        this.m_AddBindGameObject = null;
+                        m_BindNames.InsertArrayElementAtIndex(0);
+                        m_BindNames.GetArrayElementAtIndex(0).stringValue = m_AddBindName;
+                        m_BindGameObjects.InsertArrayElementAtIndex(0);
+                        m_BindGameObjects.GetArrayElementAtIndex(0).objectReferenceValue = m_AddBindGameObject;
+                        m_AddBindName = string.Empty;
+                        m_AddBindGameObject = null;
                     }
 
                     serializedObject.ApplyModifiedProperties();
@@ -64,16 +64,16 @@ namespace CodeBind.Editor
 
                 GUILayout.EndHorizontal();
 
-                for (int i = 0; i < this.m_BindNames.arraySize; i++)
+                for (int i = 0; i < m_BindNames.arraySize; i++)
                 {
                     GUILayout.BeginHorizontal();
-                    string goName = this.m_BindNames.GetArrayElementAtIndex(i).stringValue;
+                    string goName = m_BindNames.GetArrayElementAtIndex(i).stringValue;
                     EditorGUILayout.TextField(goName);
-                    EditorGUILayout.ObjectField(this.m_BindGameObjects.GetArrayElementAtIndex(i).objectReferenceValue, typeof(GameObject), true);
+                    EditorGUILayout.ObjectField(m_BindGameObjects.GetArrayElementAtIndex(i).objectReferenceValue, typeof(GameObject), true);
                     if (GUILayout.Button("-"))
                     {
-                        this.m_BindNames.DeleteArrayElementAtIndex(i);
-                        this.m_BindGameObjects.DeleteArrayElementAtIndex(i);
+                        m_BindNames.DeleteArrayElementAtIndex(i);
+                        m_BindGameObjects.DeleteArrayElementAtIndex(i);
                         serializedObject.ApplyModifiedProperties();
                     }
 
@@ -82,8 +82,8 @@ namespace CodeBind.Editor
 
                 if (GUILayout.Button("Clear Serialization"))
                 {
-                    this.m_BindNames.ClearArray();
-                    this.m_BindGameObjects.ClearArray();
+                    m_BindNames.ClearArray();
+                    m_BindGameObjects.ClearArray();
                     serializedObject.ApplyModifiedProperties();
                 }
             }

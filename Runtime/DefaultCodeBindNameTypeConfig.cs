@@ -6,7 +6,7 @@ namespace CodeBind
     sealed class DefaultCodeBindNameTypeConfig
     {
         [CodeBindNameType]
-        static Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>()
+        public static readonly Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>()
         {
             { "GameObject", typeof (UnityEngine.GameObject) },
             { "Transform", typeof (UnityEngine.Transform) },

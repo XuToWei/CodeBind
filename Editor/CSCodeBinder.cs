@@ -12,8 +12,8 @@ namespace CodeBind.Editor
         
         public CSCodeBinder(MonoScript script, Transform rootTransform, char separatorChar): base(script, rootTransform, separatorChar)
         {
-            this.m_CsCodeBindMono = rootTransform.GetComponent<CSCodeBindMono>();
-            if (this.m_CsCodeBindMono == null)
+            m_CsCodeBindMono = rootTransform.GetComponent<CSCodeBindMono>();
+            if (m_CsCodeBindMono == null)
             {
                 throw new Exception($"PureCSCodeBinder init fail! {rootTransform} has no MonoBind!");
             }
@@ -25,27 +25,27 @@ namespace CodeBind.Editor
             stringBuilder.AppendLine("// This is an automatically generated class by CodeBind. Please do not modify it.");
             stringBuilder.AppendLine("");
             string indentation = string.Empty;
-            bool needNameSpace = !string.IsNullOrEmpty(this.m_ScriptNameSpace);
+            bool needNameSpace = !string.IsNullOrEmpty(m_ScriptNameSpace);
             //命名空间
             if (needNameSpace)
             {
-                stringBuilder.AppendLine($"namespace {this.m_ScriptNameSpace}");
+                stringBuilder.AppendLine($"namespace {m_ScriptNameSpace}");
                 stringBuilder.AppendLine("{");
                 indentation = "\t";
             }
             //类名
-            stringBuilder.AppendLine($"{indentation}public partial class {this.m_ScriptClassName} : CodeBind.ICSCodeBind");
+            stringBuilder.AppendLine($"{indentation}public partial class {m_ScriptClassName} : CodeBind.ICSCodeBind");
             stringBuilder.AppendLine($"{indentation}{{");
             //组件字段
-            stringBuilder.AppendLine($"{indentation}{indentation}public CodeBind.CSCodeBindMono mono {{ get; private set; }}");
-            stringBuilder.AppendLine($"{indentation}{indentation}public UnityEngine.Transform transform {{ get; private set; }}");
+            stringBuilder.AppendLine($"{indentation}{indentation}public CodeBind.CSCodeBindMono Mono {{ get; private set; }}");
+            stringBuilder.AppendLine($"{indentation}{indentation}public UnityEngine.Transform Transform {{ get; private set; }}");
             stringBuilder.AppendLine("");
-            foreach (CodeBindData bindData in this.m_BindDatas)
+            foreach (CodeBindData bindData in m_BindDatas)
             {
                 stringBuilder.AppendLine($"{indentation}{indentation}public {bindData.BindType.FullName} {bindData.BindName}{bindData.BindPrefix} {{ get; private set; }}");
             }
             stringBuilder.AppendLine("");
-            foreach (KeyValuePair<string, List<CodeBindData>> kv in this.m_BindArrayDataDict)
+            foreach (KeyValuePair<string, List<CodeBindData>> kv in m_BindArrayDataDict)
             {
                 stringBuilder.AppendLine($"{indentation}{indentation}public {kv.Value[0].BindType.FullName}[] {kv.Key}Array {{ get; private set; }}");
             }
@@ -53,21 +53,21 @@ namespace CodeBind.Editor
             //InitBind方法
             stringBuilder.AppendLine($"{indentation}{indentation}public void InitBind(CodeBind.CSCodeBindMono mono)");
             stringBuilder.AppendLine($"{indentation}{indentation}{{");
-            stringBuilder.AppendLine($"{indentation}{indentation}{indentation}this.mono = mono;");
-            stringBuilder.AppendLine($"{indentation}{indentation}{indentation}this.transform = mono.transform;");
-            for (int i = 0; i < this.m_BindDatas.Count; i++)
+            stringBuilder.AppendLine($"{indentation}{indentation}{indentation}Mono = mono;");
+            stringBuilder.AppendLine($"{indentation}{indentation}{indentation}Transform = mono.transform;");
+            for (int i = 0; i < m_BindDatas.Count; i++)
             {
-                CodeBindData bindData = this.m_BindDatas[i];
-                stringBuilder.AppendLine($"{indentation}{indentation}{indentation}this.{bindData.BindName}{bindData.BindPrefix} = this.mono.bindComponents[{i}] as {bindData.BindType.FullName};");
+                CodeBindData bindData = m_BindDatas[i];
+                stringBuilder.AppendLine($"{indentation}{indentation}{indentation}{bindData.BindName}{bindData.BindPrefix} = Mono.BindComponents[{i}] as {bindData.BindType.FullName};");
             }
-            foreach (KeyValuePair<string, List<CodeBindData>> kv in this.m_BindArrayDataDict)
+            foreach (KeyValuePair<string, List<CodeBindData>> kv in m_BindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}{indentation}{indentation}this.{kv.Key}Array = new {kv.Value[0].BindType.FullName}[{kv.Value.Count}]");
+                stringBuilder.AppendLine($"{indentation}{indentation}{indentation}{kv.Key}Array = new {kv.Value[0].BindType.FullName}[{kv.Value.Count}]");
                 stringBuilder.AppendLine($"{indentation}{indentation}{indentation}{{");
                 for (int i = 0; i < kv.Value.Count; i++)
                 {
                     CodeBindData bindData = kv.Value[i];
-                    stringBuilder.AppendLine($"{indentation}{indentation}{indentation}{indentation}this.mono.bindComponents[{this.m_BindArrayDatas.IndexOf(bindData) + this.m_BindDatas.Count}] as {bindData.BindType.FullName},");
+                    stringBuilder.AppendLine($"{indentation}{indentation}{indentation}{indentation}Mono.BindComponents[{m_BindArrayDatas.IndexOf(bindData) + m_BindDatas.Count}] as {bindData.BindType.FullName},");
                 }
                 stringBuilder.AppendLine($"{indentation}{indentation}{indentation}}};");
             }
@@ -76,16 +76,16 @@ namespace CodeBind.Editor
             stringBuilder.AppendLine("");
             stringBuilder.AppendLine($"{indentation}{indentation}public void ClearBind()");
             stringBuilder.AppendLine($"{indentation}{indentation}{{");
-            stringBuilder.AppendLine($"{indentation}{indentation}{indentation}this.mono = null;");
-            stringBuilder.AppendLine($"{indentation}{indentation}{indentation}this.transform = null;");
-            for (int i = 0; i < this.m_BindDatas.Count; i++)
+            stringBuilder.AppendLine($"{indentation}{indentation}{indentation}Mono = null;");
+            stringBuilder.AppendLine($"{indentation}{indentation}{indentation}Transform = null;");
+            for (int i = 0; i < m_BindDatas.Count; i++)
             {
-                CodeBindData bindData = this.m_BindDatas[i];
-                stringBuilder.AppendLine($"{indentation}{indentation}{indentation}this.{bindData.BindName}{bindData.BindPrefix} = null;");
+                CodeBindData bindData = m_BindDatas[i];
+                stringBuilder.AppendLine($"{indentation}{indentation}{indentation}{bindData.BindName}{bindData.BindPrefix} = null;");
             }
-            foreach (KeyValuePair<string, List<CodeBindData>> kv in this.m_BindArrayDataDict)
+            foreach (KeyValuePair<string, List<CodeBindData>> kv in m_BindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}{indentation}{indentation}this.{kv.Key}Array = null;");
+                stringBuilder.AppendLine($"{indentation}{indentation}{indentation}{kv.Key}Array = null;");
             }
             stringBuilder.AppendLine($"{indentation}{indentation}}}");
             
@@ -101,7 +101,7 @@ namespace CodeBind.Editor
         {
             List<string> bindNames = new List<string>();
             List<UnityEngine.Object> bindComponents = new List<UnityEngine.Object>();
-            foreach (CodeBindData bindData in this.m_BindDatas)
+            foreach (CodeBindData bindData in m_BindDatas)
             {
                 bindNames.Add(bindData.BindName + bindData.BindPrefix);
                 if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
@@ -110,7 +110,7 @@ namespace CodeBind.Editor
                 }
                 bindComponents.Add(target);
             }
-            foreach (CodeBindData bindData in this.m_BindArrayDatas)
+            foreach (CodeBindData bindData in m_BindArrayDatas)
             {
                 bindNames.Add($"{bindData.BindName}{bindData.BindPrefix}Array");
                 if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
@@ -119,7 +119,7 @@ namespace CodeBind.Editor
                 }
                 bindComponents.Add(target);
             }
-            this.m_CsCodeBindMono.SetBindComponents(bindNames.ToArray(), bindComponents.ToArray());
+            m_CsCodeBindMono.SetBindComponents(bindNames.ToArray(), bindComponents.ToArray());
         }
     }
 }

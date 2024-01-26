@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 44103783}
   - component: {fileID: 44103784}
   m_Layer: 0
-  m_Name: test_Transform_Animator (1)
+  m_Name: Test_Transform_Animator (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -188,7 +188,7 @@ GameObject:
   - component: {fileID: 253148096}
   - component: {fileID: 253148095}
   m_Layer: 0
-  m_Name: test_CSCodeBindMono_ReferenceBindMono
+  m_Name: Test_CSCodeBindMono_ReferenceBindMono
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -248,12 +248,12 @@ MonoBehaviour:
   m_SeparatorChar: 95
   m_BindScript: {fileID: 11500000, guid: af79efec0e6b8e44f8f95a0516e9784a, type: 3}
   m_BindComponentNames:
-  - selfTransform
-  - otherAnimation
-  - listAnimationArray
-  - listAnimationArray
-  - listAnimationArray
-  - listAnimationArray
+  - SelfTransform
+  - OtherAnimation
+  - ListAnimationArray
+  - ListAnimationArray
+  - ListAnimationArray
+  - ListAnimationArray
 --- !u!1 &285049429
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 285049430}
   - component: {fileID: 285049431}
   m_Layer: 0
-  m_Name: test2_*
+  m_Name: Test2_*
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -318,7 +318,7 @@ GameObject:
   - component: {fileID: 459711676}
   - component: {fileID: 459711677}
   m_Layer: 0
-  m_Name: test2_* (1)
+  m_Name: Test2_* (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -371,7 +371,7 @@ GameObject:
   - component: {fileID: 517383983}
   - component: {fileID: 517383984}
   m_Layer: 0
-  m_Name: other_Animation
+  m_Name: Other_Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -464,31 +464,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcb4af7312c4dd1418dfa5e1d91f2c61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _testTransform: {fileID: 1664885868}
-  _testAnimator: {fileID: 1664885869}
-  _test2Transform: {fileID: 285049430}
-  _test2Animator: {fileID: 285049431}
-  _testCSCodeBindMono: {fileID: 253148096}
-  _testReferenceBindMono: {fileID: 253148095}
-  _test2AnimatorArray:
+  m_TestTransform: {fileID: 1664885868}
+  m_TestAnimator: {fileID: 1664885869}
+  m_Test2GameObject: {fileID: 285049429}
+  m_Test2Transform: {fileID: 285049430}
+  m_Test2Animator: {fileID: 285049431}
+  m_TestCSCodeBindMono: {fileID: 253148096}
+  m_TestReferenceBindMono: {fileID: 253148095}
+  m_Test2AnimatorArray:
   - {fileID: 2132282598}
   - {fileID: 459711677}
   - {fileID: 1351314023}
   - {fileID: 1829786443}
   - {fileID: 955000992}
-  _test2TransformArray:
+  m_Test2GameObjectArray:
+  - {fileID: 2132282596}
+  - {fileID: 459711675}
+  - {fileID: 1351314021}
+  - {fileID: 1829786441}
+  - {fileID: 955000990}
+  m_Test2TransformArray:
   - {fileID: 2132282597}
   - {fileID: 459711676}
   - {fileID: 1351314022}
   - {fileID: 1829786442}
   - {fileID: 955000991}
-  _testAnimatorArray:
+  m_TestAnimatorArray:
   - {fileID: 798915803}
   - {fileID: 44103784}
   - {fileID: 1793382482}
   - {fileID: 819198770}
   - {fileID: 1319921646}
-  _testTransformArray:
+  m_TestTransformArray:
   - {fileID: 798915802}
   - {fileID: 44103783}
   - {fileID: 1793382481}
@@ -505,7 +512,7 @@ GameObject:
   - component: {fileID: 746566295}
   - component: {fileID: 746566296}
   m_Layer: 0
-  m_Name: list_Animation (1)
+  m_Name: List_Animation (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -552,7 +559,7 @@ GameObject:
   - component: {fileID: 798915802}
   - component: {fileID: 798915803}
   m_Layer: 0
-  m_Name: test_Transform_Animator (0)
+  m_Name: Test_Transform_Animator (0)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -605,7 +612,7 @@ GameObject:
   - component: {fileID: 819198769}
   - component: {fileID: 819198770}
   m_Layer: 0
-  m_Name: test_Transform_Animator (3)
+  m_Name: Test_Transform_Animator (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -658,7 +665,7 @@ GameObject:
   - component: {fileID: 955000991}
   - component: {fileID: 955000992}
   m_Layer: 0
-  m_Name: test2_* (4)
+  m_Name: Test2_* (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -711,7 +718,7 @@ GameObject:
   - component: {fileID: 1215201789}
   - component: {fileID: 1215201790}
   m_Layer: 0
-  m_Name: list_Animation (2)
+  m_Name: List_Animation (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -758,7 +765,7 @@ GameObject:
   - component: {fileID: 1262308067}
   - component: {fileID: 1262308068}
   m_Layer: 0
-  m_Name: list_Animation (3)
+  m_Name: List_Animation (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -804,7 +811,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1279417644}
   m_Layer: 0
-  m_Name: self_Transform
+  m_Name: Self_Transform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -841,7 +848,7 @@ GameObject:
   - component: {fileID: 1319921645}
   - component: {fileID: 1319921646}
   m_Layer: 0
-  m_Name: test_Transform_Animator (4)
+  m_Name: Test_Transform_Animator (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -894,7 +901,7 @@ GameObject:
   - component: {fileID: 1351314022}
   - component: {fileID: 1351314023}
   m_Layer: 0
-  m_Name: test2_* (2)
+  m_Name: Test2_* (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -947,7 +954,7 @@ GameObject:
   - component: {fileID: 1640880386}
   - component: {fileID: 1640880387}
   m_Layer: 0
-  m_Name: list_Animation (0)
+  m_Name: List_Animation (0)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -994,7 +1001,7 @@ GameObject:
   - component: {fileID: 1664885868}
   - component: {fileID: 1664885869}
   m_Layer: 0
-  m_Name: test_Transform_Animator
+  m_Name: Test_Transform_Animator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1047,7 +1054,7 @@ GameObject:
   - component: {fileID: 1793382481}
   - component: {fileID: 1793382482}
   m_Layer: 0
-  m_Name: test_Transform_Animator (2)
+  m_Name: Test_Transform_Animator (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1100,7 +1107,7 @@ GameObject:
   - component: {fileID: 1829786442}
   - component: {fileID: 1829786443}
   m_Layer: 0
-  m_Name: test2_* (3)
+  m_Name: Test2_* (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1153,7 +1160,7 @@ GameObject:
   - component: {fileID: 2132282597}
   - component: {fileID: 2132282598}
   m_Layer: 0
-  m_Name: test2_* (0)
+  m_Name: Test2_* (0)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
