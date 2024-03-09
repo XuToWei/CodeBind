@@ -26,7 +26,9 @@ namespace CodeBind.Editor
 
         private readonly Regex m_ArrayIndexRegex;
         private readonly Regex m_VariableNameRegex;
-        
+
+        private readonly List<Component> m_ComponentCacheList;
+
         protected BaseCodeBinder(MonoScript script, Transform rootTransform, char separatorChar)
         {
             if (script == null)
@@ -53,6 +55,7 @@ namespace CodeBind.Editor
             m_SeparatorChar = separatorChar;
             m_ArrayIndexRegex = new Regex(@"\(-?\d*\)$");
             m_VariableNameRegex = new Regex(@"^([A-Za-z0-9\._-]+/)*[A-Za-z0-9\._-]+$");
+            m_ComponentCacheList = new List<Component>();
         }
 
         private bool TryGenerateNameMapTypeData()
@@ -252,10 +255,33 @@ namespace CodeBind.Editor
                 }
                 else
                 {
+                    bool canNext = true;
                     //自动补齐名字残缺的
                     for (int i = 1; i < strList.Count; i++)
                     {
                         string typeStr = strList[i];
+                        //有继承关系的脚本，脚本部分重名，先判断有没有直接能匹配的
+                        m_ComponentCacheList.Clear();
+                        child.GetComponents(m_ComponentCacheList);
+                        foreach (var kv in CodeBindNameTypeCollection.BindNameTypeDict)
+                        {
+                            if (kv.Value == typeof(GameObject))
+                            {
+                                continue;
+                            }
+                            if ((kv.Key.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(kv.Key, StringComparison.OrdinalIgnoreCase))
+                                && TryGetBindTarget(child, kv.Value, out _) && m_ComponentCacheList.Find(c => c.GetType() == kv.Value) != null)
+                            {
+                                strList[i] = kv.Key;
+                                canNext = false;
+                                break;
+                            }
+                        }
+                        m_ComponentCacheList.Clear();
+                        if (!canNext)
+                        {
+                            break;
+                        }
                         //有的命名会有局部重复，这里如果脚本存在了就不参加模糊匹配
                         if (CodeBindNameTypeCollection.BindNameTypeDict.TryGetValue(typeStr, out var comType) && TryGetBindTarget(child, comType, out _))
                         {
@@ -266,8 +292,13 @@ namespace CodeBind.Editor
                             if ((kv.Key.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(kv.Key, StringComparison.OrdinalIgnoreCase)) && TryGetBindTarget(child, kv.Value, out _))
                             {
                                 strList[i] = kv.Key;
+                                canNext = false;
                                 break;
                             }
+                        }
+                        if (!canNext)
+                        {
+                            break;
                         }
                     }
                 }
