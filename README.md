@@ -42,9 +42,9 @@ public partial class TestMono : MonoBehaviour
 
 按钮Generate Serialization：生成绑定数据
 
-## 2.CSCodeBindMono和ICSCodeBind组合(可热更新)：
+## 2.CSCodeBindMono和ICSCodeBind组合：
 
-[CSCodeBindMono](../Runtime/CSCodeBindMono.cs)保存绑定的数据，绑定类实现[ICSCodeBind](../Runtime/ICSCodeBind.cs)（非MonoBehaviour代码），因此一般有热更需求时候可以用
+[CSCodeBindMono](../Runtime/CSCodeBindMono.cs)保存绑定的数据，绑定类实现[ICSCodeBind](../Runtime/ICSCodeBind.cs)（非MonoBehaviour代码），不方便用MonoBehaviour时候使用，便利性上推荐尽量使用MonoBehaviour类型
 
 ### 使用方式：
 ![](Images~/2.png)
