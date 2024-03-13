@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.0.4] - 2024-3-13
+- 支持继承的名称准确识别
+
 ## [1.0.3] - 2024-3-9
 - fix the problem of nested judgment error
 
