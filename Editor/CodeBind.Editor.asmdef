@@ -2,7 +2,8 @@
     "name": "CodeBind.Editor",
     "rootNamespace": "CodeBind.Editor",
     "references": [
-        "CodeBind"
+        "CodeBind",
+        "StateController"
     ],
     "includePlatforms": [
         "Editor"

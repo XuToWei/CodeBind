@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
-    public static class CodeBindNameTypeCollection
+    internal static class CodeBindNameTypeCollection
     {
-        public static readonly Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>();
+        internal static readonly Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>();
 
-        [InitializeOnLoadMethod]
-        private static void GetAllBindNameTypes()
+        internal static void Do()
         {
-            BindNameTypeDict.Clear();
+            if (BindNameTypeDict.Count > 0)
+                return;
             var fieldInfos = TypeCache.GetFieldsWithAttribute<CodeBindNameTypeAttribute>();
             Type fieldType = typeof(Dictionary<string, Type>);
             foreach (var fieldInfo in fieldInfos)
@@ -55,8 +55,7 @@ namespace CodeBind.Editor
             {
                 if (!type.IsSubclassOf(typeof(Component)))
                 {
-                    Debug.LogError(
-                        $"Add BindNameType Fail! Type:{type} error! Only can bind sub class of 'Component'!");
+                    Debug.LogError($"Add BindNameType Fail! Type:{type} error! Only can bind sub class of 'Component'!");
                     continue;
                 }
                 CodeBindNameAttribute attribute = (CodeBindNameAttribute)type.GetCustomAttributes(typeof(CodeBindNameAttribute), false)[0];
@@ -66,6 +65,14 @@ namespace CodeBind.Editor
                     continue;
                 }
                 BindNameTypeDict.Add(attribute.BindName, type);
+            }
+
+            foreach (var pair in DefaultCodeBindNameTypeConfig.BindNameTypeDict)
+            {
+                if (!BindNameTypeDict.ContainsKey(pair.Key))
+                {
+                    BindNameTypeDict.Add(pair.Key, pair.Value);
+                }
             }
         }
     }

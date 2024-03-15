@@ -13,7 +13,7 @@ namespace CodeBind
         [SerializeField]
         private UnityEngine.Object[] m_BindComponents;
 
-        public UnityEngine.Object[] BindComponents => this.m_BindComponents;
+        public UnityEngine.Object[] BindComponents => m_BindComponents;
 
         private ICSCodeBind m_CSCodeBindObject;
 

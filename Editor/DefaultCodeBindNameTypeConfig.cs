@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace CodeBind
 {
-    sealed class DefaultCodeBindNameTypeConfig
+    internal static class DefaultCodeBindNameTypeConfig
     {
-        [CodeBindNameType]
-        public static readonly Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>()
+        internal static readonly Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>()
         {
             { "GameObject", typeof (UnityEngine.GameObject) },
             { "Transform", typeof (UnityEngine.Transform) },
@@ -31,6 +30,9 @@ namespace CodeBind
             { "Scrollbar", typeof (UnityEngine.UI.Scrollbar) },
             { "ScrollRect", typeof (UnityEngine.UI.ScrollRect) },
             { "Dropdown", typeof (UnityEngine.UI.Dropdown) },
+#if STATE_CONTROLLER_CODE_BIND
+            { "Controller", typeof(StateController.StateController)},
+#endif
         };
     }
 }

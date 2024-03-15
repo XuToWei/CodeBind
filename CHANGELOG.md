@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.5] - 2024-3-15
+- 添加STATE_CONTROLLER_CODE_BNIND可以支持StateController数据代码生成
+- 优化类型收集调用实际，降低ReloadDomain耗时
+
 ## [1.0.4] - 2024-3-13
 - 支持继承的名称准确识别
 

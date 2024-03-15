@@ -385,12 +385,13 @@ namespace CodeBind.Editor
 
         public void TryGenerateBindCode()
         {
+            CodeBindNameTypeCollection.Do();
             AutoFixChildBindName();
             if (!TryGenerateNameMapTypeData())
             {
                 return;
             }
-            string codeStr = GetGeneratorCode().Replace("\t", "    ");
+            string codeStr = GetGeneratedCode().Replace("\t", "    ");
             if (File.Exists(m_BindScriptFullPath) && string.Equals(codeStr, File.ReadAllText(m_BindScriptFullPath)))
             {
                 Debug.Log("文件内容相同。不需要重新生成。");
@@ -406,6 +407,7 @@ namespace CodeBind.Editor
 
         public void TrySetSerialization()
         {
+            CodeBindNameTypeCollection.Do();
             AutoFixChildBindName();
             if (!TryGenerateNameMapTypeData())
             {
@@ -417,7 +419,7 @@ namespace CodeBind.Editor
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
 
-        protected abstract string GetGeneratorCode();
+        protected abstract string GetGeneratedCode();
 
         protected abstract void SetSerialization();
     }

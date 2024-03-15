@@ -2,7 +2,8 @@
     "name": "CodeBind.Demo",
     "rootNamespace": "",
     "references": [
-        "CodeBind"
+        "CodeBind",
+        "StateController"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

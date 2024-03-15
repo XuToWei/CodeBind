@@ -7,11 +7,11 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
-    public class MonoCodeBindPropertyProcessor<T> : OdinPropertyProcessor<T, MonoCodeBindAttribute>
+    internal sealed class MonoCodeBindPropertyProcessor<T> : OdinPropertyProcessor<T, MonoCodeBindAttribute>
     {
         public override void ProcessMemberProperties(List<InspectorPropertyInfo> propertyInfos)
         {
-            MonoCodeBindAttribute attribute = this.Property.GetAttribute<MonoCodeBindAttribute>();
+            MonoCodeBindAttribute attribute = Property.GetAttribute<MonoCodeBindAttribute>();
             
             propertyInfos.AddDelegate("Code Binder", (Action) (() => { }), -100000f, new Attribute[2]
             {
@@ -25,11 +25,11 @@ namespace CodeBind.Editor
 
         private void TryGenerateBindCode()
         {
-            MonoCodeBindAttribute attribute = this.Property.GetAttribute<MonoCodeBindAttribute>();
-            MonoBehaviour mono = this.ValueEntry.SmartValue as MonoBehaviour;
+            MonoCodeBindAttribute attribute = Property.GetAttribute<MonoCodeBindAttribute>();
+            MonoBehaviour mono = ValueEntry.SmartValue as MonoBehaviour;
             if (mono == null)
             {
-                throw new Exception($"{this.ValueEntry.SmartValue.GetType()} is not inherit from MonoBehaviour!");
+                throw new Exception($"{ValueEntry.SmartValue.GetType()} is not inherit from MonoBehaviour!");
             }
             MonoScript script = MonoScript.FromMonoBehaviour(mono);
             MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
@@ -38,11 +38,11 @@ namespace CodeBind.Editor
 
         private void TrySetSerialization()
         {
-            MonoCodeBindAttribute attribute = this.Property.GetAttribute<MonoCodeBindAttribute>();
-            MonoBehaviour mono = this.ValueEntry.SmartValue as MonoBehaviour;
+            MonoCodeBindAttribute attribute = Property.GetAttribute<MonoCodeBindAttribute>();
+            MonoBehaviour mono = ValueEntry.SmartValue as MonoBehaviour;
             if (mono == null)
             {
-                throw new Exception($"{this.ValueEntry.SmartValue.GetType()} is not inherit from MonoBehaviour!");
+                throw new Exception($"{ValueEntry.SmartValue.GetType()} is not inherit from MonoBehaviour!");
             }
             MonoScript script = MonoScript.FromMonoBehaviour(mono);
             MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);

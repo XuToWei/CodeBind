@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CodeBind
 {
-    internal class CSCodeBindPool
+    internal sealed class CSCodeBindPool
     {
         private const int MaxCount = 100;
 

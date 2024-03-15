@@ -8,7 +8,7 @@ namespace CodeBind
     /// </summary>
     [Conditional("UNITY_EDITOR")]
     [AttributeUsage(AttributeTargets.Class)]
-    public class CodeBindNameAttribute : Attribute
+    public sealed class CodeBindNameAttribute : Attribute
     {
         public string BindName
         {
@@ -17,7 +17,7 @@ namespace CodeBind
 
         public CodeBindNameAttribute(string bindName)
         {
-            this.BindName = bindName;
+            BindName = bindName;
         }
     }
 }

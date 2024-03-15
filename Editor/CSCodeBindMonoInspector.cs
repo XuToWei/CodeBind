@@ -4,7 +4,7 @@ using UnityEngine;
 namespace CodeBind.Editor
 {
     [CustomEditor(typeof(CSCodeBindMono))]
-    public class CSCodeBindMonoInspector : UnityEditor.Editor
+    internal sealed class CSCodeBindMonoInspector : UnityEditor.Editor
     {
         private SerializedProperty m_SeparatorChar;
         private SerializedProperty m_BindScript;

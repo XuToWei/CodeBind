@@ -4,7 +4,7 @@ using UnityEngine;
 namespace CodeBind.Editor
 {
     [CustomEditor(typeof(ReferenceBindMono))]
-    public class ReferenceBindMonoInspector : UnityEditor.Editor
+    internal sealed class ReferenceBindMonoInspector : UnityEditor.Editor
     {
         private SerializedProperty m_BindNames;
         private SerializedProperty m_BindGameObjects;

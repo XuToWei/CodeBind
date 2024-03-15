@@ -9,12 +9,12 @@ namespace CodeBind
 
         public MonoCodeBindAttribute(char separatorChar)
         {
-            this.SeparatorChar = separatorChar;
+            SeparatorChar = separatorChar;
         }
         
         public MonoCodeBindAttribute()
         {
-            this.SeparatorChar = '_';
+            SeparatorChar = '_';
         }
     }
 }

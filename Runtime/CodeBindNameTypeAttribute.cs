@@ -8,7 +8,7 @@ namespace CodeBind
     /// </summary>
     [Conditional("UNITY_EDITOR")]
     [AttributeUsage(AttributeTargets.Field)]
-    public class CodeBindNameTypeAttribute : Attribute
+    public sealed class CodeBindNameTypeAttribute : Attribute
     {
     }
 }
