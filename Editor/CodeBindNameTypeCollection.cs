@@ -8,6 +8,7 @@ namespace CodeBind.Editor
     internal static class CodeBindNameTypeCollection
     {
         internal static readonly Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>();
+        private static readonly HashSet<Type> BindTypeHashSet = new HashSet<Type>();
 
         internal static void Do()
         {
@@ -46,7 +47,13 @@ namespace CodeBind.Editor
                         Debug.LogError($"Add BindNameType Fail! Type name:{kv.Key}({type}) exist!");
                         continue;
                     }
+                    if (BindTypeHashSet.Contains(kv.Value))
+                    {
+                        Debug.LogError($"Add BindNameType Fail! Type:{type} exist!");
+                        continue;
+                    }
                     BindNameTypeDict.Add(kv.Key, kv.Value);
+                    BindTypeHashSet.Add(kv.Value);
                 }
             }
 
@@ -64,14 +71,21 @@ namespace CodeBind.Editor
                     Debug.LogError($"Add BindNameType Fail! Type name:{attribute.BindName}({bindType}) exist!");
                     continue;
                 }
+                if (BindTypeHashSet.Contains(type))
+                {
+                    Debug.LogError($"Add BindNameType Fail! Type:{type} exist!");
+                    continue;
+                }
                 BindNameTypeDict.Add(attribute.BindName, type);
+                BindTypeHashSet.Add(type);
             }
 
             foreach (var pair in DefaultCodeBindNameTypeConfig.BindNameTypeDict)
             {
-                if (!BindNameTypeDict.ContainsKey(pair.Key))
+                if (!BindNameTypeDict.ContainsKey(pair.Key) && !BindTypeHashSet.Contains(pair.Value))
                 {
                     BindNameTypeDict.Add(pair.Key, pair.Value);
+                    BindTypeHashSet.Add(type);
                 }
             }
         }
