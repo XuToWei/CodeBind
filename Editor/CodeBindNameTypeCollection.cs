@@ -8,7 +8,7 @@ namespace CodeBind.Editor
     internal static class CodeBindNameTypeCollection
     {
         internal static readonly Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>();
-        private static readonly HashSet<Type> BindTypeHashSet = new HashSet<Type>();
+        internal static readonly Dictionary<Type, string> BindTypeNameDict = new Dictionary<Type, string>();
 
         internal static void Do()
         {
@@ -47,13 +47,13 @@ namespace CodeBind.Editor
                         Debug.LogError($"Add BindNameType Fail! Type name:{kv.Key}({type}) exist!");
                         continue;
                     }
-                    if (BindTypeHashSet.Contains(kv.Value))
+                    if (BindTypeNameDict.ContainsKey(kv.Value))
                     {
                         Debug.LogError($"Add BindNameType Fail! Type:{type} exist!");
                         continue;
                     }
                     BindNameTypeDict.Add(kv.Key, kv.Value);
-                    BindTypeHashSet.Add(kv.Value);
+                    BindTypeNameDict.Add(kv.Value, kv.Key);
                 }
             }
 
@@ -71,21 +71,21 @@ namespace CodeBind.Editor
                     Debug.LogError($"Add BindNameType Fail! Type name:{attribute.BindName}({bindType}) exist!");
                     continue;
                 }
-                if (BindTypeHashSet.Contains(type))
+                if (BindTypeNameDict.ContainsKey(type))
                 {
                     Debug.LogError($"Add BindNameType Fail! Type:{type} exist!");
                     continue;
                 }
                 BindNameTypeDict.Add(attribute.BindName, type);
-                BindTypeHashSet.Add(type);
+                BindTypeNameDict.Add(type, attribute.BindName);
             }
 
             foreach (var pair in DefaultCodeBindNameTypeConfig.BindNameTypeDict)
             {
-                if (!BindNameTypeDict.ContainsKey(pair.Key) && !BindTypeHashSet.Contains(pair.Value))
+                if (!BindNameTypeDict.ContainsKey(pair.Key) && !BindTypeNameDict.ContainsKey(pair.Value))
                 {
                     BindNameTypeDict.Add(pair.Key, pair.Value);
-                    BindTypeHashSet.Add(pair.Value);
+                    BindTypeNameDict.Add(pair.Value, pair.Key);
                 }
             }
         }

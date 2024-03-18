@@ -53,30 +53,26 @@ namespace CodeBind.Editor
 #if STATE_CONTROLLER_CODE_BIND
             //StateController
             Type stateControllerType = typeof(StateController.StateController);
-            foreach (var pair in CodeBindNameTypeCollection.BindNameTypeDict)
+            if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(stateControllerType, out string prefix))
             {
-                if (pair.Value == stateControllerType)
+                foreach (CodeBindData bindData in m_BindDatas)
                 {
-                    string prefix = pair.Key;
-                    foreach (CodeBindData bindData in m_BindDatas)
+                    if (bindData.BindType == stateControllerType)
                     {
-                        if (bindData.BindType == stateControllerType)
+                        var controller = bindData.BindTransform.GetComponent<StateController.StateController>();
+                        foreach (var data in controller.EditorControllerDatas)
                         {
-                            var controller = bindData.BindTransform.GetComponent<StateController.StateController>();
-                            foreach (var data in controller.EditorControllerDatas)
+                            stringBuilder.AppendLine($"{indentation}\tprivate StateController.StateControllerData m_{bindData.BindName}{data.Name}{prefix};");
+                            stringBuilder.AppendLine($"{indentation}\tpublic StateController.StateControllerData {bindData.BindName}{data.Name}{prefix} => m_{bindData.BindName}{data.Name}{prefix} ??= {bindData.BindName}{bindData.BindPrefix}.GetData(\"{data.Name}\");");
+                            stringBuilder.AppendLine($"{indentation}\tpublic static class {bindData.BindName}{data.Name}StateName");
+                            stringBuilder.AppendLine($"{indentation}\t{{");
+                            foreach (var stateName in data.StateNames)
                             {
-                                stringBuilder.AppendLine($"{indentation}\tprivate StateController.StateControllerData m_{bindData.BindName}{data.Name}{prefix};");
-                                stringBuilder.AppendLine($"{indentation}\tpublic StateController.StateControllerData {bindData.BindName}{data.Name}{prefix} => m_{bindData.BindName}{data.Name}{prefix} ??= {bindData.BindName}{bindData.BindPrefix}.GetData(\"{data.Name}\");");
-                                stringBuilder.AppendLine($"{indentation}\tpublic static class {bindData.BindName}{data.Name}StateName");
-                                stringBuilder.AppendLine($"{indentation}\t{{");
-                                foreach (var stateName in data.StateNames)
-                                {
-                                    stringBuilder.AppendLine($"{indentation}\t\tpublic const string {stateName} = \"{stateName}\";");
-                                }
-                                stringBuilder.AppendLine($"{indentation}\t}}");
+                                stringBuilder.AppendLine($"{indentation}\t\tpublic const string {stateName} = \"{stateName}\";");
                             }
-                            stringBuilder.AppendLine("");
+                            stringBuilder.AppendLine($"{indentation}\t}}");
                         }
+                        stringBuilder.AppendLine("");
                     }
                 }
             }
