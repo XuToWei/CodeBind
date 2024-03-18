@@ -85,7 +85,7 @@ namespace CodeBind.Editor
                 if (!BindNameTypeDict.ContainsKey(pair.Key) && !BindTypeHashSet.Contains(pair.Value))
                 {
                     BindNameTypeDict.Add(pair.Key, pair.Value);
-                    BindTypeHashSet.Add(type);
+                    BindTypeHashSet.Add(pair.Value);
                 }
             }
         }
