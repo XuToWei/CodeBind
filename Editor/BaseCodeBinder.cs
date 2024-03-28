@@ -62,19 +62,42 @@ namespace CodeBind.Editor
         {
             bool TryGetBindDatas(Transform child, string[] strArray, ref List<CodeBindData> bindDatas)
             {
+                m_ComponentCacheList.Clear();
+                child.GetComponents(m_ComponentCacheList);
                 string bindName = strArray[0];
                 for (int i = 1; i < strArray.Length; i++)
                 {
                     string typeStr = strArray[i];
                     if (string.Equals(typeStr, "*", StringComparison.OrdinalIgnoreCase))
                     {
-                        //自动补齐所有存在的脚本
-                        foreach (var kv in CodeBindNameTypeCollection.BindNameTypeDict)
+                        //自动补齐所有存在的脚本，如果存在继承关系的保留子类即可
+                        Type bindType = typeof(GameObject);
+                        if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(bindType, out var bindPrefix))
                         {
-                            if (TryGetBindTarget(child, kv.Value, out _))
+                            CodeBindData bindData = new CodeBindData(bindName, bindType, bindPrefix, child);
+                            bindDatas.Add(bindData);
+                        }
+                        foreach (var component in m_ComponentCacheList)
+                        {
+                            bindType = component.GetType();
+                            //有继承关系的脚本，脚本部分重名，先判断有没有直接能匹配的
+                            if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(bindType, out bindPrefix))
                             {
-                                CodeBindData bindData = new CodeBindData(bindName, kv.Value, kv.Key, child);
+                                CodeBindData bindData = new CodeBindData(bindName, bindType, bindPrefix, child);
                                 bindDatas.Add(bindData);
+                            }
+                            else
+                            {
+                                //没有直接匹配，可以找父类可以绑定的
+                                foreach (var kv in CodeBindNameTypeCollection.BindNameTypeDict)
+                                {
+                                    if (bindType.IsSubclassOf(kv.Value) && TryGetBindTarget(child, kv.Value, out _))
+                                    {
+                                        CodeBindData bindData = new CodeBindData(bindName, kv.Value, kv.Key, child);
+                                        bindDatas.Add(bindData);
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
@@ -88,6 +111,7 @@ namespace CodeBind.Editor
                         throw new Exception($"{child.name}的命名中{typeStr}不存在对应的组件类型，绑定失败");
                     }
                 }
+                m_ComponentCacheList.Clear();
                 if (bindDatas.Count <= 0)
                 {
                     throw new Exception("获取的Bind对象个数为0，绑定失败！");
@@ -255,54 +279,54 @@ namespace CodeBind.Editor
                 }
                 else
                 {
-                    bool canNext = true;
+                    m_ComponentCacheList.Clear();
+                    child.GetComponents(m_ComponentCacheList);
                     //自动补齐名字残缺的
                     for (int i = 1; i < strList.Count; i++)
                     {
                         string typeStr = strList[i];
-                        //有继承关系的脚本，脚本部分重名，先判断有没有直接能匹配的
-                        m_ComponentCacheList.Clear();
-                        child.GetComponents(m_ComponentCacheList);
-                        foreach (var kv in CodeBindNameTypeCollection.BindNameTypeDict)
-                        {
-                            if (kv.Value == typeof(GameObject))
-                            {
-                                continue;
-                            }
-                            if ((kv.Key.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(kv.Key, StringComparison.OrdinalIgnoreCase))
-                                && TryGetBindTarget(child, kv.Value, out _) && m_ComponentCacheList.Find(c => c.GetType() == kv.Value) != null)
-                            {
-                                strList[i] = kv.Key;
-                                canNext = false;
-                                break;
-                            }
-                        }
-                        m_ComponentCacheList.Clear();
-                        if (!canNext)
-                        {
-                            break;
-                        }
                         //有的命名会有局部重复，这里如果脚本存在了就不参加模糊匹配
                         if (CodeBindNameTypeCollection.BindNameTypeDict.TryGetValue(typeStr, out var comType) && TryGetBindTarget(child, comType, out _))
                         {
                             continue;
                         }
+                        Type bindType = typeof(GameObject);
+                        if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(bindType, out var bindPrefix) &&
+                            (bindPrefix.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(bindPrefix, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            strList[i] = bindPrefix;
+                            continue;
+                        }
+                        //有继承关系的脚本，脚本部分重名，先判断有没有直接能匹配的
+                        bool isContinue = false;
+                        foreach (var component in m_ComponentCacheList)
+                        {
+                            bindType = component.GetType();
+                            if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(bindType, out bindPrefix) &&
+                                (bindPrefix.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(bindPrefix, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                strList[i] = bindPrefix;
+                                isContinue = true;
+                                break;
+                            }
+                        }
+                        if (isContinue)
+                        {
+                            continue;
+                        }
+                        //有继承关系的脚本，可以找到父类节点绑定
                         foreach (var kv in CodeBindNameTypeCollection.BindNameTypeDict)
                         {
                             if ((kv.Key.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(kv.Key, StringComparison.OrdinalIgnoreCase)) && TryGetBindTarget(child, kv.Value, out _))
                             {
                                 strList[i] = kv.Key;
-                                canNext = false;
                                 break;
                             }
                         }
-                        if (!canNext)
-                        {
-                            break;
-                        }
                     }
+                    m_ComponentCacheList.Clear();
                 }
-                for (int i = 1; i < strList.Count; i++)
+                for (int i = 1; i < strList.Count - 1; i++)
                 {
                     for (int j = i + 1; j < strList.Count; j++)
                     {

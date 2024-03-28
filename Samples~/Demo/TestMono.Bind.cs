@@ -18,6 +18,16 @@ namespace CodeBind.Demo
         private CodeBind.CSCodeBindMono m_TestCSCodeBindMono;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private CodeBind.ReferenceBindMono m_TestReferenceBindMono;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Transform m_Test3Transform;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Slider m_Test3Slider;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.GameObject m_Test4GameObject;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.RectTransform m_Test4RectTransform;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Slider m_Test4Slider;
 
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.Animator[] m_Test2AnimatorArray;
@@ -37,6 +47,11 @@ namespace CodeBind.Demo
         public UnityEngine.Animator Test2Animator => m_Test2Animator;
         public CodeBind.CSCodeBindMono TestCSCodeBindMono => m_TestCSCodeBindMono;
         public CodeBind.ReferenceBindMono TestReferenceBindMono => m_TestReferenceBindMono;
+        public UnityEngine.Transform Test3Transform => m_Test3Transform;
+        public UnityEngine.UI.Slider Test3Slider => m_Test3Slider;
+        public UnityEngine.GameObject Test4GameObject => m_Test4GameObject;
+        public UnityEngine.RectTransform Test4RectTransform => m_Test4RectTransform;
+        public UnityEngine.UI.Slider Test4Slider => m_Test4Slider;
 
         public UnityEngine.Animator[] Test2AnimatorArray => m_Test2AnimatorArray;
         public UnityEngine.GameObject[] Test2GameObjectArray => m_Test2GameObjectArray;
