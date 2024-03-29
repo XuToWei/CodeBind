@@ -33,11 +33,11 @@ namespace CodeBind.Editor
         {
             if (script == null)
             {
-                throw new Exception("请设置需要绑定的脚本!");
+                throw new Exception("请设置需要绑定的脚本！");
             }
             if (script.name.EndsWith(".Bind"))
             {
-                throw new Exception("不可以绑定“.Bind”结尾的脚本!");
+                throw new Exception("不可以绑定“.Bind”结尾的脚本！");
             }
             if (!script.text.Contains("partial"))
             {
@@ -108,7 +108,7 @@ namespace CodeBind.Editor
                     }
                     else
                     {
-                        throw new Exception($"{child.name}的命名中{typeStr}不存在对应的组件类型，绑定失败");
+                        throw new Exception($"{child.name}的命名中{typeStr}不存在对应的组件类型，绑定失败！");
                     }
                 }
                 m_ComponentCacheList.Clear();
@@ -221,6 +221,7 @@ namespace CodeBind.Editor
 
         private void AutoFixChildBindName()
         {
+            DoCheck();
             Dictionary<Transform, string> transformNameDict = new Dictionary<Transform, string>();
             Dictionary<string, List<Transform>> arrayTransformDict = new Dictionary<string, List<Transform>>();
             foreach (Transform child in m_RootTransform.GetComponentsInChildren<Transform>(true))
@@ -441,6 +442,17 @@ namespace CodeBind.Editor
             EditorUtility.SetDirty(m_RootTransform);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+        }
+
+        private void DoCheck()
+        {
+            foreach (var bindPrefix in CodeBindNameTypeCollection.BindNameTypeDict.Keys)
+            {
+                if (bindPrefix.Contains(m_SeparatorChar, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception($"绑定名[{bindPrefix}]中不能含有分隔符[{m_SeparatorChar}]。");
+                }
+            }
         }
 
         protected abstract string GetGeneratedCode();
