@@ -35,7 +35,7 @@ namespace CodeBind.Editor
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
-                m_IsGameObjectBindFoldout = EditorGUILayout.Foldout(m_IsGameObjectBindFoldout, "GameObject Custom Bind");
+                m_IsGameObjectBindFoldout = EditorGUILayout.Foldout(m_IsGameObjectBindFoldout, "GameObject Bind");
                 if (m_IsGameObjectBindFoldout)
                 {
                     GUILayout.BeginHorizontal();
@@ -93,18 +93,35 @@ namespace CodeBind.Editor
 
                         GUILayout.EndHorizontal();
                     }
+
+                    if (GUILayout.Button("Clear GameObjects Serialization"))
+                    {
+                        m_BindNames.ClearArray();
+                        m_BindGameObjects.ClearArray();
+                        serializedObject.ApplyModifiedProperties();
+                    }
                 }
 
-                m_IsAutoBindFoldout = EditorGUILayout.Foldout(m_IsAutoBindFoldout, "Auto Bind");
+                m_IsAutoBindFoldout = EditorGUILayout.Foldout(m_IsAutoBindFoldout, $"Auto Bind (count:{m_AutoBindComponents.arraySize})");
 
                 if (m_IsAutoBindFoldout)
                 {
+                    GUILayout.BeginHorizontal();
                     if (GUILayout.Button("Generate Serialization"))
                     {
                         ReferenceBinder referenceBinder = new ReferenceBinder((ReferenceBindMono)target, (char)m_SeparatorChar.intValue);
                         referenceBinder.TrySetSerialization();
                         serializedObject.ApplyModifiedProperties();
                     }
+                    if (GUILayout.Button("Clear Serialization"))
+                    {
+                        m_AutoBindComponentNames.ClearArray();
+                        m_AutoBindComponents.ClearArray();
+                        serializedObject.ApplyModifiedProperties();
+                    }
+                    GUILayout.EndHorizontal();
+
+                    EditorGUILayout.PropertyField(m_SeparatorChar);
                     EditorGUI.BeginDisabledGroup(true);
                     {
                         GUILayout.BeginHorizontal();

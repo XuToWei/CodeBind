@@ -14,6 +14,9 @@ namespace CodeBind
         [SerializeField] private string[] m_AutoBindComponentNames;
         [SerializeField] private UnityEngine.Object[] m_AutoBindComponents;
 
+        public GameObject[] BindGameObjects => m_BindGameObjects;
+        public UnityEngine.Object[] AutoBindComponents => m_AutoBindComponents;
+
 #if UNITY_EDITOR
         [SerializeField]
         private char m_SeparatorChar = '_';
@@ -83,16 +86,23 @@ namespace CodeBind
             }
             if (m_AutoBindArrayNames.Contains(key))
             {
-                var list = new List<T>();
+                List<T> list = null;
                 for (int i = 0; i < m_AutoBindComponentNames.Length; i++)
                 {
-                    if (m_AutoBindComponentNames[i] == key)
+                    if (m_AutoBindComponentNames[i] == key && m_AutoBindComponents[i] is T component)
                     {
-                        list.Add(m_AutoBindComponents[i] as T);
+                        if (list == null)
+                        {
+                            list = new List<T>();
+                        }
+                        list.Add(component);
                     }
                 }
-                m_AutoBindArrayDict.Add(key, list);
-                return list;
+                if (list != null)
+                {
+                    m_AutoBindArrayDict.Add(key, list);
+                    return list;
+                }
             }
             return null;
         }

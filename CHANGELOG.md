@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.0.6] - 2024-5-28
+- ReferenceBindMono添加自动数据绑定
+
 ## [1.0.5] - 2024-3-15
 - 添加STATE_CONTROLLER_CODE_BNIND可以支持StateController数据代码生成
 - 优化类型收集调用实际，降低ReloadDomain耗时
