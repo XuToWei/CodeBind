@@ -150,6 +150,8 @@ namespace CodeBind.Editor
                 }
             }
             EditorGUI.EndDisabledGroup();
+
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }
