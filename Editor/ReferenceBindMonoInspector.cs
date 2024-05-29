@@ -1,3 +1,4 @@
+using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -35,8 +36,12 @@ namespace CodeBind.Editor
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
-                m_IsGameObjectBindFoldout = EditorGUILayout.Foldout(m_IsGameObjectBindFoldout, "GameObject Bind");
-                if (m_IsGameObjectBindFoldout)
+                SirenixEditorGUI.BeginBox();
+                SirenixEditorGUI.BeginBoxHeader();
+                string labelGameObjectText = "GameObject Bind";
+                m_IsGameObjectBindFoldout = SirenixEditorGUI.Foldout(m_IsGameObjectBindFoldout, labelGameObjectText);
+                SirenixEditorGUI.EndBoxHeader();
+                if (SirenixEditorGUI.BeginFadeGroup(labelGameObjectText, m_IsGameObjectBindFoldout))
                 {
                     GUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField("Name");
@@ -75,7 +80,6 @@ namespace CodeBind.Editor
 
                         serializedObject.ApplyModifiedProperties();
                     }
-
                     GUILayout.EndHorizontal();
 
                     for (int i = 0; i < m_BindNames.arraySize; i++)
@@ -90,21 +94,25 @@ namespace CodeBind.Editor
                             m_BindGameObjects.DeleteArrayElementAtIndex(i);
                             serializedObject.ApplyModifiedProperties();
                         }
-
                         GUILayout.EndHorizontal();
                     }
 
-                    if (GUILayout.Button("Clear GameObjects Serialization"))
+                    if (GUILayout.Button("Clear GameObject Serialization"))
                     {
                         m_BindNames.ClearArray();
                         m_BindGameObjects.ClearArray();
                         serializedObject.ApplyModifiedProperties();
                     }
                 }
+                SirenixEditorGUI.EndFadeGroup();
+                SirenixEditorGUI.EndBox();
 
-                m_IsAutoBindFoldout = EditorGUILayout.Foldout(m_IsAutoBindFoldout, $"Auto Bind (count:{m_AutoBindComponents.arraySize})");
-
-                if (m_IsAutoBindFoldout)
+                SirenixEditorGUI.BeginBox();
+                SirenixEditorGUI.BeginBoxHeader();
+                string labelAutoText = $"Auto Bind (count:{m_AutoBindComponents.arraySize})";
+                m_IsAutoBindFoldout = SirenixEditorGUI.Foldout(m_IsAutoBindFoldout, labelAutoText);
+                SirenixEditorGUI.EndBoxHeader();
+                if (SirenixEditorGUI.BeginFadeGroup(labelAutoText, m_IsAutoBindFoldout))
                 {
                     GUILayout.BeginHorizontal();
                     if (GUILayout.Button("Generate Serialization"))
@@ -139,6 +147,8 @@ namespace CodeBind.Editor
                     }
                     EditorGUI.EndDisabledGroup();
                 }
+                SirenixEditorGUI.EndFadeGroup();
+                SirenixEditorGUI.EndBox();
 
                 if (GUILayout.Button("Clear All Serialization"))
                 {

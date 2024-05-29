@@ -1,3 +1,4 @@
+using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -37,37 +38,40 @@ namespace CodeBind.Editor
 
                 EditorGUILayout.PropertyField(m_SeparatorChar);
                 EditorGUILayout.PropertyField(m_BindScript);
-                
+
                 if (GUILayout.Button("Clear Serialization"))
                 {
                     m_BindComponentNames.ClearArray();
                     m_BindComponents.ClearArray();
                     serializedObject.ApplyModifiedProperties();
                 }
-                
-                m_ShowBindComponents = EditorGUILayout.BeginFoldoutHeaderGroup(m_ShowBindComponents, $"Bind Data (count:{m_BindComponents.arraySize})");
+
+                SirenixEditorGUI.BeginBox();
+                SirenixEditorGUI.BeginBoxHeader();
+                string labelText = $"Bind Data (count:{m_BindComponents.arraySize})";
+                m_ShowBindComponents = SirenixEditorGUI.Foldout(m_ShowBindComponents, labelText);
+                SirenixEditorGUI.EndBoxHeader();
+                if (SirenixEditorGUI.BeginFadeGroup(labelText, m_ShowBindComponents))
                 {
-                    if (m_ShowBindComponents)
+                    EditorGUI.BeginDisabledGroup(true);
                     {
-                        EditorGUI.BeginDisabledGroup(true);
+                        GUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("Name");
+                        EditorGUILayout.LabelField("Component");
+                        GUILayout.EndHorizontal();
+                        for (int i = 0; i < m_BindComponents.arraySize; i++)
                         {
                             GUILayout.BeginHorizontal();
-                            EditorGUILayout.LabelField("Name");
-                            EditorGUILayout.LabelField("Component");
+                            string cName = m_BindComponentNames.GetArrayElementAtIndex(i).stringValue;
+                            EditorGUILayout.TextField(cName);
+                            EditorGUILayout.ObjectField(m_BindComponents.GetArrayElementAtIndex(i).objectReferenceValue, typeof (Component), true);
                             GUILayout.EndHorizontal();
-                            for (int i = 0; i < m_BindComponents.arraySize; i++)
-                            {
-                                GUILayout.BeginHorizontal();
-                                string cName = m_BindComponentNames.GetArrayElementAtIndex(i).stringValue;
-                                EditorGUILayout.TextField(cName);
-                                EditorGUILayout.ObjectField(m_BindComponents.GetArrayElementAtIndex(i).objectReferenceValue, typeof (Component), true);
-                                GUILayout.EndHorizontal();
-                            }
                         }
-                        EditorGUI.EndDisabledGroup();
                     }
+                    EditorGUI.EndDisabledGroup();
                 }
-                EditorGUILayout.EndFoldoutHeaderGroup();
+                SirenixEditorGUI.EndFadeGroup();
+                SirenixEditorGUI.EndBox();
             }
             EditorGUI.EndDisabledGroup();
             
