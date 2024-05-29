@@ -85,9 +85,10 @@ namespace CodeBind.Editor
                     for (int i = 0; i < m_BindNames.arraySize; i++)
                     {
                         GUILayout.BeginHorizontal();
-                        string goName = m_BindNames.GetArrayElementAtIndex(i).stringValue;
-                        EditorGUILayout.TextField(goName);
-                        EditorGUILayout.ObjectField(m_BindGameObjects.GetArrayElementAtIndex(i).objectReferenceValue, typeof(GameObject), true);
+                        var elementName = m_BindNames.GetArrayElementAtIndex(i);
+                        elementName.stringValue = EditorGUILayout.TextField(elementName.stringValue);
+                        var elementGameObject = m_BindGameObjects.GetArrayElementAtIndex(i);
+                        elementGameObject.objectReferenceValue = EditorGUILayout.ObjectField(elementGameObject.objectReferenceValue, typeof(GameObject), true);
                         if (GUILayout.Button("-"))
                         {
                             m_BindNames.DeleteArrayElementAtIndex(i);
@@ -139,9 +140,8 @@ namespace CodeBind.Editor
                         for (int i = 0; i < m_AutoBindComponents.arraySize; i++)
                         {
                             GUILayout.BeginHorizontal();
-                            string cName = m_AutoBindComponentNames.GetArrayElementAtIndex(i).stringValue;
-                            EditorGUILayout.TextField(cName);
-                            EditorGUILayout.ObjectField(m_AutoBindComponents.GetArrayElementAtIndex(i).objectReferenceValue, typeof (Component), true);
+                            EditorGUILayout.TextField(m_AutoBindComponentNames.GetArrayElementAtIndex(i).stringValue);
+                            EditorGUILayout.ObjectField(m_AutoBindComponents.GetArrayElementAtIndex(i).objectReferenceValue, typeof (UnityEngine.Object), true);
                             GUILayout.EndHorizontal();
                         }
                     }
