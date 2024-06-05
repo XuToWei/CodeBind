@@ -31,7 +31,7 @@ namespace CodeBind
             { "ScrollRect", typeof (UnityEngine.UI.ScrollRect) },
             { "Dropdown", typeof (UnityEngine.UI.Dropdown) },
 #if STATE_CONTROLLER_CODE_BIND
-            { "Controller", typeof(StateController.StateController)},
+            { "StateController", typeof(StateController.StateController)},
 #endif
         };
     }
