@@ -62,14 +62,14 @@ namespace CodeBind.Editor
             stringBuilder.AppendLine("");
 #if STATE_CONTROLLER_CODE_BIND
             //StateController
-            Type stateControllerType = typeof(StateController.StateController);
-            if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(stateControllerType, out string prefix))
+            Type stateControllerMonoType = typeof(StateController.StateControllerMono);
+            if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(stateControllerMonoType, out string prefix))
             {
                 foreach (CodeBindData bindData in m_BindDatas)
                 {
-                    if (bindData.BindType == stateControllerType)
+                    if (bindData.BindType == stateControllerMonoType)
                     {
-                        var controller = bindData.BindTransform.GetComponent<StateController.StateController>();
+                        var controller = bindData.BindTransform.GetComponent<StateController.StateControllerMono>();
                         foreach (var data in controller.EditorControllerDatas)
                         {
                             stringBuilder.AppendLine($"{indentation}\tprivate StateController.StateControllerData m_{bindData.BindName}{data.Name}{prefix};");
