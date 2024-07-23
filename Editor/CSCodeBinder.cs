@@ -62,8 +62,8 @@ namespace CodeBind.Editor
                         var controller = bindData.BindTransform.GetComponent<StateController.StateControllerMono>();
                         foreach (var data in controller.EditorControllerDatas)
                         {
-                            stringBuilder.AppendLine($"{indentation}\tprivate StateController.StateControllerData m_{bindData.BindName}{data.Name}{prefix};");
-                            stringBuilder.AppendLine($"{indentation}\tpublic StateController.StateControllerData {bindData.BindName}{data.Name}{prefix} => m_{bindData.BindName}{data.Name}{prefix} ??= {bindData.BindName}{bindData.BindPrefix}.GetData(\"{data.Name}\");");
+                            stringBuilder.AppendLine($"{indentation}\tprivate StateController.StateControllerData m_{bindData.BindName}{data.Name}StateControllerData;");
+                            stringBuilder.AppendLine($"{indentation}\tpublic StateController.StateControllerData {bindData.BindName}{data.Name}StateControllerData => m_{bindData.BindName}{data.Name}StateControllerData ??= {bindData.BindName}{bindData.BindPrefix}.GetData(\"{data.Name}\");");
                             stringBuilder.AppendLine($"{indentation}\tpublic static class {bindData.BindName}{data.Name}StateName");
                             stringBuilder.AppendLine($"{indentation}\t{{");
                             foreach (var stateName in data.StateNames)
