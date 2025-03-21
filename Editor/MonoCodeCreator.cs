@@ -28,7 +28,7 @@ namespace CodeBind.Editor
 
 namespace {m_ScriptNameSpace}
 {{
-    public class {m_ScriptClassName} : MonoBehaviour 
+    public partial class {m_ScriptClassName} : MonoBehaviour 
     {{
 
     }}
@@ -38,7 +38,7 @@ namespace {m_ScriptNameSpace}
             {
                 return $@"using UnityEngine;
 
-public class {m_ScriptClassName} : MonoBehaviour 
+public partial class {m_ScriptClassName} : MonoBehaviour 
 {{
     
 }}";
