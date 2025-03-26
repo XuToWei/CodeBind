@@ -18,6 +18,7 @@ namespace CodeBind.Editor
         private void OnEnable()
         {
             m_SeparatorChar = serializedObject.FindProperty("m_SeparatorChar");
+            m_SeparatorChar.intValue = EditorSetting.GetSaveSeparatorChar();
             m_BindScript = serializedObject.FindProperty("m_BindScript");
             m_BindComponents = serializedObject.FindProperty("m_BindComponents");
             m_BindComponentNames = serializedObject.FindProperty("m_BindComponentNames");
@@ -29,14 +30,27 @@ namespace CodeBind.Editor
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
-                if (GUILayout.Button("Generate BindCode and Serialization"))
+                if(m_BindScript.objectReferenceValue == null)
                 {
-                    CSCodeBinder codeBinder = new CSCodeBinder((MonoScript)m_BindScript.objectReferenceValue, ((MonoBehaviour)target).transform, (char)m_SeparatorChar.intValue);
-                    codeBinder.TryGenerateBindCode();
-                    codeBinder.TrySetSerialization();
+                    if (GUILayout.Button("CodeBind Creator"))
+                    {
+                        CSCodeCreatorWindow.ShowWindow();
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("Generate BindCode and Serialization"))
+                    {
+                        CSCodeBinder codeBinder = new CSCodeBinder((MonoScript)m_BindScript.objectReferenceValue, ((MonoBehaviour)target).transform, (char)m_SeparatorChar.intValue);
+                        codeBinder.TryGenerateBindCode();
+                        codeBinder.TrySetSerialization();
+                    }
                 }
 
-                EditorGUILayout.PropertyField(m_SeparatorChar);
+                if (EditorGUILayout.PropertyField(m_SeparatorChar))
+                {
+                    EditorSetting.SetSaveSeparatorChar((char)m_SeparatorChar.intValue);
+                }
                 EditorGUILayout.PropertyField(m_BindScript);
 
                 if (GUILayout.Button("Clear Serialization"))

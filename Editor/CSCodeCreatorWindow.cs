@@ -1,36 +1,26 @@
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace CodeBind.Editor
 {
-    internal class MonoCodeCreatorWindow : EditorWindow
+    internal class CSCodeCreatorWindow : EditorWindow
     {
         private string m_CodePath;
         private string m_CodeName;
         private string m_CodeNamespace;
-        private GameObject m_SelectedObject;
-        private char m_SeparatorChar;
+        private CSCodeBindMono m_CSCodeBindMono;
         
-        private MethodInfo m_AddComponentMethod;
-
-        [MenuItem("GameObject/CodeBind Creator", priority = -1)]
-        private static void ShowWindow()
+        internal static void ShowWindow()
         {
-            GetWindow<MonoCodeCreatorWindow>("MonoCodeCreatorWindow");
+            GetWindow<CSCodeCreatorWindow>("CSCodeCreatorWindow");
         }
 
         private void OnEnable()
         {
             m_CodePath = EditorSetting.GetSaveCodePath();
             m_CodeNamespace = EditorSetting.GetSaveCodeNamespace();
-            m_SeparatorChar = EditorSetting.GetSaveSeparatorChar();
-            if(m_AddComponentMethod == null)
-            {
-                m_AddComponentMethod = typeof(InternalEditorUtility).GetMethod("AddScriptComponentUncheckedUndoable", BindingFlags.Static | BindingFlags.NonPublic);
-            }
         }
 
         private void OnGUI()
@@ -52,22 +42,19 @@ namespace CodeBind.Editor
 
             m_CodeNamespace = EditorGUILayout.TextField("Code Namespace", m_CodeNamespace);
             m_CodeName = EditorGUILayout.TextField("Code Name", m_CodeName);
-            m_SeparatorChar = EditorGUILayout.TextField("Separator Char", m_SeparatorChar.ToString())[0];
-            if(m_SelectedObject == null)
+            if(m_CSCodeBindMono == null)
             {
-                m_SelectedObject = Selection.activeGameObject;
+                m_CSCodeBindMono = Selection.activeGameObject.GetComponent<CSCodeBindMono>();
             }
-            m_SelectedObject = (GameObject)EditorGUILayout.ObjectField("Selected Object", m_SelectedObject, typeof(GameObject), true);
-
+            m_CSCodeBindMono = (CSCodeBindMono)EditorGUILayout.ObjectField("Selected Object", m_CSCodeBindMono, typeof(CSCodeBindMono), true);
             // 如果文件名和目录名为空，则创建文件的按钮不可用
-            EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(m_CodePath) || string.IsNullOrEmpty(m_CodeName) || m_SelectedObject == null || !Directory.Exists(m_CodePath));
+            EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(m_CodePath) || string.IsNullOrEmpty(m_CodeName) || m_CSCodeBindMono == null || !Directory.Exists(m_CodePath));
             {
                 if (GUILayout.Button("Create Code File"))
                 {
                     CreateCodeFileAndAdd();
                     EditorSetting.SetSaveCodePath(m_CodePath);
                     EditorSetting.SetSaveCodeNamespace(m_CodeNamespace);
-                    EditorSetting.SetSaveSeparatorChar(m_SeparatorChar);
                 }
             }
             EditorGUI.EndDisabledGroup();
@@ -75,10 +62,11 @@ namespace CodeBind.Editor
 
         private void CreateCodeFileAndAdd()
         {
-            MonoCodeCreator codeCreator = new MonoCodeCreator(m_CodePath, m_CodeName, m_CodeNamespace, m_SelectedObject.transform, m_SeparatorChar);
+            CSCodeCreator codeCreator = new CSCodeCreator(m_CodePath, m_CodeName, m_CodeNamespace, m_CSCodeBindMono.transform, m_CSCodeBindMono.SeparatorChar);
             codeCreator.TryCreateCodeFile();
-            MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(Path.Combine(m_CodePath, $"{m_CodeName}.cs"));
-            m_AddComponentMethod.Invoke(null, new object[] { m_SelectedObject, script });
+            MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(Path.Combine(m_CodePath, $"{m_CodeName}.cs")) ;
+            FieldInfo bindScriptFieldInfo = m_CSCodeBindMono.GetType().GetField("m_BindScript", BindingFlags.NonPublic | BindingFlags.Instance);
+            bindScriptFieldInfo.SetValue(m_CSCodeBindMono, script);
         }
     }
 }

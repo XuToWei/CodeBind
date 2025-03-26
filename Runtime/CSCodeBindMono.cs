@@ -28,7 +28,9 @@ namespace CodeBind
         private string[] m_BindComponentNames;
 
         public char SeparatorChar => m_SeparatorChar;
+
         public UnityEditor.MonoScript BindScript => m_BindScript;
+
         public string[] BindComponentNames => m_BindComponentNames;
 
         public void SetBindComponents(string[] names, UnityEngine.Object[] components)

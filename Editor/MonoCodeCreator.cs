@@ -44,7 +44,7 @@ using CodeBind;
 [MonoCodeBind('{m_SeparatorChar}')]
 public partial class {m_ScriptClassName} : MonoBehaviour 
 {{
-    
+
 }}";
             }
         }
