@@ -18,7 +18,11 @@ namespace CodeBind.Editor
         private void OnEnable()
         {
             m_SeparatorChar = serializedObject.FindProperty("m_SeparatorChar");
-            m_SeparatorChar.intValue = EditorSetting.GetSaveSeparatorChar();
+            if (m_SeparatorChar.intValue == 0)
+            {
+                m_SeparatorChar.intValue = EditorSetting.GetSaveSeparatorChar();
+                serializedObject.ApplyModifiedProperties();
+            }
             m_BindScript = serializedObject.FindProperty("m_BindScript");
             m_BindComponents = serializedObject.FindProperty("m_BindComponents");
             m_BindComponentNames = serializedObject.FindProperty("m_BindComponentNames");
@@ -47,17 +51,19 @@ namespace CodeBind.Editor
                     }
                 }
 
-                if (EditorGUILayout.PropertyField(m_SeparatorChar))
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(m_SeparatorChar);
+                if (EditorGUI.EndChangeCheck())
                 {
                     EditorSetting.SetSaveSeparatorChar((char)m_SeparatorChar.intValue);
                 }
+
                 EditorGUILayout.PropertyField(m_BindScript);
 
                 if (GUILayout.Button("Clear Serialization"))
                 {
                     m_BindComponentNames.ClearArray();
                     m_BindComponents.ClearArray();
-                    serializedObject.ApplyModifiedProperties();
                 }
 
                 SirenixEditorGUI.BeginBox();

@@ -19,7 +19,7 @@ namespace CodeBind
 
 #if UNITY_EDITOR
         [SerializeField]
-        private char m_SeparatorChar = '_';
+        private char m_SeparatorChar;
 
         public char SeparatorChar => m_SeparatorChar;
 

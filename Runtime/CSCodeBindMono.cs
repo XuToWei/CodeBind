@@ -19,11 +19,11 @@ namespace CodeBind
 
 #if UNITY_EDITOR
         [SerializeField]
-        private char m_SeparatorChar = '_';
+        private char m_SeparatorChar;
 
         [SerializeField]
         private UnityEditor.MonoScript m_BindScript;
-        
+
         [SerializeField]
         private string[] m_BindComponentNames;
 

@@ -55,6 +55,7 @@ namespace CodeBind.Editor
                     CreateCodeFileAndAdd();
                     EditorSetting.SetSaveCodePath(m_CodePath);
                     EditorSetting.SetSaveCodeNamespace(m_CodeNamespace);
+                    Close();
                 }
             }
             EditorGUI.EndDisabledGroup();

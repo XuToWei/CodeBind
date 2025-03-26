@@ -52,7 +52,11 @@ namespace CodeBind.Editor
 
             m_CodeNamespace = EditorGUILayout.TextField("Code Namespace", m_CodeNamespace);
             m_CodeName = EditorGUILayout.TextField("Code Name", m_CodeName);
-            m_SeparatorChar = EditorGUILayout.TextField("Separator Char", m_SeparatorChar.ToString())[0];
+            string separatorChar = EditorGUILayout.TextField("Separator Char", m_SeparatorChar.ToString());
+            if (!string.IsNullOrEmpty(separatorChar))
+            {
+                m_SeparatorChar = separatorChar[0];
+            }
             if(m_SelectedObject == null)
             {
                 m_SelectedObject = Selection.activeGameObject;
@@ -68,6 +72,7 @@ namespace CodeBind.Editor
                     EditorSetting.SetSaveCodePath(m_CodePath);
                     EditorSetting.SetSaveCodeNamespace(m_CodeNamespace);
                     EditorSetting.SetSaveSeparatorChar(m_SeparatorChar);
+                    Close();
                 }
             }
             EditorGUI.EndDisabledGroup();
