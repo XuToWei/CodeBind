@@ -25,9 +25,11 @@ namespace CodeBind.Editor
             if (!string.IsNullOrEmpty(m_ScriptNameSpace))
             {
                 return $@"using UnityEngine;
+using CodeBind;
 
 namespace {m_ScriptNameSpace}
 {{
+    [MonoCodeBind('{m_SeparatorChar}')]
     public partial class {m_ScriptClassName} : MonoBehaviour 
     {{
 
@@ -37,7 +39,9 @@ namespace {m_ScriptNameSpace}
             else
             {
                 return $@"using UnityEngine;
+using CodeBind;
 
+[MonoCodeBind('{m_SeparatorChar}')]
 public partial class {m_ScriptClassName} : MonoBehaviour 
 {{
     

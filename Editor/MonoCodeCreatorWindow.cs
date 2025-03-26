@@ -1,36 +1,53 @@
+using System.IO;
+using System.Reflection;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace CodeBind.Editor
 {
     internal class MonoCodeCreatorWindow : EditorWindow
     {
-        private const string DEFAULT_TARGET_DIRECTORY = "Assets/Scripts/Game";
-
         private string m_CodePath;
         private string m_CodeName;
         private string m_CodeNamespace;
         private GameObject m_SelectedObject;
         private char m_SeparatorChar = '_';
+        
+        private MethodInfo m_AddComponentMethod;
 
-        [MenuItem("Assets/CodeBind/Mono Code Creator")]
+        [MenuItem("GameObject/CodeBind Creator", priority = -1)]
         private static void ShowWindow()
         {
             GetWindow<MonoCodeCreatorWindow>("MonoCodeCreatorWindow");
         }
 
+        private void OnEnable()
+        {
+            m_CodePath = EditorPrefs.GetString("CodeBind.CodePath", "Assets/");
+            m_CodeNamespace = EditorPrefs.GetString("CodeBind.CodeNamespace");
+            if(m_AddComponentMethod == null)
+            {
+                m_AddComponentMethod = typeof(InternalEditorUtility).GetMethod("AddScriptComponentUncheckedUndoable", BindingFlags.Static | BindingFlags.NonPublic);
+            }
+        }
+
         private void OnGUI()
         {
-            if (GUILayout.Button("Select Code Path"))
+            EditorGUILayout.BeginHorizontal();
+
+            m_CodePath = EditorGUILayout.TextField("Code Path", m_CodePath);
+
+            if (GUILayout.Button("Select Code Path", GUILayout.MaxWidth(150)))
             {
-                string path = EditorUtility.OpenFolderPanel("Select Code Path", DEFAULT_TARGET_DIRECTORY, "");
+                string path = EditorUtility.OpenFolderPanel("Select Code Path", m_CodePath, "");
                 if (!string.IsNullOrEmpty(path))
                 {
                     m_CodePath = path.Replace(Application.dataPath, "Assets");
                 }
             }
 
-            m_CodePath = EditorGUILayout.TextField("Code Path", m_CodePath);
+            EditorGUILayout.EndHorizontal();
 
             m_CodeNamespace = EditorGUILayout.TextField("Code Namespace", m_CodeNamespace);
             m_CodeName = EditorGUILayout.TextField("Code Name", m_CodeName);
@@ -46,16 +63,18 @@ namespace CodeBind.Editor
             {
                 if (GUILayout.Button("Create Code File"))
                 {
-                    CreateCodeFile();
+                    CreateCodeFileAndAdd();
                 }
             }
             EditorGUI.EndDisabledGroup();
         }
 
-        private void CreateCodeFile()
+        private void CreateCodeFileAndAdd()
         {
             MonoCodeCreator codeCreator = new MonoCodeCreator(m_CodePath, m_CodeName, m_CodeNamespace, m_SelectedObject.transform, m_SeparatorChar);
             codeCreator.TryCreateCodeFile();
+            var script = AssetDatabase.LoadAssetAtPath(Path.Combine(m_CodePath, $"{m_CodeName}.cs"), typeof(MonoScript)) as MonoScript;
+            m_AddComponentMethod.Invoke(null, new object[] { m_SelectedObject, script });
         }
     }
 }

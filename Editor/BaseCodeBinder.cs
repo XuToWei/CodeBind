@@ -7,7 +7,7 @@ namespace CodeBind.Editor
 {
     internal abstract class BaseCodeBinder : BaseBinder
     {
-        private readonly string m_BindScriptFullPath;
+        protected readonly string m_BindScriptFullPath;
 
         protected readonly string m_ScriptNameSpace;
 
