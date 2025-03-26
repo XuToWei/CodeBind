@@ -24,6 +24,11 @@ namespace CodeBind.Editor
         private void OnEnable()
         {
             m_SeparatorChar = serializedObject.FindProperty("m_SeparatorChar");
+            if (m_SeparatorChar.intValue == 0)
+            {
+                m_SeparatorChar.intValue = EditorSetting.GetSaveSeparatorChar();
+                serializedObject.ApplyModifiedProperties();
+            }
             m_BindNames = serializedObject.FindProperty("m_BindNames");
             m_BindGameObjects = serializedObject.FindProperty("m_BindGameObjects");
             m_AutoBindComponentNames = serializedObject.FindProperty("m_AutoBindComponentNames");
@@ -120,17 +125,21 @@ namespace CodeBind.Editor
                     {
                         ReferenceBinder referenceBinder = new ReferenceBinder((ReferenceBindMono)target, (char)m_SeparatorChar.intValue);
                         referenceBinder.TrySetSerialization();
-                        serializedObject.ApplyModifiedProperties();
                     }
                     if (GUILayout.Button("Clear Serialization"))
                     {
                         m_AutoBindComponentNames.ClearArray();
                         m_AutoBindComponents.ClearArray();
-                        serializedObject.ApplyModifiedProperties();
                     }
                     GUILayout.EndHorizontal();
 
+                    EditorGUI.BeginChangeCheck();
                     EditorGUILayout.PropertyField(m_SeparatorChar);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        EditorSetting.SetSaveSeparatorChar((char)m_SeparatorChar.intValue);
+                    }
+
                     EditorGUI.BeginDisabledGroup(true);
                     {
                         GUILayout.BeginHorizontal();
@@ -156,7 +165,6 @@ namespace CodeBind.Editor
                     m_BindGameObjects.ClearArray();
                     m_AutoBindComponentNames.ClearArray();
                     m_AutoBindComponents.ClearArray();
-                    serializedObject.ApplyModifiedProperties();
                 }
             }
             EditorGUI.EndDisabledGroup();

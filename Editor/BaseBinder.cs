@@ -9,9 +9,9 @@ namespace CodeBind.Editor
 {
     internal abstract class BaseBinder
     {
-        private readonly char m_SeparatorChar;
+        protected readonly char m_SeparatorChar;
 
-        private readonly Transform m_RootTransform;
+        protected readonly Transform m_RootTransform;
 
         protected readonly List<CodeBindData> m_BindDatas;
         protected readonly List<CodeBindData> m_BindArrayDatas;
