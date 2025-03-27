@@ -371,11 +371,21 @@ namespace CodeBind.Editor
 
         private bool CheckIsInOtherBind(Transform child)
         {
+            //子节点可以绑定，创建代码类型不需要判断特性
+            if(child == m_RootTransform)
+            {
+                return false;
+            }
             //检查父节点有没有bind，支持bind嵌套
             Transform parent = child.parent;
             bool nearestCodeBind = true;
             while (parent != null)
             {
+                //子节点可以绑定，创建代码类型不需要判断特性
+                if(parent == m_RootTransform)
+                {
+                    return false;
+                }
                 MonoBehaviour[] components = parent.GetComponents<MonoBehaviour>();
                 foreach (MonoBehaviour component in components)
                 {
