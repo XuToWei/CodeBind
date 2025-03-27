@@ -369,40 +369,34 @@ namespace CodeBind.Editor
             return target != null;
         }
 
-        private bool CheckIsInOtherBind(Transform child)
+        private bool CheckIsInOtherBind(Transform transform)
         {
-            //子节点可以绑定，创建代码类型不需要判断特性
-            if(child == m_RootTransform)
-            {
-                return false;
-            }
             //检查父节点有没有bind，支持bind嵌套
-            Transform parent = child.parent;
             bool nearestCodeBind = true;
-            while (parent != null)
+            while (transform != null)
             {
                 //子节点可以绑定，创建代码类型不需要判断特性
-                if(parent == m_RootTransform)
+                if(transform == m_RootTransform)
                 {
                     return false;
                 }
-                MonoBehaviour[] components = parent.GetComponents<MonoBehaviour>();
+                MonoBehaviour[] components = transform.GetComponents<MonoBehaviour>();
                 foreach (MonoBehaviour component in components)
                 {
                     if (component.GetType().GetCustomAttributes(typeof(CodeBindAttribute), true).Length > 0)
                     {
-                        if (nearestCodeBind && parent == m_RootTransform)
+                        if (nearestCodeBind && transform == m_RootTransform)
                         {
                             return false;
                         }
-                        if (parent != m_RootTransform)
+                        if (transform != m_RootTransform)
                         {
                             return true;
                         }
                         nearestCodeBind = false;
                     }
                 }
-                parent = parent.parent;
+                transform = transform.parent;
             }
             return false;
         }
