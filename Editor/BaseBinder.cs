@@ -371,6 +371,7 @@ namespace CodeBind.Editor
 
         private bool CheckIsInOtherBind(Transform transform)
         {
+            transform = transform.parent;
             //检查父节点有没有bind，支持bind嵌套
             bool nearestCodeBind = true;
             while (transform != null)
