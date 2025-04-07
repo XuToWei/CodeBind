@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
+    /// <summary>
+    /// 基础绑定器
+    /// </summary>
     internal abstract class BaseBinder
     {
         protected readonly char m_SeparatorChar;

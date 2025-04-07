@@ -10,6 +10,5 @@ namespace CodeBind
     [Conditional("UNITY_EDITOR")]
     public class CodeBindAttribute : Attribute
     {
-        
     }
 }

@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
+    /// <summary>
+    /// 基础代码创建器
+    /// </summary>
     internal abstract class BaseCodeCreator : BaseBinder
     {
         private readonly string m_ScriptFullPath;

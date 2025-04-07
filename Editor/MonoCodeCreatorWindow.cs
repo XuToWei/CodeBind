@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
+    /// <summary>
+    /// Mono类绑定代码生成器窗口
+    /// </summary>
     internal class MonoCodeCreatorWindow : EditorWindow
     {
         private string m_CodePath;

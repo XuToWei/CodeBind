@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
+    /// <summary>
+    /// 非Mono类绑定代码创建窗口
+    /// </summary>
     internal class CSCodeCreatorWindow : EditorWindow
     {
         private string m_CodePath;

@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
+    /// <summary>
+    /// 非Mono类的绑定代码生成器
+    /// </summary>
     internal sealed class CSCodeCreator : BaseCodeCreator
     {
         public CSCodeCreator(string codePath, string codeName, string codeNamespace, Transform rootTransform, char separatorChar) : base(codePath, codeName, codeNamespace, rootTransform, separatorChar)

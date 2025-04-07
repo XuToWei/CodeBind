@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
+    /// <summary>
+    /// Mono类的绑定代码的生成器
+    /// </summary>
     internal sealed class MonoCodeCreator : BaseCodeCreator
     {
         public MonoCodeCreator(string codePath, string codeName, string codeNamespace, Transform rootTransform, char separatorChar) : base(codePath, codeName, codeNamespace, rootTransform, separatorChar)

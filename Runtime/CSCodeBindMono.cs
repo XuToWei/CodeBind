@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace CodeBind
 {
+    /// <summary>
+    /// 非Mono类绑定数据的Mono
+    /// </summary>
     [CodeBind]
     [CodeBindName("CSCodeBindMono")]
     [DisallowMultipleComponent]

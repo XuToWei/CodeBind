@@ -3,9 +3,12 @@ using System.Collections.Generic;
 
 namespace CodeBind
 {
+    /// <summary>
+    /// 非Mono类绑定对象的缓存池
+    /// </summary>
     internal sealed class CSCodeBindPool
     {
-        private const int MaxCount = 100;
+        private const int MaxCount = 128;
 
         private readonly Dictionary<Type, Queue<ICSCodeBind>> m_Pool = new Dictionary<Type, Queue<ICSCodeBind>>();
 

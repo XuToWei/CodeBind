@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
+    /// <summary>
+    /// 非Mono类绑定数据的Mono编辑器界面
+    /// </summary>
     [CustomEditor(typeof(CSCodeBindMono))]
     internal sealed class CSCodeBindMonoInspector : UnityEditor.Editor
     {

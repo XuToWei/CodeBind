@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace CodeBind.Editor
 {
+    /// <summary>
+    /// 引用绑定器
+    /// </summary>
     internal sealed class ReferenceBinder : BaseBinder
     {
         private readonly ReferenceBindMono m_ReferenceBindMono;

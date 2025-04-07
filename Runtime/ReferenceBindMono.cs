@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace CodeBind
 {
+    /// <summary>
+    /// 引用绑定的Mono
+    /// </summary>
     [CodeBind]
     [CodeBindName("ReferenceBindMono")]
     [DisallowMultipleComponent]

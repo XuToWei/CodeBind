@@ -3,33 +3,37 @@ using System.Collections.Generic;
 
 namespace CodeBind
 {
+    /// <summary>
+    /// 缺省绑定类型名称配置，会被CodeBindNameTypeAttribute的配置覆盖
+    /// </summary>
     internal static class DefaultCodeBindNameTypeConfig
     {
         internal static readonly Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>()
         {
-            { "GameObject", typeof (UnityEngine.GameObject) },
-            { "Transform", typeof (UnityEngine.Transform) },
             { "Animation", typeof (UnityEngine.Animation) },
             { "Animator", typeof (UnityEngine.Animator) },
-            { "RectTransform", typeof (UnityEngine.RectTransform) },
+            { "Button", typeof (UnityEngine.UI.Button) },
             { "Canvas", typeof (UnityEngine.Canvas) },
             { "CanvasGroup", typeof (UnityEngine.CanvasGroup) },
-            { "VerticalLayoutGroup", typeof (UnityEngine.UI.VerticalLayoutGroup) },
-            { "HorizontalLayoutGroup", typeof (UnityEngine.UI.HorizontalLayoutGroup) },
+            { "Dropdown", typeof (UnityEngine.UI.Dropdown) },
+            { "GameObject", typeof (UnityEngine.GameObject) },
             { "GridLayoutGroup", typeof (UnityEngine.UI.GridLayoutGroup) },
-            { "ToggleGroup", typeof (UnityEngine.UI.ToggleGroup) },
-            { "Button", typeof (UnityEngine.UI.Button) },
+            { "HorizontalLayoutGroup", typeof (UnityEngine.UI.HorizontalLayoutGroup) },
             { "Image", typeof (UnityEngine.UI.Image) },
-            { "RawImage", typeof (UnityEngine.UI.RawImage) },
-            { "Text", typeof (UnityEngine.UI.Text) },
             { "InputField", typeof (UnityEngine.UI.InputField) },
-            { "Slider", typeof (UnityEngine.UI.Slider) },
             { "Mask", typeof (UnityEngine.UI.Mask) },
+            { "RawImage", typeof (UnityEngine.UI.RawImage) },
             { "RectMask2D", typeof (UnityEngine.UI.RectMask2D) },
-            { "Toggle", typeof (UnityEngine.UI.Toggle) },
+            { "RectTransform", typeof (UnityEngine.RectTransform) },
             { "Scrollbar", typeof (UnityEngine.UI.Scrollbar) },
             { "ScrollRect", typeof (UnityEngine.UI.ScrollRect) },
-            { "Dropdown", typeof (UnityEngine.UI.Dropdown) },
+            { "Slider", typeof (UnityEngine.UI.Slider) },
+            { "SpriteRenderer", typeof (UnityEngine.SpriteRenderer) },
+            { "Text", typeof (UnityEngine.UI.Text) },
+            { "Transform", typeof (UnityEngine.Transform) },
+            { "Toggle", typeof (UnityEngine.UI.Toggle) },
+            { "ToggleGroup", typeof (UnityEngine.UI.ToggleGroup) },
+            { "VerticalLayoutGroup", typeof (UnityEngine.UI.VerticalLayoutGroup) },
 #if STATE_CONTROLLER_CODE_BIND
             { "StateControllerMono", typeof(StateController.StateControllerMono)},
 #endif
