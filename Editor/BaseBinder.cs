@@ -138,7 +138,7 @@ namespace CodeBind.Editor
             m_BindArrayDatas.Clear();
             m_BindArrayDataDict.Clear();
 #if STATE_CONTROLLER_CODE_BIND
-            if (m_RootTransform.name.Contains(m_SeparatorChar))
+            if (!m_RootTransform.name.Contains(m_SeparatorChar))
             {
                 //如果根节点有StateControllerMono，生成Root
                 Type scmType = typeof(StateController.StateControllerMono);
