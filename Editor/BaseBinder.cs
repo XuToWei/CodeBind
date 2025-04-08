@@ -13,16 +13,13 @@ namespace CodeBind.Editor
     internal abstract class BaseBinder
     {
         protected readonly char m_SeparatorChar;
-
         protected readonly Transform m_RootTransform;
-
         protected readonly List<CodeBindData> m_BindDatas;
         protected readonly List<CodeBindData> m_BindArrayDatas;
         protected readonly SortedDictionary<string, List<CodeBindData>> m_BindArrayDataDict;
 
         private readonly Regex m_ArrayIndexRegex;
         private readonly Regex m_VariableNameRegex;
-
         private readonly List<Component> m_ComponentCacheList;
 
         protected BaseBinder(Transform rootTransform, char separatorChar)
@@ -141,15 +138,18 @@ namespace CodeBind.Editor
             m_BindArrayDatas.Clear();
             m_BindArrayDataDict.Clear();
 #if STATE_CONTROLLER_CODE_BIND
-            //如果根节点有StateControllerMono，生成Root
-            Type scmType = typeof(StateController.StateControllerMono);
-            if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(scmType, out var bindPrefix))
+            if (m_RootTransform.name.Contains(m_SeparatorChar))
             {
-                StateController.StateControllerMono scm = m_RootTransform.GetComponent<StateController.StateControllerMono>();
-                if (scm != null)
+                //如果根节点有StateControllerMono，生成Root
+                Type scmType = typeof(StateController.StateControllerMono);
+                if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(scmType, out var bindPrefix))
                 {
-                    CodeBindData bindData = new CodeBindData("Root", scmType, bindPrefix, m_RootTransform);
-                    m_BindDatas.Add(bindData);
+                    StateController.StateControllerMono scm = m_RootTransform.GetComponent<StateController.StateControllerMono>();
+                    if (scm != null)
+                    {
+                        CodeBindData bindData = new CodeBindData("Root", scmType, bindPrefix, m_RootTransform);
+                        m_BindDatas.Add(bindData);
+                    }
                 }
             }
 #endif
