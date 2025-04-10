@@ -208,6 +208,8 @@ namespace CodeBind.Editor
                     bindDatas.Add(bindData);
                 }
             }
+            //进行排序，保证不同名字相同节点顺序不同的预制可以公用绑定脚本
+            m_BindDatas.Sort();
             return true;
         }
 

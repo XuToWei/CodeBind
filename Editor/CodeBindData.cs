@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CodeBind.Editor
 {
-    internal sealed class CodeBindData
+    internal sealed class CodeBindData : IComparable<CodeBindData>
     {
         public string BindName
         {
@@ -31,6 +31,16 @@ namespace CodeBind.Editor
             BindType = bindType;
             BindPrefix = bindPrefix;
             BindTransform = bindTransform;
+        }
+
+        public int CompareTo(CodeBindData other)
+        {
+            int compare = String.CompareOrdinal(BindName, other.BindName);
+            if (compare != 0)
+            {
+                return compare;
+            }
+            return String.CompareOrdinal(BindPrefix, other.BindPrefix);
         }
     }
 }
