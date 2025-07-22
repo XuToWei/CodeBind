@@ -47,9 +47,9 @@ namespace CodeBind.Editor
                         Debug.LogError($"Add BindNameType Fail! Type name:{kv.Key}({type}) exist!");
                         continue;
                     }
-                    if (BindTypeNameDict.ContainsKey(kv.Value))
+                    if (BindTypeNameDict.TryGetValue(kv.Value, out string name))
                     {
-                        Debug.LogError($"Add BindNameType Fail! Type:{type} exist!");
+                        Debug.LogError($"Add BindNameType Fail! Type name:{name}({kv.Value}) exist!");
                         continue;
                     }
                     BindNameTypeDict.Add(kv.Key, kv.Value);
@@ -71,9 +71,9 @@ namespace CodeBind.Editor
                     Debug.LogError($"Add BindNameType Fail! Type name:{attribute.BindName}({bindType}) exist!");
                     continue;
                 }
-                if (BindTypeNameDict.ContainsKey(type))
+                if (BindTypeNameDict.TryGetValue(type, out string bindName))
                 {
-                    Debug.LogError($"Add BindNameType Fail! Type:{type} exist!");
+                    Debug.LogError($"Add BindNameType Fail! Type name:{bindName}({type}) exist!");
                     continue;
                 }
                 BindNameTypeDict.Add(attribute.BindName, type);
