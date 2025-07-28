@@ -67,6 +67,13 @@ namespace CodeBind.Editor
                                 stringBuilder.AppendLine($"{indentation}\t\tpublic const string {stateName} = \"{stateName}\";");
                             }
                             stringBuilder.AppendLine($"{indentation}\t}}");
+                            stringBuilder.AppendLine($"{indentation}\tpublic static class {bindData.BindName}{data.Name}StateIndex");
+                            stringBuilder.AppendLine($"{indentation}\t{{");
+                            for (int index = 0; index < data.StateNames.Count; index++)
+                            {
+                                stringBuilder.AppendLine($"{indentation}\t\tpublic const int {data.StateNames[index]} = {index};");
+                            }
+                            stringBuilder.AppendLine($"{indentation}\t}}");
                         }
                         stringBuilder.AppendLine("");
                     }
@@ -131,6 +138,13 @@ namespace CodeBind.Editor
                             foreach (var stateName in data.StateNames)
                             {
                                 stringBuilder.AppendLine($"{indentation}\t\tpublic const string {stateName} = \"{stateName}\";");
+                            }
+                            stringBuilder.AppendLine($"{indentation}\t}}");
+                            stringBuilder.AppendLine($"{indentation}\tpublic static class {bindData.BindName}{data.Name}StateIndex");
+                            stringBuilder.AppendLine($"{indentation}\t{{");
+                            for (int index = 0; index < data.StateNames.Count; index++)
+                            {
+                                stringBuilder.AppendLine($"{indentation}\t\tpublic const int {data.StateNames[index]} = {index};");
                             }
                             stringBuilder.AppendLine($"{indentation}\t}}");
                         }

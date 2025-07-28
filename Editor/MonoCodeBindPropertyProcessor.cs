@@ -25,28 +25,34 @@ namespace CodeBind.Editor
 
         private void TryGenerateBindCode()
         {
-            MonoCodeBindAttribute attribute = Property.GetAttribute<MonoCodeBindAttribute>();
-            MonoBehaviour mono = ValueEntry.SmartValue as MonoBehaviour;
-            if (mono == null)
+            foreach (T t in ValueEntry.Values)
             {
-                throw new Exception($"{ValueEntry.SmartValue.GetType()} is not inherit from MonoBehaviour!");
+                MonoCodeBindAttribute attribute = Property.GetAttribute<MonoCodeBindAttribute>();
+                MonoBehaviour mono = t as MonoBehaviour;
+                if (mono == null)
+                {
+                    throw new Exception($"{t.GetType()} is not inherit from MonoBehaviour!");
+                }
+                MonoScript script = MonoScript.FromMonoBehaviour(mono);
+                MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
+                codeBinder.TryGenerateBindCode();
             }
-            MonoScript script = MonoScript.FromMonoBehaviour(mono);
-            MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
-            codeBinder.TryGenerateBindCode();
         }
 
         private void TrySetSerialization()
         {
-            MonoCodeBindAttribute attribute = Property.GetAttribute<MonoCodeBindAttribute>();
-            MonoBehaviour mono = ValueEntry.SmartValue as MonoBehaviour;
-            if (mono == null)
+            foreach (T t in ValueEntry.Values)
             {
-                throw new Exception($"{ValueEntry.SmartValue.GetType()} is not inherit from MonoBehaviour!");
+                MonoCodeBindAttribute attribute = Property.GetAttribute<MonoCodeBindAttribute>();
+                MonoBehaviour mono = t as MonoBehaviour;
+                if (mono == null)
+                {
+                    throw new Exception($"{t.GetType()} is not inherit from MonoBehaviour!");
+                }
+                MonoScript script = MonoScript.FromMonoBehaviour(mono);
+                MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
+                codeBinder.TrySetSerialization();
             }
-            MonoScript script = MonoScript.FromMonoBehaviour(mono);
-            MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
-            codeBinder.TrySetSerialization();
         }
     }
 }

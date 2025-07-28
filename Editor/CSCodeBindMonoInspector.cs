@@ -1,6 +1,9 @@
+using System;
+using System.Reflection;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CodeBind.Editor
 {
@@ -8,6 +11,7 @@ namespace CodeBind.Editor
     /// 非Mono类绑定数据的Mono编辑器界面
     /// </summary>
     [CustomEditor(typeof(CSCodeBindMono))]
+    [CanEditMultipleObjects]
     internal sealed class CSCodeBindMonoInspector : UnityEditor.Editor
     {
         private SerializedProperty m_SeparatorChar;
@@ -48,9 +52,22 @@ namespace CodeBind.Editor
                 {
                     if (GUILayout.Button("Generate BindCode and Serialization"))
                     {
-                        CSCodeBinder codeBinder = new CSCodeBinder((MonoScript)m_BindScript.objectReferenceValue, ((MonoBehaviour)target).transform, (char)m_SeparatorChar.intValue);
-                        codeBinder.TryGenerateBindCode();
-                        codeBinder.TrySetSerialization();
+                        if (targets.Length > 1)
+                        {
+                            foreach (Object t in targets)
+                            {
+                                CSCodeBindMono bindMono = (CSCodeBindMono)t;
+                                CSCodeBinder codeBinder = new CSCodeBinder(bindMono.BindScript, bindMono.transform, bindMono.SeparatorChar);
+                                codeBinder.TryGenerateBindCode();
+                                codeBinder.TrySetSerialization();
+                            }
+                        }
+                        else
+                        {
+                            CSCodeBinder codeBinder = new CSCodeBinder((MonoScript)m_BindScript.objectReferenceValue, ((MonoBehaviour)target).transform, (char)m_SeparatorChar.intValue);
+                            codeBinder.TryGenerateBindCode();
+                            codeBinder.TrySetSerialization();
+                        }
                     }
                 }
 
@@ -65,8 +82,23 @@ namespace CodeBind.Editor
 
                 if (GUILayout.Button("Clear Serialization"))
                 {
-                    m_BindComponentNames.ClearArray();
-                    m_BindComponents.ClearArray();
+                    if (targets.Length > 1)
+                    {
+                        Type bindMonoType = typeof(CSCodeBindMono);
+                        FieldInfo bindComponentNamesField = bindMonoType.GetField("m_BindComponentNames", BindingFlags.Instance | BindingFlags.NonPublic);
+                        FieldInfo bindComponentsField = bindMonoType.GetField("m_BindComponents", BindingFlags.Instance | BindingFlags.NonPublic);
+                        foreach (Object t in targets)
+                        {
+                            CSCodeBindMono bindMono = (CSCodeBindMono)t;
+                            bindComponentNamesField.SetValue(bindMono, null);
+                            bindComponentsField.SetValue(bindMono, null);
+                        }
+                    }
+                    else
+                    {
+                        m_BindComponentNames.ClearArray();
+                        m_BindComponents.ClearArray();
+                    }
                 }
 
                 SirenixEditorGUI.BeginBox();

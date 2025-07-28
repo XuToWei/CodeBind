@@ -19,7 +19,7 @@ namespace CodeBind.Editor
         
         private MethodInfo m_AddComponentMethod;
 
-        [MenuItem("GameObject/CodeBind Creator", priority = -1)]
+        [MenuItem("GameObject/CodeBind/Mono Code Creator", priority = -3)]
         private static void ShowWindow()
         {
             GetWindow<MonoCodeCreatorWindow>("MonoCodeCreatorWindow");
