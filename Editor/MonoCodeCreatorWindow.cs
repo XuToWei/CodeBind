@@ -19,7 +19,7 @@ namespace CodeBind.Editor
         
         private MethodInfo m_AddComponentMethod;
 
-        [MenuItem("GameObject/CodeBind/Mono Code Creator", priority = -3)]
+        [MenuItem("GameObject/CodeBind/Mono Code Creator", priority = -4)]
         private static void ShowWindow()
         {
             GetWindow<MonoCodeCreatorWindow>("MonoCodeCreatorWindow");
@@ -53,16 +53,20 @@ namespace CodeBind.Editor
 
             EditorGUILayout.EndHorizontal();
 
+            if(m_SelectedObject == null)
+            {
+                m_SelectedObject = Selection.activeGameObject;
+                if (m_SelectedObject != null)
+                {
+                    m_CodeName = m_SelectedObject.name.Replace("_", "").Replace(".", "").Replace(" ", "");
+                }
+            }
             m_CodeNamespace = EditorGUILayout.TextField("Code Namespace", m_CodeNamespace);
             m_CodeName = EditorGUILayout.TextField("Code Name", m_CodeName);
             string separatorChar = EditorGUILayout.TextField("Separator Char", m_SeparatorChar.ToString());
             if (!string.IsNullOrEmpty(separatorChar))
             {
                 m_SeparatorChar = separatorChar[0];
-            }
-            if(m_SelectedObject == null)
-            {
-                m_SelectedObject = Selection.activeGameObject;
             }
             m_SelectedObject = (GameObject)EditorGUILayout.ObjectField("Selected Object", m_SelectedObject, typeof(GameObject), true);
 

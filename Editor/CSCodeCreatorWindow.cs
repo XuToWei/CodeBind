@@ -14,7 +14,8 @@ namespace CodeBind.Editor
         private string m_CodeName;
         private string m_CodeNamespace;
         private CSCodeBindMono m_CSCodeBindMono;
-        
+
+        [MenuItem("GameObject/CodeBind/CS Code Creator", priority = -3)]
         internal static void ShowWindow()
         {
             GetWindow<CSCodeCreatorWindow>("CSCodeCreatorWindow");
@@ -43,12 +44,16 @@ namespace CodeBind.Editor
 
             EditorGUILayout.EndHorizontal();
 
-            m_CodeNamespace = EditorGUILayout.TextField("Code Namespace", m_CodeNamespace);
-            m_CodeName = EditorGUILayout.TextField("Code Name", m_CodeName);
             if(m_CSCodeBindMono == null)
             {
                 m_CSCodeBindMono = Selection.activeGameObject.GetComponent<CSCodeBindMono>();
+                if (m_CSCodeBindMono != null)
+                {
+                    m_CodeName = m_CSCodeBindMono.name.Replace("_", "").Replace(".", "").Replace(" ", "");
+                }
             }
+            m_CodeNamespace = EditorGUILayout.TextField("Code Namespace", m_CodeNamespace);
+            m_CodeName = EditorGUILayout.TextField("Code Name", m_CodeName);
             m_CSCodeBindMono = (CSCodeBindMono)EditorGUILayout.ObjectField("Selected Object", m_CSCodeBindMono, typeof(CSCodeBindMono), true);
             // 如果文件名和目录名为空，则创建文件的按钮不可用
             EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(m_CodePath) || string.IsNullOrEmpty(m_CodeName) || m_CSCodeBindMono == null || !Directory.Exists(m_CodePath));
