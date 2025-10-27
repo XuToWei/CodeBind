@@ -113,9 +113,14 @@ namespace CodeBind.Editor
                 SirenixEditorGUI.EndFadeGroup();
                 SirenixEditorGUI.EndBox();
 
+                if (((ReferenceBindMono)target).CheckBindDataExitEmpty())
+                {
+                    SirenixEditorGUI.MessageBox("BindData exist empty.", MessageType.Warning);
+                }
+
                 SirenixEditorGUI.BeginBox();
                 SirenixEditorGUI.BeginBoxHeader();
-                string labelAutoText = $"Auto Bind (count:{m_AutoBindComponents.arraySize})";
+                string labelAutoText = $"BindData (count:{m_AutoBindComponents.arraySize})";
                 m_IsAutoBindFoldout = SirenixEditorGUI.Foldout(m_IsAutoBindFoldout, labelAutoText);
                 SirenixEditorGUI.EndBoxHeader();
                 if (SirenixEditorGUI.BeginFadeGroup(labelAutoText, m_IsAutoBindFoldout))

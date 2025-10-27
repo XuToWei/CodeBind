@@ -21,6 +21,7 @@ namespace CodeBind.Editor
                 indentation = "\t";
             }
             //类名
+            stringBuilder.AppendLine($@"{indentation}[Sirenix.OdinInspector.InfoBox(""BindData exist empty."", Sirenix.OdinInspector.InfoMessageType.Warning, VisibleIf = ""CheckBindDataExitEmpty"")]");
             stringBuilder.AppendLine($"{indentation}public partial class {className}");
             stringBuilder.AppendLine($"{indentation}{{");
             //组件字段
@@ -80,6 +81,22 @@ namespace CodeBind.Editor
                 }
             }
 #endif
+            //CheckBindDataExitEmpty方法
+            stringBuilder.AppendLine($"{indentation}\tprivate bool CheckBindDataExitEmpty()");
+            stringBuilder.AppendLine($"{indentation}\t{{");
+            foreach (CodeBindData bindData in bindDatas)
+            {
+                stringBuilder.AppendLine($"{indentation}\t\tif (this.m_{bindData.BindName}{bindData.BindPrefix} == null) return true;");
+            }
+            foreach (KeyValuePair<string, List<CodeBindData>> kv in bindArrayDataDict)
+            {
+                stringBuilder.AppendLine($"{indentation}\t\tif (this.m_{kv.Key}Array == null || this.m_{kv.Key}Array.Length == 0) return true;");
+                stringBuilder.AppendLine($"{indentation}\t\tfor (int i = 0; i < this.m_{kv.Key}Array.Length; i++)");
+                stringBuilder.AppendLine($"{indentation}\t\t\tif (this.m_{kv.Key}Array[i] == null) return true;");
+            }
+            stringBuilder.AppendLine($"{indentation}\t\treturn false;");
+            stringBuilder.AppendLine($"{indentation}\t}}");
+
             stringBuilder.AppendLine($"{indentation}}}");
             if (needNameSpace)
             {

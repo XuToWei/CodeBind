@@ -28,16 +28,45 @@ namespace CodeBind
 
         public void SetAutoBindComponents(string[] names, UnityEngine.Object[] components)
         {
-            if (names == null || components == null)
+            if (names == null && components != null)
             {
-                throw new Exception("Name and Component cant be null!");
+                throw new Exception("Names cant be null!");
             }
-            if (names.Length != components.Length)
+            if (names != null && components == null)
+            {
+                throw new Exception("Components cant be null!");
+            }
+            if (names != null && components != null && names.Length != components.Length)
             {
                 throw new Exception("Name count must be same with Component count!");
             }
             m_AutoBindComponentNames = names;
             m_AutoBindComponents = components;
+        }
+
+        public bool CheckBindDataExitEmpty()
+        {
+            if (m_BindGameObjects != null)
+            {
+                for (int i = 0; i < m_BindGameObjects.Length; i++)
+                {
+                    if (m_BindGameObjects[i] == null)
+                    {
+                        return true;
+                    }
+                }
+            }
+            if (m_AutoBindComponents != null)
+            {
+                for (int i = 0; i < m_AutoBindComponents.Length; i++)
+                {
+                    if (m_AutoBindComponents[i] == null)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 #endif
 

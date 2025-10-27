@@ -1,5 +1,3 @@
-using System;
-using System.Reflection;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -84,20 +82,33 @@ namespace CodeBind.Editor
                 {
                     if (targets.Length > 1)
                     {
-                        Type bindMonoType = typeof(CSCodeBindMono);
-                        FieldInfo bindComponentNamesField = bindMonoType.GetField("m_BindComponentNames", BindingFlags.Instance | BindingFlags.NonPublic);
-                        FieldInfo bindComponentsField = bindMonoType.GetField("m_BindComponents", BindingFlags.Instance | BindingFlags.NonPublic);
-                        foreach (Object t in targets)
+                        foreach (var t in targets)
                         {
-                            CSCodeBindMono bindMono = (CSCodeBindMono)t;
-                            bindComponentNamesField.SetValue(bindMono, null);
-                            bindComponentsField.SetValue(bindMono, null);
+                            ((CSCodeBindMono)t).SetBindComponents(null, null);
                         }
                     }
                     else
                     {
-                        m_BindComponentNames.ClearArray();
-                        m_BindComponents.ClearArray();
+                        ((CSCodeBindMono)target).SetBindComponents(null, null);
+                    }
+                }
+
+                if (targets.Length > 1)
+                {
+                    foreach (var t in targets)
+                    {
+                        if (((CSCodeBindMono)t).CheckBindDataExitEmpty())
+                        {
+                            SirenixEditorGUI.MessageBox("BindData exist empty.", MessageType.Warning);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (((CSCodeBindMono)target).CheckBindDataExitEmpty())
+                    {
+                        SirenixEditorGUI.MessageBox("BindData exist empty.", MessageType.Warning);
                     }
                 }
 
