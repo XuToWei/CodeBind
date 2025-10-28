@@ -30,9 +30,17 @@ namespace CodeBind
         [SerializeField]
         private string[] m_BindComponentNames;
 
-        public char SeparatorChar => m_SeparatorChar;
+        public char SeparatorChar
+        {
+            get => m_SeparatorChar;
+            set => m_SeparatorChar = value;
+        }
 
-        public UnityEditor.MonoScript BindScript => m_BindScript;
+        public UnityEditor.MonoScript BindScript
+        {
+            get => m_BindScript;
+            set => m_BindScript = value;
+        }
 
         public string[] BindComponentNames => m_BindComponentNames;
 

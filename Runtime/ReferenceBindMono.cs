@@ -24,7 +24,11 @@ namespace CodeBind
         [SerializeField]
         private char m_SeparatorChar;
 
-        public char SeparatorChar => m_SeparatorChar;
+        public char SeparatorChar
+        {
+            get => m_SeparatorChar;
+            set => m_SeparatorChar = value;
+        }
 
         public void SetAutoBindComponents(string[] names, UnityEngine.Object[] components)
         {
