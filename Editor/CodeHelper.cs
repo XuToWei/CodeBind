@@ -21,7 +21,6 @@ namespace CodeBind.Editor
                 indentation = "\t";
             }
             //类名
-            stringBuilder.AppendLine($@"{indentation}[Sirenix.OdinInspector.InfoBox(""BindData exist empty."", Sirenix.OdinInspector.InfoMessageType.Warning, VisibleIf = ""CheckBindDataExitEmpty"")]");
             stringBuilder.AppendLine($"{indentation}public partial class {className}");
             stringBuilder.AppendLine($"{indentation}{{");
             //组件字段
@@ -82,6 +81,12 @@ namespace CodeBind.Editor
             }
 #endif
             //CheckBindDataExitEmpty方法
+            stringBuilder.AppendLine("#if UNITY_EDITOR");
+            stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]");
+            stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.GUIColor(1,0.8f,0), Sirenix.OdinInspector.PropertyOrder(-99999)]");
+            stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]");
+            stringBuilder.AppendLine($"{indentation}\tprivate string BindDataExitEmptyWarning => \"BindData exit empty, please check.\";");
+            stringBuilder.AppendLine("");
             stringBuilder.AppendLine($"{indentation}\tprivate bool CheckBindDataExitEmpty()");
             stringBuilder.AppendLine($"{indentation}\t{{");
             foreach (CodeBindData bindData in bindDatas)
@@ -96,6 +101,7 @@ namespace CodeBind.Editor
             }
             stringBuilder.AppendLine($"{indentation}\t\treturn false;");
             stringBuilder.AppendLine($"{indentation}\t}}");
+            stringBuilder.AppendLine("#endif");
 
             stringBuilder.AppendLine($"{indentation}}}");
             if (needNameSpace)
