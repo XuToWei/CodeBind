@@ -83,7 +83,7 @@ namespace CodeBind.Editor
             //CheckBindDataExitEmpty方法
             stringBuilder.AppendLine("#if UNITY_EDITOR");
             stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]");
-            stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.GUIColor(1,0.8f,0), Sirenix.OdinInspector.PropertyOrder(-99999)]");
+            stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.GUIColor(1f, 0.8f, 0f), Sirenix.OdinInspector.PropertyOrder(-99999)]");
             stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]");
             stringBuilder.AppendLine($"{indentation}\tprivate string BindDataExitEmptyWarning => \"BindData exit empty, please check.\";");
             stringBuilder.AppendLine("");
