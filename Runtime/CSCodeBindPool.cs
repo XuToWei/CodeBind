@@ -12,7 +12,7 @@ namespace CodeBind
 
         private readonly Dictionary<Type, Queue<ICSCodeBind>> m_Pool = new Dictionary<Type, Queue<ICSCodeBind>>();
 
-        internal T Fetch<T>(CSCodeBindMono mono) where T : ICSCodeBind, new()
+        internal T Fetch<T>(CSCodeBindMono mono) where T : class, ICSCodeBind, new()
         {
             T obj;
             if (!m_Pool.TryGetValue(typeof(T), out var queue))

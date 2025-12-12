@@ -10,9 +10,14 @@ namespace CodeBind
         /// <param name="self"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T GetCSCodeBindObject<T>(this Transform self) where T : ICSCodeBind, new()
+        public static T GetCSCodeBindObject<T>(this Transform self) where T : class, ICSCodeBind, new()
         {
-            return self.GetComponent<CSCodeBindMono>().GetCSCodeBindObject<T>();
+            CSCodeBindMono codeBindMono = self.GetComponent<CSCodeBindMono>();
+            if (codeBindMono == null)
+            {
+                return null;
+            }
+            return codeBindMono.GetCSCodeBindObject<T>();
         }
 
         /// <summary>
@@ -21,9 +26,14 @@ namespace CodeBind
         /// <param name="self"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T GetCSCodeBindObject<T>(this GameObject self) where T : ICSCodeBind, new()
+        public static T GetCSCodeBindObject<T>(this GameObject self) where T : class, ICSCodeBind, new()
         {
-            return self.GetComponent<CSCodeBindMono>().GetCSCodeBindObject<T>();
+            CSCodeBindMono codeBindMono = self.GetComponent<CSCodeBindMono>();
+            if (codeBindMono == null)
+            {
+                return null;
+            }
+            return codeBindMono.GetCSCodeBindObject<T>();
         }
 
         /// <summary>

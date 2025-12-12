@@ -83,7 +83,7 @@ namespace CodeBind
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T GetCSCodeBindObject<T>() where T : ICSCodeBind, new()
+        public T GetCSCodeBindObject<T>() where T : class, ICSCodeBind, new()
         {
 #if UNITY_EDITOR
             Type bindType = m_BindScript.GetClass();

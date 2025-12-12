@@ -46,10 +46,14 @@ namespace CodeBind.Editor
 
             if(m_CSCodeBindMono == null)
             {
-                m_CSCodeBindMono = Selection.activeGameObject.GetComponent<CSCodeBindMono>();
-                if (m_CSCodeBindMono != null)
+                GameObject selectedObject = Selection.activeGameObject;
+                if (selectedObject != null)
                 {
-                    m_CodeName = m_CSCodeBindMono.name.Replace("_", "").Replace(".", "").Replace(" ", "");
+                    m_CSCodeBindMono = selectedObject.GetComponent<CSCodeBindMono>();
+                    if (m_CSCodeBindMono != null)
+                    {
+                        m_CodeName = m_CSCodeBindMono.name.Replace("_", "").Replace(".", "").Replace(" ", "");
+                    }
                 }
             }
             m_CodeNamespace = EditorGUILayout.TextField("Code Namespace", m_CodeNamespace);
