@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 namespace CodeBind.Editor
@@ -37,6 +38,11 @@ namespace CodeBind.Editor
                 MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
                 codeBinder.TryGenerateBindCode();
             }
+
+            if (ValueEntry.Values.Count > 0)
+            {
+                SessionState.SetBool("CodeBind.NeedTrySetSerialization", true);
+            }
         }
 
         private void TrySetSerialization()
@@ -52,6 +58,37 @@ namespace CodeBind.Editor
                 MonoScript script = MonoScript.FromMonoBehaviour(mono);
                 MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
                 codeBinder.TrySetSerialization();
+            }
+        }
+    }
+
+    internal static class MonoCodeBindReloadScripts
+    {
+        [DidReloadScripts]
+        private static void OnReloadScripts()
+        {
+            if (!SessionState.GetBool("CodeBind.NeedTrySetSerialization", false))
+            {
+                return;
+            }
+            SessionState.EraseBool("CodeBind.NeedTrySetSerialization");
+
+            foreach (GameObject go in Selection.gameObjects)
+            {
+                foreach (MonoBehaviour mono in go.GetComponents<MonoBehaviour>())
+                {
+                    foreach (var customAttribute in mono.GetType().GetCustomAttributes(typeof(MonoCodeBindAttribute), false))
+                    {
+                        MonoCodeBindAttribute attribute = customAttribute as MonoCodeBindAttribute;
+                        if (attribute == null)
+                        {
+                            continue;
+                        }
+                        MonoScript script = MonoScript.FromMonoBehaviour(mono);
+                        MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
+                        codeBinder.TrySetSerialization();
+                    }
+                }
             }
         }
     }

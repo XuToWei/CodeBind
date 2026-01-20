@@ -30,10 +30,6 @@ namespace CodeBind.Editor
             {
                 throw new Exception("Unity正在编译，无法进行绑定数据生成，请稍后再试。");
             }
-            if (EditorApplication.isUpdating)
-            {
-                throw new Exception("Unity正在更新，无法进行绑定数据生成，请稍后再试。");
-            }
             if (EditorUtility.scriptCompilationFailed)
             {
                 throw new Exception("Unity脚本编译失败，无法进行绑定数据生成，请修复脚本错误后再试。");
