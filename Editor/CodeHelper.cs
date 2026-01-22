@@ -85,7 +85,7 @@ namespace CodeBind.Editor
             stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]");
             stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.GUIColor(1f, 0.8f, 0f), Sirenix.OdinInspector.PropertyOrder(-99999)]");
             stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]");
-            stringBuilder.AppendLine($"{indentation}\tprivate string BindDataExitEmptyWarning => \"BindData exit empty, please check.\";");
+            stringBuilder.AppendLine($"{indentation}\tprivate string BindDataExitEmptyWarning => \"BindData contains empty reference, please check.\";");
             stringBuilder.AppendLine("");
             stringBuilder.AppendLine($"{indentation}\tprivate bool CheckBindDataExitEmpty()");
             stringBuilder.AppendLine($"{indentation}\t{{");

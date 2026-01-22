@@ -115,7 +115,7 @@ namespace CodeBind.Editor
 
                 if (((ReferenceBindMono)target).CheckBindDataExitEmpty())
                 {
-                    SirenixEditorGUI.MessageBox("BindData exist empty.", MessageType.Warning);
+                    SirenixEditorGUI.MessageBox("BindData contains empty reference.", MessageType.Warning);
                 }
 
                 SirenixEditorGUI.BeginBox();

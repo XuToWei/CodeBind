@@ -99,7 +99,7 @@ namespace CodeBind.Editor
                     {
                         if (((CSCodeBindMono)t).CheckBindDataExitEmpty())
                         {
-                            SirenixEditorGUI.MessageBox("BindData exist empty.", MessageType.Warning);
+                            SirenixEditorGUI.MessageBox("BindData contains empty reference.", MessageType.Warning);
                             break;
                         }
                     }
@@ -108,7 +108,7 @@ namespace CodeBind.Editor
                 {
                     if (((CSCodeBindMono)target).CheckBindDataExitEmpty())
                     {
-                        SirenixEditorGUI.MessageBox("BindData exist empty.", MessageType.Warning);
+                        SirenixEditorGUI.MessageBox("BindData contains empty reference.", MessageType.Warning);
                     }
                 }
 

@@ -12,14 +12,22 @@ namespace CodeBind.Editor
     /// </summary>
     internal abstract class BaseBinder
     {
+        /// <summary>
+        /// 匹配数组索引，如 (0), (1), (-1) 等
+        /// </summary>
+        private static readonly Regex s_ArrayIndexRegex = new Regex(@"\(-?\d*\)$", RegexOptions.Compiled);
+
+        /// <summary>
+        /// 匹配有效的变量名格式
+        /// </summary>
+        private static readonly Regex s_VariableNameRegex = new Regex(@"^([A-Za-z0-9\._-]+/)*[A-Za-z0-9\._-]+$", RegexOptions.Compiled);
+
         protected readonly char m_SeparatorChar;
         protected readonly Transform m_RootTransform;
         protected readonly List<CodeBindData> m_BindDatas;
         protected readonly List<CodeBindData> m_BindArrayDatas;
         protected readonly SortedDictionary<string, List<CodeBindData>> m_BindArrayDataDict;
 
-        private readonly Regex m_ArrayIndexRegex;
-        private readonly Regex m_VariableNameRegex;
         private readonly List<Component> m_ComponentCacheList;
 
         protected BaseBinder(Transform rootTransform, char separatorChar)
@@ -29,8 +37,6 @@ namespace CodeBind.Editor
             m_BindArrayDatas = new List<CodeBindData>();
             m_BindArrayDataDict = new SortedDictionary<string, List<CodeBindData>>();
             m_SeparatorChar = separatorChar;
-            m_ArrayIndexRegex = new Regex(@"\(-?\d*\)$");
-            m_VariableNameRegex = new Regex(@"^([A-Za-z0-9\._-]+/)*[A-Za-z0-9\._-]+$");
             m_ComponentCacheList = new List<Component>();
         }
 
@@ -100,7 +106,7 @@ namespace CodeBind.Editor
                 bindDatas = new List<CodeBindData>();
                 string[] strArray = child.name.Split(m_SeparatorChar);
                 string lastStr = strArray[^1];
-                MatchCollection matchCollection = m_ArrayIndexRegex.Matches(lastStr);
+                MatchCollection matchCollection = s_ArrayIndexRegex.Matches(lastStr);
                 if (matchCollection.Count > 0)
                 {
                     return false;
@@ -117,7 +123,7 @@ namespace CodeBind.Editor
                 bindDatas = new List<CodeBindData>();
                 string[] strArray = child.name.Split(m_SeparatorChar);
                 string lastStr = strArray[^1];
-                MatchCollection matchCollection = m_ArrayIndexRegex.Matches(lastStr);
+                MatchCollection matchCollection = s_ArrayIndexRegex.Matches(lastStr);
                 if (matchCollection.Count < 1)
                 {
                     return false;
@@ -229,13 +235,13 @@ namespace CodeBind.Editor
                 {
                     throw new Exception($"变量名为空：{child.name}");
                 }
-                if (!m_VariableNameRegex.IsMatch(strList[0]))
+                if (!s_VariableNameRegex.IsMatch(strList[0]))
                 {
                     throw new Exception($"{child.name}的变量名格式不对：{strList[0]}");
                 }
                 //(xxx)结尾的识别为数组，方便复制
                 string lastStr = strList[^1];
-                MatchCollection matchCollection = m_ArrayIndexRegex.Matches(lastStr);
+                MatchCollection matchCollection = s_ArrayIndexRegex.Matches(lastStr);
                 if (matchCollection.Count > 0)
                 {
                     if (arrayTransformDict.TryGetValue(strList[0], out List<Transform> transforms))

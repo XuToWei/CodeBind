@@ -48,15 +48,15 @@ namespace CodeBind
         {
             if (names == null && components != null)
             {
-                throw new Exception("Names cant be null!");
+                throw new ArgumentException("Names cannot be null when components are provided!");
             }
             if (names != null && components == null)
             {
-                throw new Exception("Components cant be null!");
+                throw new ArgumentException("Components cannot be null when names are provided!");
             }
             if (names != null && components != null && names.Length != components.Length)
             {
-                throw new Exception("Name count must be same with Component count!");
+                throw new ArgumentException("Name count must be same with component count!");
             }
             m_BindComponentNames = names;
             m_BindComponents = components;

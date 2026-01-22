@@ -2,7 +2,7 @@
   "name": "me.xw.codebind",
   "version": "1.0.6",
   "displayName": "CodeBind",
-  "description": "better CodeBind",
+  "description": "Unity component binding code generator based on naming rules. Automatically generate binding code with zero-intrusion design using partial classes.",
   "repository": {
       "type": "git",
       "url": "https://github.com/XuToWei/CodeBind.git"
@@ -13,6 +13,12 @@
   "dependencies": {
   },
   "keywords": [
+    "codebind",
+    "code-generation",
+    "ui-binding",
+    "component-binding",
+    "editor-tool",
+    "prefab"
   ],
   "author": {
     "name": "Xu Wei",
