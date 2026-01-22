@@ -1,6 +1,6 @@
 {
   "name": "me.xw.codebind",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "displayName": "CodeBind",
   "description": "Unity component binding code generator based on naming rules. Automatically generate binding code with zero-intrusion design using partial classes.",
   "repository": {
