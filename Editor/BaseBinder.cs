@@ -46,6 +46,13 @@ namespace CodeBind.Editor
             {
                 m_ComponentCacheList.Clear();
                 child.GetComponents(m_ComponentCacheList);
+                for (int i = m_ComponentCacheList.Count -1; i >= 0; i--)
+                {
+                    if (m_ComponentCacheList[i].hideFlags != HideFlags.None)
+                    {
+                        m_ComponentCacheList.RemoveAt(i);
+                    }
+                }
                 string bindName = strArray[0];
                 for (int i = 1; i < strArray.Length; i++)
                 {
@@ -282,6 +289,13 @@ namespace CodeBind.Editor
                 {
                     m_ComponentCacheList.Clear();
                     child.GetComponents(m_ComponentCacheList);
+                    for (int i = m_ComponentCacheList.Count -1; i >= 0; i--)
+                    {
+                        if (m_ComponentCacheList[i].hideFlags != HideFlags.None)
+                        {
+                            m_ComponentCacheList.RemoveAt(i);
+                        }
+                    }
                     //自动补齐名字残缺的
                     for (int i = 1; i < strList.Count; i++)
                     {
