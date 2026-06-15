@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using CodeBind.Editor;
 
-namespace CodeBind.Demo
+namespace CodeBind.Demo.Editor
 {
     /// <summary>
     /// ICodeBindNameTypeConfig 示例：批量注册 节点识别名 -> 绑定类型 的映射

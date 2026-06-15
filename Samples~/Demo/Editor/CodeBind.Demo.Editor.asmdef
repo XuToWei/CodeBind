@@ -1,9 +1,10 @@
 {
-    "name": "CodeBind.Demo",
+    "name": "CodeBind.Demo.Editor",
     "rootNamespace": "",
     "references": [
         "CodeBind",
-        "CodeBind.Editor"
+        "CodeBind.Editor",
+        "CodeBind.Demo"
     ],
     "includePlatforms": [
         "Editor"
@@ -13,9 +14,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [
-        "UNITY_EDITOR"
-    ],
+    "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
 }

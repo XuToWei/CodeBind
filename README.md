@@ -258,7 +258,7 @@ public class MyCustomComponent : MonoBehaviour
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CodeBind;
+using CodeBind.Editor;
 
 public sealed class ProjectBindTypeConfig : ICodeBindNameTypeConfig
 {
@@ -297,7 +297,7 @@ public sealed class ProjectBindTypeConfig : ICodeBindNameTypeConfig
 #### 示例一：自定义命名风格
 
 ```csharp
-using CodeBind;
+using CodeBind.Editor;
 
 // 字段改用 "_" 前缀，数组后缀改为 "List"
 public sealed class MyCodeStyle : ICodeBindCustomizer
@@ -324,7 +324,7 @@ public sealed class MyCodeStyle : ICodeBindCustomizer
 ```csharp
 using System.Collections.Generic;
 using System.Text;
-using CodeBind;
+using CodeBind.Editor;
 
 public sealed class MyExtraCode : ICodeBindCustomizer
 {

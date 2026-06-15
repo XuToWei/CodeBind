@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Text;
+using CodeBind.Editor;
 
-namespace CodeBind.Demo
+namespace CodeBind.Demo.Editor
 {
     /// <summary>
     /// ICodeBindCustomizer 示例：自定义命名风格 + 追加额外代码

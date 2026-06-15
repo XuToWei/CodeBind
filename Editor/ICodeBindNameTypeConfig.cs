@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CodeBind
+namespace CodeBind.Editor
 {
     /// <summary>
     /// 绑定类型名称配置接口，提供 节点识别名 -> 绑定类型 的映射

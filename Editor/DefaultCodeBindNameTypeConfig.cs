@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CodeBind
+namespace CodeBind.Editor
 {
     /// <summary>
     /// 缺省绑定类型名称配置，优先级最低，会被更高优先级的 ICodeBindNameTypeConfig 实现覆盖

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CodeBind
+namespace CodeBind.Editor
 {
     /// <summary>
     /// 生成代码时的单个绑定成员信息
