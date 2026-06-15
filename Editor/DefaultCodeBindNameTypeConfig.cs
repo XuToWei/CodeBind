@@ -4,11 +4,15 @@ using System.Collections.Generic;
 namespace CodeBind
 {
     /// <summary>
-    /// 缺省绑定类型名称配置，会被CodeBindNameTypeAttribute的配置覆盖
+    /// 缺省绑定类型名称配置，优先级最低，会被更高优先级的 ICodeBindNameTypeConfig 实现覆盖
     /// </summary>
-    internal static class DefaultCodeBindNameTypeConfig
+    internal sealed class DefaultCodeBindNameTypeConfig : ICodeBindNameTypeConfig
     {
-        internal static readonly Dictionary<string, Type> BindNameTypeDict = new Dictionary<string, Type>()
+        public int Priority => 0;
+
+        public IReadOnlyDictionary<string, Type> BindNameTypeDict => s_BindNameTypeDict;
+
+        private static readonly Dictionary<string, Type> s_BindNameTypeDict = new Dictionary<string, Type>()
         {
             { "Animation", typeof (UnityEngine.Animation) },
             { "Animator", typeof (UnityEngine.Animator) },
@@ -34,9 +38,6 @@ namespace CodeBind
             { "Toggle", typeof (UnityEngine.UI.Toggle) },
             { "ToggleGroup", typeof (UnityEngine.UI.ToggleGroup) },
             { "VerticalLayoutGroup", typeof (UnityEngine.UI.VerticalLayoutGroup) },
-#if STATE_CONTROLLER_CODE_BIND
-            { "StateControllerMono", typeof(StateController.StateControllerMono)},
-#endif
         };
     }
 }

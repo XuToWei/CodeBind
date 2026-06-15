@@ -14,78 +14,67 @@ namespace CodeBind.Editor
         {
             if (BindNameTypeDict.Count > 0)
                 return;
-            var fieldInfos = TypeCache.GetFieldsWithAttribute<CodeBindNameTypeAttribute>();
-            Type fieldType = typeof(Dictionary<string, Type>);
-            foreach (var fieldInfo in fieldInfos)
-            {
-                if (!fieldInfo.IsStatic)
-                {
-                    Debug.LogError($"Get BindNameType Fail! {fieldInfo.Name} is not static!");
-                    continue;
-                }
-                if (fieldInfo.FieldType != fieldType)
-                {
-                    Debug.LogError($"Get BindNameType Fail! {fieldInfo.Name} is not {fieldType}!");
-                    continue;
-                }
-                object value = fieldInfo.GetValue(null);
-                if (value == null)
-                {
-                    Debug.LogError($"Get BindNameType Fail! {fieldInfo.Name} is null!");
-                    continue;
-                }
-                Dictionary<string, Type> bindNameTypeDict = (Dictionary<string, Type>)value;
-                foreach (var kv in bindNameTypeDict)
-                {
-                    if (kv.Value == null || !kv.Value.IsSubclassOf(typeof(Component)) && kv.Value != typeof(GameObject))
-                    {
-                        Debug.LogError($"Add BindNameType Fail! Type:{kv.Value} error! Only can bind sub class of 'Component'!");
-                        continue;
-                    }
-                    if (BindNameTypeDict.TryGetValue(kv.Key, out Type type))
-                    {
-                        Debug.LogError($"Add BindNameType Fail! Type name:{kv.Key}({type}) exist!");
-                        continue;
-                    }
-                    if (BindTypeNameDict.TryGetValue(kv.Value, out string name))
-                    {
-                        Debug.LogError($"Add BindNameType Fail! Type name:{name}({kv.Value}) exist!");
-                        continue;
-                    }
-                    BindNameTypeDict.Add(kv.Key, kv.Value);
-                    BindTypeNameDict.Add(kv.Value, kv.Key);
-                }
-            }
-
             var types = TypeCache.GetTypesWithAttribute<CodeBindNameAttribute>();
             foreach (var type in types)
             {
                 if (!type.IsSubclassOf(typeof(Component)))
                 {
-                    Debug.LogError($"Add BindNameType Fail! Type:{type} error! Only can bind sub class of 'Component'!");
+                    Debug.LogError($"[CodeBind] Add BindNameType Fail! Type:{type} error! Only can bind sub class of 'Component'!");
                     continue;
                 }
                 CodeBindNameAttribute attribute = (CodeBindNameAttribute)type.GetCustomAttributes(typeof(CodeBindNameAttribute), false)[0];
                 if (BindNameTypeDict.TryGetValue(attribute.BindName, out Type bindType))
                 {
-                    Debug.LogError($"Add BindNameType Fail! Type name:{attribute.BindName}({bindType}) exist!");
+                    Debug.LogError($"[CodeBind] Add BindNameType Fail! Type name:{attribute.BindName}({bindType}) exist!");
                     continue;
                 }
                 if (BindTypeNameDict.TryGetValue(type, out string bindName))
                 {
-                    Debug.LogError($"Add BindNameType Fail! Type name:{bindName}({type}) exist!");
+                    Debug.LogError($"[CodeBind] Add BindNameType Fail! Type name:{bindName}({type}) exist!");
                     continue;
                 }
                 BindNameTypeDict.Add(attribute.BindName, type);
                 BindTypeNameDict.Add(type, attribute.BindName);
             }
 
-            foreach (var pair in DefaultCodeBindNameTypeConfig.BindNameTypeDict)
+            //缺省配置 DefaultCodeBindNameTypeConfig 也会被收集，其优先级为 0
+            List<ICodeBindNameTypeConfig> configs = new List<ICodeBindNameTypeConfig>();
+            foreach (var type in TypeCache.GetTypesDerivedFrom<ICodeBindNameTypeConfig>())
             {
-                if (!BindNameTypeDict.ContainsKey(pair.Key) && !BindTypeNameDict.ContainsKey(pair.Value))
+                if (type.IsAbstract || type.IsInterface)
                 {
-                    BindNameTypeDict.Add(pair.Key, pair.Value);
-                    BindTypeNameDict.Add(pair.Value, pair.Key);
+                    continue;
+                }
+                configs.Add((ICodeBindNameTypeConfig)Activator.CreateInstance(type));
+            }
+            //优先级高的先处理，已存在则跳过，从而高优先级覆盖低优先级
+            configs.Sort((a, b) =>
+            {
+                int compare = b.Priority.CompareTo(a.Priority);
+                if (compare != 0)
+                {
+                    return compare;
+                }
+                return string.CompareOrdinal(a.GetType().FullName, b.GetType().FullName);
+            });
+            foreach (var config in configs)
+            {
+                if (config.BindNameTypeDict == null)
+                {
+                    continue;
+                }
+                foreach (var pair in config.BindNameTypeDict)
+                {
+                    if (pair.Value == null || !pair.Value.IsSubclassOf(typeof(Component)) && pair.Value != typeof(GameObject))
+                    {
+                        Debug.LogError($"[CodeBind] Add BindNameType Fail! Type:{pair.Value} error! Only can bind sub class of 'Component'!");
+                        continue;
+                    }
+                    if (!BindNameTypeDict.ContainsKey(pair.Key) && !BindTypeNameDict.ContainsKey(pair.Value))
+                    {
+                        BindNameTypeDict.Add(pair.Key, pair.Value);
+                        BindTypeNameDict.Add(pair.Value, pair.Key);
+                    }
                 }
             }
         }

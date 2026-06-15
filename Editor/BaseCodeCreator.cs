@@ -26,7 +26,7 @@ namespace CodeBind.Editor
         {
             if (File.Exists(m_ScriptFullPath))
             {
-                Debug.Log("文件已存在，不能重复生成。");
+                Debug.Log("[CodeBind] File already exists, skip generation.");
                 return;
             }
             if (File.Exists(m_BindScriptFullPath))
@@ -50,7 +50,7 @@ namespace CodeBind.Editor
             bindSw.Close();
             AssetDatabase.ImportAsset(m_BindScriptFullPath);
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-            Debug.Log($"代码生成成功,生成路径: {m_ScriptFullPath}");
+            Debug.Log($"[CodeBind] Code generated successfully, path: {m_ScriptFullPath}");
         }
 
         protected abstract string GetBindCode();

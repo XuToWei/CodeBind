@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0] - 2026-6-15
+- 添加ICodeBindCustomizer接口，支持自定义命名风格和额外代码生成，带优先级，高优先级覆盖低优先级
+- DefaultCodeBindNameTypeConfig改为ICodeBindNameTypeConfig接口实现，支持多实现按优先级合并覆盖
+- 移除CodeBindNameTypeAttribute，由ICodeBindNameTypeConfig替代
+- 移除内置STATE_CONTROLLER_CODE_BIND支持，可通过ICodeBindCustomizer自行实现
+- 统一日志为英文并添加[CodeBind]前缀
+
 ## [1.0.7] - 2025-1-22
 - 添加Mono类型自动绑定引用
 

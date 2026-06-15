@@ -24,6 +24,7 @@ CodeBind 是一款为 Unity 开发者设计的高效代码生成工具，通过�
 - **自定义分隔符**：根据团队命名习惯自由设置分隔字符
 - **命名空间支持**：自动生成指定命名空间的代码
 - **路径记忆**：自动记住上次使用的代码生成路径
+- **自定义命名风格与额外代码**：通过实现 `ICodeBindCustomizer` 接口自定义字段/属性命名风格，并向生成代码追加额外内容
 
 ### 🏗️ 两种工作模式
 - **MonoBehaviour 模式**：直接在 MonoBehaviour 类上使用，最便捷的使用方式
@@ -207,7 +208,7 @@ testCS.Initialize();
 | RectTransform | Rect, RectTr |
 | GameObject | Go, Obj |
 
-你也可以通过 `CodeBindNameAttribute` 和 `CodeBindNameTypeAttribute` 自定义命名规则。
+你也可以通过 `CodeBindNameAttribute` 和 `ICodeBindNameTypeConfig` 自定义命名规则。
 
 ### 示例
 
@@ -238,27 +239,6 @@ testCS.Initialize();
 
 ### 自定义命名类型
 
-通过 `CodeBindNameTypeAttribute` 扩展不可变的类型识别（应用于 static Dictionary 字段）：
-
-```csharp
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using CodeBind;
-
-public static class CustomBindTypeConfig
-{
-    [CodeBindNameType]
-    public static Dictionary<string, Type> CustomBindTypes = new Dictionary<string, Type>
-    {
-        { "MyCustomComponent", typeof(MyCustomComponent) },
-        { "MCC", typeof(MyCustomComponent) },
-        { "PlayerController", typeof(PlayerController) },
-        { "PC", typeof(PlayerController) }
-    };
-}
-```
-
 通过 `CodeBindNameAttribute` 处理业务代码中的自定义类型（应用于 Component 类）：
 
 ```csharp
@@ -269,6 +249,127 @@ using CodeBind;
 public class MyCustomComponent : MonoBehaviour 
 { 
     // 你的自定义组件代码
+}
+```
+
+通过实现 `ICodeBindNameTypeConfig` 接口可以**批量提供类型映射并带优先级**，适合维护团队/项目级别的类型识别表。可以有多个实现，识别名或类型冲突时**优先级高的覆盖优先级低的**；内置的缺省配置优先级为 `0`，自定义实现的 `Priority` 需要大于 `0` 才能覆盖。
+
+```csharp
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using CodeBind;
+
+public sealed class ProjectBindTypeConfig : ICodeBindNameTypeConfig
+{
+    public int Priority => 100; // 大于缺省配置的 0
+
+    public IReadOnlyDictionary<string, Type> BindNameTypeDict { get; } = new Dictionary<string, Type>
+    {
+        { "MyCustomComponent", typeof(MyCustomComponent) },
+        { "MCC", typeof(MyCustomComponent) },
+        // 也可以覆盖缺省映射，例如把 "Text" 改绑到 TextMeshPro
+        // { "Text", typeof(TMPro.TextMeshProUGUI) },
+    };
+}
+```
+
+> **两种方式的优先级**：`CodeBindNameAttribute` 特性 > `ICodeBindNameTypeConfig` 实现（按 `Priority` 由高到低）> 内置缺省配置。
+
+### 自定义代码生成（ICodeBindCustomizer）
+
+通过实现 `ICodeBindCustomizer` 接口，可以**自定义生成代码的命名风格**，并向生成的代码中**追加额外代码**。无需实现即使用默认行为（字段前缀 `m_`、数组后缀 `Array`、属性名为 `变量名 + 类型名`、无额外代码）。
+
+> **零侵入**：直接新建一个类实现接口即可被自动发现，无需注册。Mono 模式和纯 C# 模式共用同一份实现。
+
+#### 接口成员
+
+| 成员 | 说明 | 默认值 |
+|------|------|--------|
+| `int Priority` | 优先级，数值越大越优先，最高优先级的实现会被使用 | 默认实现为 `0` |
+| `string FieldPrefix` | 私有序列化字段前缀 | `"m_"` |
+| `string ArraySuffix` | 数组字段和属性的后缀 | `"Array"` |
+| `string GetPropertyName(string bindName, string bindPrefix)` | 公共属性命名 | `bindName + bindPrefix` |
+| `string GenerateExtraCode(...)` | 返回追加到 `partial` 类体内的额外代码，无内容返回空字符串 | 返回 `string.Empty` |
+
+> **优先级规则**：所有实现（含默认实现）一起参与比较，取 `Priority` 最高者；若最高优先级有多个实现，会报错并取其一。因此自定义实现的 `Priority` 需要大于 `0` 才能覆盖默认。
+
+#### 示例一：自定义命名风格
+
+```csharp
+using CodeBind;
+
+// 字段改用 "_" 前缀，数组后缀改为 "List"
+public sealed class MyCodeStyle : ICodeBindCustomizer
+{
+    public int Priority => 100; // 大于默认的 0
+
+    public string FieldPrefix => "_";
+    public string ArraySuffix => "List";
+    public string GetPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}";
+
+    public string GenerateExtraCode(string nameSpace, string className,
+        System.Collections.Generic.IReadOnlyList<CodeBindMemberInfo> members,
+        System.Collections.Generic.IReadOnlyList<CodeBindArrayMemberInfo> arrayMembers,
+        string indentation) => string.Empty;
+}
+```
+
+效果：`Self_Transform` 生成字段 `_SelfTransform`、属性 `SelfTransform`；数组生成 `ItemTransformList`。
+
+#### 示例二：追加额外代码
+
+`GenerateExtraCode` 提供绑定成员信息，返回的字符串会原样追加进生成类体内（单个成员与数组成员分开提供）：
+
+```csharp
+using System.Collections.Generic;
+using System.Text;
+using CodeBind;
+
+public sealed class MyExtraCode : ICodeBindCustomizer
+{
+    public int Priority => 100;
+
+    // 命名沿用默认行为
+    public string FieldPrefix => "m_";
+    public string ArraySuffix => "Array";
+    public string GetPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}";
+
+    public string GenerateExtraCode(string nameSpace, string className,
+        IReadOnlyList<CodeBindMemberInfo> members,
+        IReadOnlyList<CodeBindArrayMemberInfo> arrayMembers,
+        string indentation)
+    {
+        StringBuilder sb = new StringBuilder();
+        // 为每个绑定成员生成一行注释
+        foreach (CodeBindMemberInfo member in members)
+        {
+            sb.AppendLine($"{indentation}// bind member: {member.Name} ({member.Type.Name})");
+        }
+        return sb.ToString();
+    }
+}
+```
+
+#### 绑定成员信息
+
+`GenerateExtraCode` 的成员信息分为单个和数组两类：
+
+```csharp
+// 单个绑定成员
+public readonly struct CodeBindMemberInfo
+{
+    public string Name { get; }                  // 公共属性名，如 SelfTransform
+    public System.Type Type { get; }             // 绑定类型
+    public UnityEngine.Transform Transform { get; } // 绑定的节点
+}
+
+// 数组绑定成员
+public readonly struct CodeBindArrayMemberInfo
+{
+    public string Name { get; }                  // 公共属性名，如 ItemTransformArray
+    public System.Type Type { get; }             // 数组元素类型
+    public IReadOnlyList<UnityEngine.Transform> Transforms { get; } // 各元素绑定的节点
 }
 ```
 

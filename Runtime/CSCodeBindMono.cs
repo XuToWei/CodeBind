@@ -90,7 +90,7 @@ namespace CodeBind
             Type getType = typeof(T);
             if (bindType != getType)
             {
-                Debug.LogWarning($"{gameObject.name} bind type is {bindType}, but get is {getType}.");
+                Debug.LogWarning($"[CodeBind] {gameObject.name} bind type is {bindType}, but get is {getType}.");
             }
 #endif
             if (m_CSCodeBindObject == null)
@@ -101,7 +101,7 @@ namespace CodeBind
             {
                 if (m_CSCodeBindObject is not T)
                 {
-                    Debug.LogWarning($"Get different object(type:{typeof(T)}, the old object(type:{m_CSCodeBindObject.GetType()} will recycle!)");
+                    Debug.LogWarning($"[CodeBind] Get different object(type:{typeof(T)}, the old object(type:{m_CSCodeBindObject.GetType()} will recycle!)");
                     s_Pool.Recycle(m_CSCodeBindObject);
                     m_CSCodeBindObject = s_Pool.Fetch<T>(this);
                 }

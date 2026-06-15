@@ -48,7 +48,7 @@ namespace CodeBind.Editor
             string codeStr = GetGeneratedCode().Replace("\t", "    ");
             if (File.Exists(m_BindScriptFullPath) && string.Equals(codeStr, File.ReadAllText(m_BindScriptFullPath)))
             {
-                Debug.Log("文件内容相同，不需要重新生成。");
+                Debug.Log("[CodeBind] File content is identical, skip regeneration.");
                 return;
             }
             using StreamWriter sw = new StreamWriter(m_BindScriptFullPath);
@@ -56,7 +56,7 @@ namespace CodeBind.Editor
             sw.Close();
             AssetDatabase.ImportAsset(m_BindScriptFullPath);
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-            Debug.Log($"代码生成成功,生成路径: {m_BindScriptFullPath}");
+            Debug.Log($"[CodeBind] Code generated successfully, path: {m_BindScriptFullPath}");
         }
 
         protected abstract string GetGeneratedCode();

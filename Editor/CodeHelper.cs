@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -27,59 +26,29 @@ namespace CodeBind.Editor
             foreach (CodeBindData bindData in bindDatas)
             {
                 stringBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup(\"BindData\"), Sirenix.OdinInspector.ReadOnly]");
-                stringBuilder.AppendLine($"{indentation}\tprivate {bindData.BindType.FullName} m_{bindData.BindName}{bindData.BindPrefix};");
+                stringBuilder.AppendLine($"{indentation}\tprivate {bindData.BindType.FullName} {CodeBindCustomizerCollection.GetFieldName(bindData.BindName, bindData.BindPrefix)};");
             }
             stringBuilder.AppendLine("");
             foreach (KeyValuePair<string, List<CodeBindData>> kv in bindArrayDataDict)
             {
+                CodeBindData bindData = kv.Value[0];
                 stringBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup(\"BindData\"), Sirenix.OdinInspector.ReadOnly]");
-                stringBuilder.AppendLine($"{indentation}\tprivate {kv.Value[0].BindType.FullName}[] m_{kv.Key}Array;");
+                stringBuilder.AppendLine($"{indentation}\tprivate {bindData.BindType.FullName}[] {CodeBindCustomizerCollection.GetArrayFieldName(bindData.BindName, bindData.BindPrefix)};");
             }
             stringBuilder.AppendLine("");
             foreach (CodeBindData bindData in bindDatas)
             {
-                stringBuilder.AppendLine($"{indentation}\tpublic {bindData.BindType.FullName} {bindData.BindName}{bindData.BindPrefix} => m_{bindData.BindName}{bindData.BindPrefix};");
+                stringBuilder.AppendLine($"{indentation}\tpublic {bindData.BindType.FullName} {CodeBindCustomizerCollection.GetPropertyName(bindData.BindName, bindData.BindPrefix)} => {CodeBindCustomizerCollection.GetFieldName(bindData.BindName, bindData.BindPrefix)};");
             }
             stringBuilder.AppendLine("");
             foreach (KeyValuePair<string, List<CodeBindData>> kv in bindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}\tpublic {kv.Value[0].BindType.FullName}[] {kv.Key}Array => m_{kv.Key}Array;");
+                CodeBindData bindData = kv.Value[0];
+                stringBuilder.AppendLine($"{indentation}\tpublic {bindData.BindType.FullName}[] {CodeBindCustomizerCollection.GetArrayPropertyName(bindData.BindName, bindData.BindPrefix)} => {CodeBindCustomizerCollection.GetArrayFieldName(bindData.BindName, bindData.BindPrefix)};");
             }
             stringBuilder.AppendLine("");
-#if STATE_CONTROLLER_CODE_BIND
-            //StateController
-            Type stateControllerMonoType = typeof(StateController.StateControllerMono);
-            if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(stateControllerMonoType, out string prefix))
-            {
-                foreach (CodeBindData bindData in bindDatas)
-                {
-                    if (bindData.BindType == stateControllerMonoType)
-                    {
-                        var controller = bindData.BindTransform.GetComponent<StateController.StateControllerMono>();
-                        foreach (var data in controller.EditorControllerDatas)
-                        {
-                            stringBuilder.AppendLine($"{indentation}\tprivate StateController.StateControllerData m_{bindData.BindName}{data.Name}StateControllerData;");
-                            stringBuilder.AppendLine($"{indentation}\tpublic StateController.StateControllerData {bindData.BindName}{data.Name}StateControllerData => m_{bindData.BindName}{data.Name}StateControllerData ??= {bindData.BindName}{bindData.BindPrefix}.GetData(\"{data.Name}\");");
-                            stringBuilder.AppendLine($"{indentation}\tpublic static class {bindData.BindName}{data.Name}StateName");
-                            stringBuilder.AppendLine($"{indentation}\t{{");
-                            foreach (var stateName in data.StateNames)
-                            {
-                                stringBuilder.AppendLine($"{indentation}\t\tpublic const string {stateName} = \"{stateName}\";");
-                            }
-                            stringBuilder.AppendLine($"{indentation}\t}}");
-                            stringBuilder.AppendLine($"{indentation}\tpublic static class {bindData.BindName}{data.Name}StateIndex");
-                            stringBuilder.AppendLine($"{indentation}\t{{");
-                            for (int index = 0; index < data.StateNames.Count; index++)
-                            {
-                                stringBuilder.AppendLine($"{indentation}\t\tpublic const int {data.StateNames[index]} = {index};");
-                            }
-                            stringBuilder.AppendLine($"{indentation}\t}}");
-                        }
-                        stringBuilder.AppendLine("");
-                    }
-                }
-            }
-#endif
+            //额外生成代码
+            stringBuilder.Append(CodeBindCustomizerCollection.GenerateExtraCode(nameSpace, className, bindDatas, bindArrayDataDict, $"{indentation}\t"));
             //CheckBindDataExitEmpty方法
             stringBuilder.AppendLine("#if UNITY_EDITOR");
             stringBuilder.AppendLine($"{indentation}\t[Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]");
@@ -91,13 +60,15 @@ namespace CodeBind.Editor
             stringBuilder.AppendLine($"{indentation}\t{{");
             foreach (CodeBindData bindData in bindDatas)
             {
-                stringBuilder.AppendLine($"{indentation}\t\tif (this.m_{bindData.BindName}{bindData.BindPrefix} == null) return true;");
+                stringBuilder.AppendLine($"{indentation}\t\tif (this.{CodeBindCustomizerCollection.GetFieldName(bindData.BindName, bindData.BindPrefix)} == null) return true;");
             }
             foreach (KeyValuePair<string, List<CodeBindData>> kv in bindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}\t\tif (this.m_{kv.Key}Array == null || this.m_{kv.Key}Array.Length == 0) return true;");
-                stringBuilder.AppendLine($"{indentation}\t\tfor (int i = 0; i < this.m_{kv.Key}Array.Length; i++)");
-                stringBuilder.AppendLine($"{indentation}\t\t\tif (this.m_{kv.Key}Array[i] == null) return true;");
+                CodeBindData bindData = kv.Value[0];
+                string arrayFieldName = CodeBindCustomizerCollection.GetArrayFieldName(bindData.BindName, bindData.BindPrefix);
+                stringBuilder.AppendLine($"{indentation}\t\tif (this.{arrayFieldName} == null || this.{arrayFieldName}.Length == 0) return true;");
+                stringBuilder.AppendLine($"{indentation}\t\tfor (int i = 0; i < this.{arrayFieldName}.Length; i++)");
+                stringBuilder.AppendLine($"{indentation}\t\t\tif (this.{arrayFieldName}[i] == null) return true;");
             }
             stringBuilder.AppendLine($"{indentation}\t\treturn false;");
             stringBuilder.AppendLine($"{indentation}\t}}");
@@ -134,48 +105,15 @@ namespace CodeBind.Editor
             stringBuilder.AppendLine("");
             foreach (CodeBindData bindData in bindDatas)
             {
-                stringBuilder.AppendLine($"{indentation}\tpublic {bindData.BindType.FullName} {bindData.BindName}{bindData.BindPrefix} {{ get; private set; }}");
+                stringBuilder.AppendLine($"{indentation}\tpublic {bindData.BindType.FullName} {CodeBindCustomizerCollection.GetPropertyName(bindData.BindName, bindData.BindPrefix)} {{ get; private set; }}");
             }
             stringBuilder.AppendLine("");
             foreach (KeyValuePair<string, List<CodeBindData>> kv in bindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}\tpublic {kv.Value[0].BindType.FullName}[] {kv.Key}Array {{ get; private set; }}");
+                CodeBindData bindData = kv.Value[0];
+                stringBuilder.AppendLine($"{indentation}\tpublic {bindData.BindType.FullName}[] {CodeBindCustomizerCollection.GetArrayPropertyName(bindData.BindName, bindData.BindPrefix)} {{ get; private set; }}");
             }
             stringBuilder.AppendLine("");
-#if STATE_CONTROLLER_CODE_BIND
-            //StateController
-            Type stateControllerMonoType = typeof(StateController.StateControllerMono);
-            if (CodeBindNameTypeCollection.BindTypeNameDict.TryGetValue(stateControllerMonoType, out string prefix))
-            {
-                foreach (CodeBindData bindData in bindDatas)
-                {
-                    if (bindData.BindType == stateControllerMonoType)
-                    {
-                        var controller = bindData.BindTransform.GetComponent<StateController.StateControllerMono>();
-                        foreach (var data in controller.EditorControllerDatas)
-                        {
-                            stringBuilder.AppendLine($"{indentation}\tprivate StateController.StateControllerData m_{bindData.BindName}{data.Name}StateControllerData;");
-                            stringBuilder.AppendLine($"{indentation}\tpublic StateController.StateControllerData {bindData.BindName}{data.Name}StateControllerData => m_{bindData.BindName}{data.Name}StateControllerData ??= {bindData.BindName}{bindData.BindPrefix}.GetData(\"{data.Name}\");");
-                            stringBuilder.AppendLine($"{indentation}\tpublic static class {bindData.BindName}{data.Name}StateName");
-                            stringBuilder.AppendLine($"{indentation}\t{{");
-                            foreach (var stateName in data.StateNames)
-                            {
-                                stringBuilder.AppendLine($"{indentation}\t\tpublic const string {stateName} = \"{stateName}\";");
-                            }
-                            stringBuilder.AppendLine($"{indentation}\t}}");
-                            stringBuilder.AppendLine($"{indentation}\tpublic static class {bindData.BindName}{data.Name}StateIndex");
-                            stringBuilder.AppendLine($"{indentation}\t{{");
-                            for (int index = 0; index < data.StateNames.Count; index++)
-                            {
-                                stringBuilder.AppendLine($"{indentation}\t\tpublic const int {data.StateNames[index]} = {index};");
-                            }
-                            stringBuilder.AppendLine($"{indentation}\t}}");
-                        }
-                        stringBuilder.AppendLine("");
-                    }
-                }
-            }
-#endif
             //InitBind方法
             stringBuilder.AppendLine($"{indentation}\tpublic void InitBind(CodeBind.CSCodeBindMono mono)");
             stringBuilder.AppendLine($"{indentation}\t{{");
@@ -184,11 +122,12 @@ namespace CodeBind.Editor
             for (int i = 0; i < bindDatas.Count; i++)
             {
                 CodeBindData bindData = bindDatas[i];
-                stringBuilder.AppendLine($"{indentation}\t\t{bindData.BindName}{bindData.BindPrefix} = Mono.BindComponents[{i}] as {bindData.BindType.FullName};");
+                stringBuilder.AppendLine($"{indentation}\t\t{CodeBindCustomizerCollection.GetPropertyName(bindData.BindName, bindData.BindPrefix)} = Mono.BindComponents[{i}] as {bindData.BindType.FullName};");
             }
             foreach (KeyValuePair<string, List<CodeBindData>> kv in bindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}\t\t{kv.Key}Array = new {kv.Value[0].BindType.FullName}[{kv.Value.Count}]");
+                CodeBindData firstBindData = kv.Value[0];
+                stringBuilder.AppendLine($"{indentation}\t\t{CodeBindCustomizerCollection.GetArrayPropertyName(firstBindData.BindName, firstBindData.BindPrefix)} = new {firstBindData.BindType.FullName}[{kv.Value.Count}]");
                 stringBuilder.AppendLine($"{indentation}\t\t{{");
                 for (int i = 0; i < kv.Value.Count; i++)
                 {
@@ -207,14 +146,16 @@ namespace CodeBind.Editor
             for (int i = 0; i < bindDatas.Count; i++)
             {
                 CodeBindData bindData = bindDatas[i];
-                stringBuilder.AppendLine($"{indentation}\t\t{bindData.BindName}{bindData.BindPrefix} = null;");
+                stringBuilder.AppendLine($"{indentation}\t\t{CodeBindCustomizerCollection.GetPropertyName(bindData.BindName, bindData.BindPrefix)} = null;");
             }
             foreach (KeyValuePair<string, List<CodeBindData>> kv in bindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}\t\t{kv.Key}Array = null;");
+                CodeBindData bindData = kv.Value[0];
+                stringBuilder.AppendLine($"{indentation}\t\t{CodeBindCustomizerCollection.GetArrayPropertyName(bindData.BindName, bindData.BindPrefix)} = null;");
             }
             stringBuilder.AppendLine($"{indentation}\t}}");
-            
+            //额外生成代码
+            stringBuilder.Append(CodeBindCustomizerCollection.GenerateExtraCode(nameSpace, className, bindDatas, bindArrayDataDict, $"{indentation}\t"));
             stringBuilder.AppendLine($"{indentation}}}");
             if (needNameSpace)
             {

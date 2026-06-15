@@ -3,9 +3,11 @@
     "rootNamespace": "",
     "references": [
         "CodeBind",
-        "StateController"
+        "CodeBind.Editor"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

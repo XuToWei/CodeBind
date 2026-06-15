@@ -37,7 +37,7 @@ namespace CodeBind.Editor
             Type monoType = m_MonoObj.GetType();
             foreach (CodeBindData bindData in m_BindDatas)
             {
-                FieldInfo fieldInfo = monoType.GetField($"m_{bindData.BindName}{bindData.BindPrefix}", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo fieldInfo = monoType.GetField(CodeBindCustomizerCollection.GetFieldName(bindData.BindName, bindData.BindPrefix), BindingFlags.NonPublic | BindingFlags.Instance);
                 if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
                 {
                     throw new Exception($"Bind '{bindData.BindTransform} - {bindData.BindType}' fail!");
@@ -56,7 +56,8 @@ namespace CodeBind.Editor
                     }
                     components.Add(target);
                 }
-                FieldInfo fieldInfo = monoType.GetField($"m_{kv.Key}Array", BindingFlags.NonPublic | BindingFlags.Instance);
+                CodeBindData firstBindData = kv.Value[0];
+                FieldInfo fieldInfo = monoType.GetField(CodeBindCustomizerCollection.GetArrayFieldName(firstBindData.BindName, firstBindData.BindPrefix), BindingFlags.NonPublic | BindingFlags.Instance);
                 Type type = fieldInfo.FieldType.GetElementType();
                 Array filledArray = Array.CreateInstance(type, kv.Value.Count);
                 Array.Copy(components.ToArray(), filledArray, kv.Value.Count);

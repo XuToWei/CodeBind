@@ -29,7 +29,7 @@ namespace CodeBind.Editor
             List<UnityEngine.Object> bindComponents = new List<UnityEngine.Object>();
             foreach (CodeBindData bindData in m_BindDatas)
             {
-                bindNames.Add(bindData.BindName + bindData.BindPrefix);
+                bindNames.Add(CodeBindCustomizerCollection.GetPropertyName(bindData.BindName, bindData.BindPrefix));
                 if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
                 {
                     throw new Exception($"Bind '{bindData.BindTransform} - {bindData.BindType}' fail!");
@@ -38,7 +38,7 @@ namespace CodeBind.Editor
             }
             foreach (CodeBindData bindData in m_BindArrayDatas)
             {
-                bindNames.Add($"{bindData.BindName}{bindData.BindPrefix}Array");
+                bindNames.Add(CodeBindCustomizerCollection.GetArrayPropertyName(bindData.BindName, bindData.BindPrefix));
                 if(!TryGetBindTarget(bindData.BindTransform, bindData.BindType, out var target))
                 {
                     throw new Exception($"Bind '{bindData.BindTransform} - {bindData.BindType}' fail!");

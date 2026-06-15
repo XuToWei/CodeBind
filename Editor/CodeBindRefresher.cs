@@ -11,7 +11,7 @@ namespace CodeBind.Editor
         {
             if (Selection.gameObjects.Length < 1)
             {
-                Debug.LogError("Please select at least one GameObject to refresh bind code.");
+                Debug.LogError("[CodeBind] Please select at least one GameObject to refresh bind code.");
                 return;
             }
             foreach (GameObject go in Selection.gameObjects)
@@ -30,7 +30,7 @@ namespace CodeBind.Editor
                         MonoScript script = MonoScript.FromMonoBehaviour(mono);
                         MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
                         codeBinder.TryGenerateBindCode();
-                        Debug.Log($"Refresh '{mono.name}({mono})' code successfully.");
+                        Debug.Log($"[CodeBind] Refresh '{mono.name}({mono})' code successfully.");
                     }
                 }
                 CSCodeBindMono[] csCodeBinds = go.GetComponentsInChildren<CSCodeBindMono>(true);
@@ -47,7 +47,7 @@ namespace CodeBind.Editor
         {
             if (Selection.gameObjects.Length < 1)
             {
-                Debug.LogError("Please select at least one GameObject to refresh bind serialization.");
+                Debug.LogError("[CodeBind] Please select at least one GameObject to refresh bind serialization.");
             }
             foreach (GameObject go in Selection.gameObjects)
             {
@@ -65,7 +65,7 @@ namespace CodeBind.Editor
                         MonoScript script = MonoScript.FromMonoBehaviour(mono);
                         MonoCodeBinder codeBinder = new MonoCodeBinder(script, mono.transform, attribute.SeparatorChar);
                         codeBinder.TrySetSerialization();
-                        Debug.Log($"Refresh '{mono.name}({mono})' serialization successfully.");
+                        Debug.Log($"[CodeBind] Refresh '{mono.name}({mono})' serialization successfully.");
                     }
                 }
                 CSCodeBindMono[] csCodeBinds = go.GetComponentsInChildren<CSCodeBindMono>(true);
@@ -73,7 +73,7 @@ namespace CodeBind.Editor
                 {
                     CSCodeBinder codeBinder = new CSCodeBinder(bindMono.BindScript, bindMono.transform, bindMono.SeparatorChar);
                     codeBinder.TrySetSerialization();
-                    Debug.Log($"Refresh '{bindMono.name}({bindMono})' serialization successfully.");
+                    Debug.Log($"[CodeBind] Refresh '{bindMono.name}({bindMono})' serialization successfully.");
                 }
             }
         }
