@@ -9,13 +9,24 @@ namespace CodeBind.Editor
     {
         public int Priority => 0;
 
-        public string FieldPrefix => "m_";
-
-        public string ArraySuffix => "Array";
+        public string GetFieldName(string bindName, string bindPrefix)
+        {
+            return $"m_{bindName}{bindPrefix}";
+        }
 
         public string GetPropertyName(string bindName, string bindPrefix)
         {
             return $"{bindName}{bindPrefix}";
+        }
+
+        public string GetArrayFieldName(string bindName, string bindPrefix)
+        {
+            return $"m_{bindName}{bindPrefix}Array";
+        }
+
+        public string GetArrayPropertyName(string bindName, string bindPrefix)
+        {
+            return $"{bindName}{bindPrefix}Array";
         }
 
         public string GenerateExtraCode(string nameSpace, string className, IReadOnlyList<CodeBindMemberInfo> members, IReadOnlyList<CodeBindArrayMemberInfo> arrayMembers, string indentation)

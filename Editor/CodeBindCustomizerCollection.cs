@@ -45,7 +45,7 @@ namespace CodeBind.Editor
         internal static string GetFieldName(string bindName, string bindPrefix)
         {
             Do();
-            return $"{s_Customizer.FieldPrefix}{s_Customizer.GetPropertyName(bindName, bindPrefix)}";
+            return s_Customizer.GetFieldName(bindName, bindPrefix);
         }
 
         internal static string GetPropertyName(string bindName, string bindPrefix)
@@ -57,13 +57,13 @@ namespace CodeBind.Editor
         internal static string GetArrayFieldName(string bindName, string bindPrefix)
         {
             Do();
-            return $"{s_Customizer.FieldPrefix}{s_Customizer.GetPropertyName(bindName, bindPrefix)}{s_Customizer.ArraySuffix}";
+            return s_Customizer.GetArrayFieldName(bindName, bindPrefix);
         }
 
         internal static string GetArrayPropertyName(string bindName, string bindPrefix)
         {
             Do();
-            return $"{s_Customizer.GetPropertyName(bindName, bindPrefix)}{s_Customizer.ArraySuffix}";
+            return s_Customizer.GetArrayPropertyName(bindName, bindPrefix);
         }
 
         internal static string GenerateExtraCode(string nameSpace, string className, List<CodeBindData> bindDatas, SortedDictionary<string, List<CodeBindData>> bindArrayDataDict, string indentation)

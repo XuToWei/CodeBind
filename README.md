@@ -287,9 +287,10 @@ public sealed class ProjectBindTypeConfig : ICodeBindNameTypeConfig
 | 成员 | 说明 | 默认值 |
 |------|------|--------|
 | `int Priority` | 优先级，数值越大越优先，最高优先级的实现会被使用 | 默认实现为 `0` |
-| `string FieldPrefix` | 私有序列化字段前缀 | `"m_"` |
-| `string ArraySuffix` | 数组字段和属性的后缀 | `"Array"` |
-| `string GetPropertyName(string bindName, string bindPrefix)` | 公共属性命名 | `bindName + bindPrefix` |
+| `string GetFieldName(string bindName, string bindPrefix)` | 单个绑定的私有序列化字段命名 | `"m_" + bindName + bindPrefix` |
+| `string GetPropertyName(string bindName, string bindPrefix)` | 单个绑定的公共属性命名 | `bindName + bindPrefix` |
+| `string GetArrayFieldName(string bindName, string bindPrefix)` | 数组绑定的私有序列化字段命名 | `"m_" + bindName + bindPrefix + "Array"` |
+| `string GetArrayPropertyName(string bindName, string bindPrefix)` | 数组绑定的公共属性命名 | `bindName + bindPrefix + "Array"` |
 | `string GenerateExtraCode(...)` | 返回追加到 `partial` 类体内的额外代码，无内容返回空字符串 | 返回 `string.Empty` |
 
 > **优先级规则**：所有实现（含默认实现）一起参与比较，取 `Priority` 最高者；若最高优先级有多个实现，会报错并取其一。因此自定义实现的 `Priority` 需要大于 `0` 才能覆盖默认。
@@ -304,9 +305,10 @@ public sealed class MyCodeStyle : ICodeBindCustomizer
 {
     public int Priority => 100; // 大于默认的 0
 
-    public string FieldPrefix => "_";
-    public string ArraySuffix => "List";
+    public string GetFieldName(string bindName, string bindPrefix) => $"_{bindName}{bindPrefix}";
     public string GetPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}";
+    public string GetArrayFieldName(string bindName, string bindPrefix) => $"_{bindName}{bindPrefix}List";
+    public string GetArrayPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}List";
 
     public string GenerateExtraCode(string nameSpace, string className,
         System.Collections.Generic.IReadOnlyList<CodeBindMemberInfo> members,
@@ -331,9 +333,10 @@ public sealed class MyExtraCode : ICodeBindCustomizer
     public int Priority => 100;
 
     // 命名沿用默认行为
-    public string FieldPrefix => "m_";
-    public string ArraySuffix => "Array";
+    public string GetFieldName(string bindName, string bindPrefix) => $"m_{bindName}{bindPrefix}";
     public string GetPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}";
+    public string GetArrayFieldName(string bindName, string bindPrefix) => $"m_{bindName}{bindPrefix}Array";
+    public string GetArrayPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}Array";
 
     public string GenerateExtraCode(string nameSpace, string className,
         IReadOnlyList<CodeBindMemberInfo> members,

@@ -62,7 +62,7 @@ namespace CodeBind.Editor
 
     /// <summary>
     /// 自定义生成代码接口，包含命名风格和额外代码生成
-    /// 实现此接口即可覆盖默认行为，未实现则使用默认行为（字段前缀 m_，数组后缀 Array，无额外代码）
+    /// 实现此接口即可覆盖默认行为，未实现则使用默认行为（字段 m_ 前缀，数组 Array 后缀，无额外代码）
     /// 实现类需要有无参构造函数
     /// </summary>
     public interface ICodeBindCustomizer
@@ -74,21 +74,32 @@ namespace CodeBind.Editor
         int Priority { get; }
 
         /// <summary>
-        /// 私有序列化字段前缀，默认 "m_"
+        /// 单个绑定的私有序列化字段命名，默认 "m_" + bindName + bindPrefix
         /// </summary>
-        string FieldPrefix { get; }
+        /// <param name="bindName">绑定的变量名</param>
+        /// <param name="bindPrefix">绑定的类型名</param>
+        string GetFieldName(string bindName, string bindPrefix);
 
         /// <summary>
-        /// 数组字段和属性的后缀，默认 "Array"
-        /// </summary>
-        string ArraySuffix { get; }
-
-        /// <summary>
-        /// 公共属性命名，默认 bindName + bindPrefix
+        /// 单个绑定的公共属性命名，默认 bindName + bindPrefix
         /// </summary>
         /// <param name="bindName">绑定的变量名</param>
         /// <param name="bindPrefix">绑定的类型名</param>
         string GetPropertyName(string bindName, string bindPrefix);
+
+        /// <summary>
+        /// 数组绑定的私有序列化字段命名，默认 "m_" + bindName + bindPrefix + "Array"
+        /// </summary>
+        /// <param name="bindName">绑定的变量名</param>
+        /// <param name="bindPrefix">绑定的类型名</param>
+        string GetArrayFieldName(string bindName, string bindPrefix);
+
+        /// <summary>
+        /// 数组绑定的公共属性命名，默认 bindName + bindPrefix + "Array"
+        /// </summary>
+        /// <param name="bindName">绑定的变量名</param>
+        /// <param name="bindPrefix">绑定的类型名</param>
+        string GetArrayPropertyName(string bindName, string bindPrefix);
 
         /// <summary>
         /// 额外生成代码，返回追加到 partial 类体内的代码，无内容返回空字符串

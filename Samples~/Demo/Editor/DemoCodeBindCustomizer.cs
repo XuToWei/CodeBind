@@ -13,13 +13,24 @@ namespace CodeBind.Demo.Editor
         public int Priority => 1;
 
         // 命名风格：字段用 "_" 前缀，数组后缀用 "List"，属性名为 变量名 + 类型名
-        public string FieldPrefix => "_";
-
-        public string ArraySuffix => "List";
+        public string GetFieldName(string bindName, string bindPrefix)
+        {
+            return $"_{bindName}{bindPrefix}";
+        }
 
         public string GetPropertyName(string bindName, string bindPrefix)
         {
             return $"{bindName}{bindPrefix}";
+        }
+
+        public string GetArrayFieldName(string bindName, string bindPrefix)
+        {
+            return $"_{bindName}{bindPrefix}List";
+        }
+
+        public string GetArrayPropertyName(string bindName, string bindPrefix)
+        {
+            return $"{bindName}{bindPrefix}List";
         }
 
         // 额外代码：为每个绑定成员生成一行说明注释
