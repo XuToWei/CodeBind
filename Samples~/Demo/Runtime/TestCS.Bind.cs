@@ -2,8 +2,8 @@
 
 public partial class TestCS : CodeBind.ICSCodeBind
 {
-    public CodeBind.CSCodeBindMono Mono { get; private set; }
-    public UnityEngine.Transform Transform { get; private set; }
+    public CodeBind.CSCodeBindMono BindMono { get; private set; }
+    public UnityEngine.Transform CachedTransform { get; private set; }
 
     public UnityEngine.Transform SelfTransform { get; private set; }
     public UnityEngine.Animation OtherAnimation { get; private set; }
@@ -12,25 +12,25 @@ public partial class TestCS : CodeBind.ICSCodeBind
 
     public void InitBind(CodeBind.CSCodeBindMono mono)
     {
-        Mono = mono;
-        Transform = mono.transform;
-        SelfTransform = Mono.BindComponents[0] as UnityEngine.Transform;
-        OtherAnimation = Mono.BindComponents[1] as UnityEngine.Animation;
-        ListAnimationArray = new UnityEngine.Animation[4]
+        this.BindMono = mono;
+        this.CachedTransform = mono.transform;
+        this.SelfTransform = this.BindMono.BindComponents[0] as UnityEngine.Transform;
+        this.OtherAnimation = this.BindMono.BindComponents[1] as UnityEngine.Animation;
+        this.ListAnimationArray = new UnityEngine.Animation[4]
         {
-            Mono.BindComponents[2] as UnityEngine.Animation,
-            Mono.BindComponents[3] as UnityEngine.Animation,
-            Mono.BindComponents[4] as UnityEngine.Animation,
-            Mono.BindComponents[5] as UnityEngine.Animation,
+            this.BindMono.BindComponents[2] as UnityEngine.Animation,
+            this.BindMono.BindComponents[3] as UnityEngine.Animation,
+            this.BindMono.BindComponents[4] as UnityEngine.Animation,
+            this.BindMono.BindComponents[5] as UnityEngine.Animation,
         };
     }
 
     public void ClearBind()
     {
-        Mono = null;
-        Transform = null;
-        SelfTransform = null;
-        OtherAnimation = null;
-        ListAnimationArray = null;
+        this.BindMono = null;
+        this.CachedTransform = null;
+        this.SelfTransform = null;
+        this.OtherAnimation = null;
+        this.ListAnimationArray = null;
     }
 }

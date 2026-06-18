@@ -1,68 +1,12 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace CodeBind.Editor
 {
     /// <summary>
-    /// 生成代码时的单个绑定成员信息
-    /// </summary>
-    public readonly struct CodeBindMemberInfo
-    {
-        /// <summary>
-        /// 公共属性名，如 SelfTransform
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// 绑定类型
-        /// </summary>
-        public Type Type { get; }
-
-        /// <summary>
-        /// 绑定的节点
-        /// </summary>
-        public Transform Transform { get; }
-
-        public CodeBindMemberInfo(string name, Type type, Transform transform)
-        {
-            Name = name;
-            Type = type;
-            Transform = transform;
-        }
-    }
-
-    /// <summary>
-    /// 生成代码时的数组绑定成员信息
-    /// </summary>
-    public readonly struct CodeBindArrayMemberInfo
-    {
-        /// <summary>
-        /// 公共属性名，如 ItemTransformArray
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// 数组元素类型
-        /// </summary>
-        public Type Type { get; }
-
-        /// <summary>
-        /// 数组各元素绑定的节点
-        /// </summary>
-        public IReadOnlyList<Transform> Transforms { get; }
-
-        public CodeBindArrayMemberInfo(string name, Type type, IReadOnlyList<Transform> transforms)
-        {
-            Name = name;
-            Type = type;
-            Transforms = transforms;
-        }
-    }
-
-    /// <summary>
     /// 自定义生成代码接口，包含命名风格和额外代码生成
-    /// 实现此接口即可覆盖默认行为，未实现则使用默认行为（字段 m_ 前缀，数组 Array 后缀，无额外代码）
+    /// 实现此接口即可覆盖默认行为，未实现则使用默认行为（字段 m_ 前缀、属性首字母小写、无额外代码）
+    /// 命名方法接收已拼好的组合名（变量名 + 类型名），数组会由框架自动追加 "Array" 后缀后再传入，
+    /// 实现只需决定字段/属性的前后缀风格，无需自行拼接
     /// 实现类需要有无参构造函数
     /// </summary>
     public interface ICodeBindCustomizer
@@ -74,32 +18,16 @@ namespace CodeBind.Editor
         int Priority { get; }
 
         /// <summary>
-        /// 单个绑定的私有序列化字段命名，默认 "m_" + bindName + bindPrefix
+        /// 私有序列化字段命名，默认 "m_" + name
         /// </summary>
-        /// <param name="bindName">绑定的变量名</param>
-        /// <param name="bindPrefix">绑定的类型名</param>
-        string GetFieldName(string bindName, string bindPrefix);
+        /// <param name="name">已拼好的组合名（变量名 + 类型名，数组已带 "Array" 后缀）</param>
+        string GetFieldName(string name);
 
         /// <summary>
-        /// 单个绑定的公共属性命名，默认 bindName + bindPrefix
+        /// 公共属性命名，默认 name 首字母小写
         /// </summary>
-        /// <param name="bindName">绑定的变量名</param>
-        /// <param name="bindPrefix">绑定的类型名</param>
-        string GetPropertyName(string bindName, string bindPrefix);
-
-        /// <summary>
-        /// 数组绑定的私有序列化字段命名，默认 "m_" + bindName + bindPrefix + "Array"
-        /// </summary>
-        /// <param name="bindName">绑定的变量名</param>
-        /// <param name="bindPrefix">绑定的类型名</param>
-        string GetArrayFieldName(string bindName, string bindPrefix);
-
-        /// <summary>
-        /// 数组绑定的公共属性命名，默认 bindName + bindPrefix + "Array"
-        /// </summary>
-        /// <param name="bindName">绑定的变量名</param>
-        /// <param name="bindPrefix">绑定的类型名</param>
-        string GetArrayPropertyName(string bindName, string bindPrefix);
+        /// <param name="name">已拼好的组合名（变量名 + 类型名，数组已带 "Array" 后缀）</param>
+        string GetPropertyName(string name);
 
         /// <summary>
         /// 额外生成代码，返回追加到 partial 类体内的代码，无内容返回空字符串
@@ -107,9 +35,9 @@ namespace CodeBind.Editor
         /// </summary>
         /// <param name="nameSpace">生成类的命名空间，可能为空</param>
         /// <param name="className">生成类的类名</param>
-        /// <param name="members">单个绑定成员列表</param>
-        /// <param name="arrayMembers">数组绑定成员列表</param>
+        /// <param name="bindDatas">单个绑定数据列表</param>
+        /// <param name="bindArrayDataDict">数组绑定数据字典，键为数组名，值为该数组各元素的绑定数据</param>
         /// <param name="indentation">类体内的缩进字符串</param>
-        string GenerateExtraCode(string nameSpace, string className, IReadOnlyList<CodeBindMemberInfo> members, IReadOnlyList<CodeBindArrayMemberInfo> arrayMembers, string indentation);
+        string GenerateExtraCode(string nameSpace, string className, List<CodeBindData> bindDatas, SortedDictionary<string, List<CodeBindData>> bindArrayDataDict, string indentation);
     }
 }

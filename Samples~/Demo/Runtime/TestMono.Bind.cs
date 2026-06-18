@@ -40,24 +40,24 @@ namespace CodeBind.Demo
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.Transform[] m_TestTransformArray;
 
-        public UnityEngine.Transform TestTransform => m_TestTransform;
-        public UnityEngine.Animator TestAnimator => m_TestAnimator;
-        public UnityEngine.GameObject Test2GameObject => m_Test2GameObject;
-        public UnityEngine.Transform Test2Transform => m_Test2Transform;
-        public UnityEngine.Animator Test2Animator => m_Test2Animator;
-        public CodeBind.CSCodeBindMono TestCSCodeBindMono => m_TestCSCodeBindMono;
-        public CodeBind.ReferenceBindMono TestReferenceBindMono => m_TestReferenceBindMono;
-        public UnityEngine.Transform Test3Transform => m_Test3Transform;
-        public UnityEngine.UI.Slider Test3Slider => m_Test3Slider;
-        public UnityEngine.GameObject Test4GameObject => m_Test4GameObject;
-        public UnityEngine.RectTransform Test4RectTransform => m_Test4RectTransform;
-        public UnityEngine.UI.Slider Test4Slider => m_Test4Slider;
+        public UnityEngine.Transform TestTransform => this.m_TestTransform;
+        public UnityEngine.Animator TestAnimator => this.m_TestAnimator;
+        public UnityEngine.GameObject Test2GameObject => this.m_Test2GameObject;
+        public UnityEngine.Transform Test2Transform => this.m_Test2Transform;
+        public UnityEngine.Animator Test2Animator => this.m_Test2Animator;
+        public CodeBind.CSCodeBindMono TestCSCodeBindMono => this.m_TestCSCodeBindMono;
+        public CodeBind.ReferenceBindMono TestReferenceBindMono => this.m_TestReferenceBindMono;
+        public UnityEngine.Transform Test3Transform => this.m_Test3Transform;
+        public UnityEngine.UI.Slider Test3Slider => this.m_Test3Slider;
+        public UnityEngine.GameObject Test4GameObject => this.m_Test4GameObject;
+        public UnityEngine.RectTransform Test4RectTransform => this.m_Test4RectTransform;
+        public UnityEngine.UI.Slider Test4Slider => this.m_Test4Slider;
 
-        public UnityEngine.Animator[] Test2AnimatorArray => m_Test2AnimatorArray;
-        public UnityEngine.GameObject[] Test2GameObjectArray => m_Test2GameObjectArray;
-        public UnityEngine.Transform[] Test2TransformArray => m_Test2TransformArray;
-        public UnityEngine.Animator[] TestAnimatorArray => m_TestAnimatorArray;
-        public UnityEngine.Transform[] TestTransformArray => m_TestTransformArray;
+        public UnityEngine.Animator[] Test2AnimatorArray => this.m_Test2AnimatorArray;
+        public UnityEngine.GameObject[] Test2GameObjectArray => this.m_Test2GameObjectArray;
+        public UnityEngine.Transform[] Test2TransformArray => this.m_Test2TransformArray;
+        public UnityEngine.Animator[] TestAnimatorArray => this.m_TestAnimatorArray;
+        public UnityEngine.Transform[] TestTransformArray => this.m_TestTransformArray;
 
     }
 }

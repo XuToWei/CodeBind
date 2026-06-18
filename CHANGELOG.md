@@ -1,6 +1,9 @@
 # Changelog
 
 ## [1.1.0] - 2026-6-15
+- 精简ICodeBindCustomizer命名接口：GetFieldName/GetPropertyName直接接收拼好的组合名，数组后缀固定为Array由框架拼接，移除单独的数组命名方法
+- 公共字段与属性统一使用大写开头（PascalCase），生成的属性名也保持大写开头，私有字段保持 m_ 前缀
+- ICSCodeBind 的 Mono/Transform 重命名为 BindMono/CachedTransform
 - 添加ICodeBindCustomizer接口，支持自定义命名风格和额外代码生成，带优先级，高优先级覆盖低优先级
 - DefaultCodeBindNameTypeConfig改为ICodeBindNameTypeConfig接口实现，支持多实现按优先级合并覆盖
 - 移除CodeBindNameTypeAttribute，由ICodeBindNameTypeConfig替代

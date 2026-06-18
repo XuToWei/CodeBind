@@ -7,8 +7,8 @@ namespace CodeBind
     /// </summary>
     public interface ICSCodeBind
     {
-        CSCodeBindMono Mono { get; }
-        Transform Transform { get; }
+        CSCodeBindMono BindMono { get; }
+        Transform CachedTransform { get; }
         void InitBind(CSCodeBindMono csCodeBindMono);
         void ClearBind();
     }

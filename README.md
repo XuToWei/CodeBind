@@ -220,7 +220,7 @@ testCS.Initialize();
 | `ListItem (0)` | `ListItemTransformArray` | 数组元素，自动生成数组 |
 | `Child_Nested_Transform` | - | 如果 Child 有 CodeBind 特性，Nested 不会被识别 |
 
-> **注意**：生成的属性名会移除分隔符并转换为 PascalCase 格式。例如 `Self_Transform` 生成 `SelfTransform`。
+> **注意**：生成的属性名会移除分隔符并以大写字母开头（PascalCase）。例如 `Self_Transform` 生成属性 `SelfTransform`，对应私有字段为 `m_SelfTransform`。
 
 ---
 
@@ -278,19 +278,19 @@ public sealed class ProjectBindTypeConfig : ICodeBindNameTypeConfig
 
 ### 自定义代码生成（ICodeBindCustomizer）
 
-通过实现 `ICodeBindCustomizer` 接口，可以**自定义生成代码的命名风格**，并向生成的代码中**追加额外代码**。无需实现即使用默认行为（字段前缀 `m_`、数组后缀 `Array`、属性名为 `变量名 + 类型名`、无额外代码）。
+通过实现 `ICodeBindCustomizer` 接口，可以**自定义生成代码的命名风格**，并向生成的代码中**追加额外代码**。无需实现即使用默认行为（字段前缀 `m_`、属性沿用组合名大写开头、无额外代码）。
 
 > **零侵入**：直接新建一个类实现接口即可被自动发现，无需注册。Mono 模式和纯 C# 模式共用同一份实现。
+
+> **命名方法只关心风格**：`GetFieldName` / `GetPropertyName` 接收的是框架**已拼好的组合名**（`变量名 + 类型名`），数组会自动追加固定的 `Array` 后缀后再传入。实现只需决定前后缀风格，无需自己拼接，也不再区分单个与数组方法。
 
 #### 接口成员
 
 | 成员 | 说明 | 默认值 |
 |------|------|--------|
 | `int Priority` | 优先级，数值越大越优先，最高优先级的实现会被使用 | 默认实现为 `0` |
-| `string GetFieldName(string bindName, string bindPrefix)` | 单个绑定的私有序列化字段命名 | `"m_" + bindName + bindPrefix` |
-| `string GetPropertyName(string bindName, string bindPrefix)` | 单个绑定的公共属性命名 | `bindName + bindPrefix` |
-| `string GetArrayFieldName(string bindName, string bindPrefix)` | 数组绑定的私有序列化字段命名 | `"m_" + bindName + bindPrefix + "Array"` |
-| `string GetArrayPropertyName(string bindName, string bindPrefix)` | 数组绑定的公共属性命名 | `bindName + bindPrefix + "Array"` |
+| `string GetFieldName(string name)` | 私有序列化字段命名，`name` 为已拼好的组合名 | `"m_" + name` |
+| `string GetPropertyName(string name)` | 公共属性命名，`name` 为已拼好的组合名 | `name`（大写开头） |
 | `string GenerateExtraCode(...)` | 返回追加到 `partial` 类体内的额外代码，无内容返回空字符串 | 返回 `string.Empty` |
 
 > **优先级规则**：所有实现（含默认实现）一起参与比较，取 `Priority` 最高者；若最高优先级有多个实现，会报错并取其一。因此自定义实现的 `Priority` 需要大于 `0` 才能覆盖默认。
@@ -300,24 +300,22 @@ public sealed class ProjectBindTypeConfig : ICodeBindNameTypeConfig
 ```csharp
 using CodeBind.Editor;
 
-// 字段改用 "_" 前缀，数组后缀改为 "List"
+// 字段改用 "_" 前缀，属性沿用默认（组合名大写开头）
 public sealed class MyCodeStyle : ICodeBindCustomizer
 {
     public int Priority => 100; // 大于默认的 0
 
-    public string GetFieldName(string bindName, string bindPrefix) => $"_{bindName}{bindPrefix}";
-    public string GetPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}";
-    public string GetArrayFieldName(string bindName, string bindPrefix) => $"_{bindName}{bindPrefix}List";
-    public string GetArrayPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}List";
+    public string GetFieldName(string name) => $"_{name}";
+    public string GetPropertyName(string name) => name;
 
     public string GenerateExtraCode(string nameSpace, string className,
-        System.Collections.Generic.IReadOnlyList<CodeBindMemberInfo> members,
-        System.Collections.Generic.IReadOnlyList<CodeBindArrayMemberInfo> arrayMembers,
+        System.Collections.Generic.List<CodeBindData> bindDatas,
+        System.Collections.Generic.SortedDictionary<string, System.Collections.Generic.List<CodeBindData>> bindArrayDataDict,
         string indentation) => string.Empty;
 }
 ```
 
-效果：`Self_Transform` 生成字段 `_SelfTransform`、属性 `SelfTransform`；数组生成 `ItemTransformList`。
+效果：`Self_Transform` 生成字段 `_SelfTransform`、属性 `SelfTransform`；数组生成 `_ItemTransformArray` / `ItemTransformArray`。
 
 #### 示例二：追加额外代码
 
@@ -333,48 +331,40 @@ public sealed class MyExtraCode : ICodeBindCustomizer
     public int Priority => 100;
 
     // 命名沿用默认行为
-    public string GetFieldName(string bindName, string bindPrefix) => $"m_{bindName}{bindPrefix}";
-    public string GetPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}";
-    public string GetArrayFieldName(string bindName, string bindPrefix) => $"m_{bindName}{bindPrefix}Array";
-    public string GetArrayPropertyName(string bindName, string bindPrefix) => $"{bindName}{bindPrefix}Array";
+    public string GetFieldName(string name) => $"m_{name}";
+    public string GetPropertyName(string name) => name;
 
     public string GenerateExtraCode(string nameSpace, string className,
-        IReadOnlyList<CodeBindMemberInfo> members,
-        IReadOnlyList<CodeBindArrayMemberInfo> arrayMembers,
+        List<CodeBindData> bindDatas,
+        SortedDictionary<string, List<CodeBindData>> bindArrayDataDict,
         string indentation)
     {
         StringBuilder sb = new StringBuilder();
-        // 为每个绑定成员生成一行注释
-        foreach (CodeBindMemberInfo member in members)
+        // 为每个绑定成员生成一行注释，自行拼接 变量名 + 类型名 作为组合名
+        foreach (CodeBindData bindData in bindDatas)
         {
-            sb.AppendLine($"{indentation}// bind member: {member.Name} ({member.Type.Name})");
+            sb.AppendLine($"{indentation}// bind member: {GetPropertyName($"{bindData.BindName}{bindData.BindPrefix}")} ({bindData.BindType.Name})");
         }
         return sb.ToString();
     }
 }
 ```
 
-#### 绑定成员信息
+#### 绑定数据 CodeBindData
 
-`GenerateExtraCode` 的成员信息分为单个和数组两类：
+`GenerateExtraCode` 直接提供绑定数据：`bindDatas` 为单个绑定列表，`bindArrayDataDict` 为数组绑定字典（键为数组名，值为该数组各元素的绑定数据）。
 
 ```csharp
-// 单个绑定成员
-public readonly struct CodeBindMemberInfo
+public sealed class CodeBindData
 {
-    public string Name { get; }                  // 公共属性名，如 SelfTransform
-    public System.Type Type { get; }             // 绑定类型
-    public UnityEngine.Transform Transform { get; } // 绑定的节点
-}
-
-// 数组绑定成员
-public readonly struct CodeBindArrayMemberInfo
-{
-    public string Name { get; }                  // 公共属性名，如 ItemTransformArray
-    public System.Type Type { get; }             // 数组元素类型
-    public IReadOnlyList<UnityEngine.Transform> Transforms { get; } // 各元素绑定的节点
+    public string bindName { get; }                 // 绑定的变量名
+    public System.Type bindType { get; }            // 绑定类型
+    public string bindPrefix { get; }               // 绑定的类型名
+    public UnityEngine.Transform bindTransform { get; } // 绑定的节点
 }
 ```
+
+> 成员的字段名/属性名通过 `GetFieldName` / `GetPropertyName` 由 `变量名 + 类型名` 组合名计算得到；数组在传入前由框架自动追加固定的 `Array` 后缀。
 
 ---
 

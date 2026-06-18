@@ -12,41 +12,34 @@ namespace CodeBind.Demo.Editor
     {
         public int Priority => 1;
 
-        // 命名风格：字段用 "_" 前缀，数组后缀用 "List"，属性名为 变量名 + 类型名
-        public string GetFieldName(string bindName, string bindPrefix)
+        // 命名风格：字段用 "_" 前缀，属性沿用组合名（大写开头）
+        // name 为框架拼好的组合名（数组已带 "Array" 后缀），只需决定前后缀即可
+        public string GetFieldName(string name)
         {
-            return $"_{bindName}{bindPrefix}";
+            return $"_{name}";
         }
 
-        public string GetPropertyName(string bindName, string bindPrefix)
+        public string GetPropertyName(string name)
         {
-            return $"{bindName}{bindPrefix}";
-        }
-
-        public string GetArrayFieldName(string bindName, string bindPrefix)
-        {
-            return $"_{bindName}{bindPrefix}List";
-        }
-
-        public string GetArrayPropertyName(string bindName, string bindPrefix)
-        {
-            return $"{bindName}{bindPrefix}List";
+            return name;
         }
 
         // 额外代码：为每个绑定成员生成一行说明注释
         public string GenerateExtraCode(string nameSpace, string className,
-            IReadOnlyList<CodeBindMemberInfo> members,
-            IReadOnlyList<CodeBindArrayMemberInfo> arrayMembers,
+            List<CodeBindData> bindDatas,
+            SortedDictionary<string, List<CodeBindData>> bindArrayDataDict,
             string indentation)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            foreach (CodeBindMemberInfo member in members)
+            foreach (CodeBindData bindData in bindDatas)
             {
-                stringBuilder.AppendLine($"{indentation}// member: {member.Name} ({member.Type.Name})");
+                stringBuilder.AppendLine($"{indentation}// member: {GetPropertyName($"{bindData.BindName}{bindData.BindPrefix}")} ({bindData.BindType.Name})");
             }
-            foreach (CodeBindArrayMemberInfo arrayMember in arrayMembers)
+            foreach (KeyValuePair<string, List<CodeBindData>> kv in bindArrayDataDict)
             {
-                stringBuilder.AppendLine($"{indentation}// array member: {arrayMember.Name} ({arrayMember.Type.Name}[{arrayMember.Transforms.Count}])");
+                CodeBindData firstBindData = kv.Value[0];
+                //数组属性名为组合名加固定的 "Array" 后缀
+                stringBuilder.AppendLine($"{indentation}// array member: {GetPropertyName($"{firstBindData.BindName}{firstBindData.BindPrefix}Array")} ({firstBindData.BindType.Name}[{kv.Value.Count}])");
             }
             return stringBuilder.ToString();
         }

@@ -9,9 +9,9 @@ namespace CodeBind
 
         public MonoCodeBindAttribute(char separatorChar)
         {
-            SeparatorChar = separatorChar;
+            this.SeparatorChar = separatorChar;
         }
-        
+
         public MonoCodeBindAttribute()
         {
             SeparatorChar = '_';

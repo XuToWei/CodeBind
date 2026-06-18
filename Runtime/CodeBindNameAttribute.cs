@@ -22,7 +22,7 @@ namespace CodeBind
         /// <param name="bindName">绑定的节点识别名</param>
         public CodeBindNameAttribute(string bindName)
         {
-            BindName = bindName;
+            this.BindName = bindName;
         }
     }
 }

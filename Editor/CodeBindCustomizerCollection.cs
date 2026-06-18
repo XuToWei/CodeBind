@@ -42,52 +42,37 @@ namespace CodeBind.Editor
             s_Customizer = customizers[0];
         }
 
+        //数组绑定固定追加的后缀，由框架统一拼接，不再暴露给 ICodeBindCustomizer
+        private const string ArraySuffix = "Array";
+
         internal static string GetFieldName(string bindName, string bindPrefix)
         {
             Do();
-            return s_Customizer.GetFieldName(bindName, bindPrefix);
+            return s_Customizer.GetFieldName($"{bindName}{bindPrefix}");
         }
 
         internal static string GetPropertyName(string bindName, string bindPrefix)
         {
             Do();
-            return s_Customizer.GetPropertyName(bindName, bindPrefix);
+            return s_Customizer.GetPropertyName($"{bindName}{bindPrefix}");
         }
 
         internal static string GetArrayFieldName(string bindName, string bindPrefix)
         {
             Do();
-            return s_Customizer.GetArrayFieldName(bindName, bindPrefix);
+            return s_Customizer.GetFieldName($"{bindName}{bindPrefix}{ArraySuffix}");
         }
 
         internal static string GetArrayPropertyName(string bindName, string bindPrefix)
         {
             Do();
-            return s_Customizer.GetArrayPropertyName(bindName, bindPrefix);
+            return s_Customizer.GetPropertyName($"{bindName}{bindPrefix}{ArraySuffix}");
         }
 
         internal static string GenerateExtraCode(string nameSpace, string className, List<CodeBindData> bindDatas, SortedDictionary<string, List<CodeBindData>> bindArrayDataDict, string indentation)
         {
             Do();
-            List<CodeBindMemberInfo> members = new List<CodeBindMemberInfo>();
-            foreach (CodeBindData bindData in bindDatas)
-            {
-                string name = GetPropertyName(bindData.BindName, bindData.BindPrefix);
-                members.Add(new CodeBindMemberInfo(name, bindData.BindType, bindData.BindTransform));
-            }
-            List<CodeBindArrayMemberInfo> arrayMembers = new List<CodeBindArrayMemberInfo>();
-            foreach (KeyValuePair<string, List<CodeBindData>> kv in bindArrayDataDict)
-            {
-                CodeBindData firstBindData = kv.Value[0];
-                string name = GetArrayPropertyName(firstBindData.BindName, firstBindData.BindPrefix);
-                List<Transform> transforms = new List<Transform>();
-                foreach (CodeBindData bindData in kv.Value)
-                {
-                    transforms.Add(bindData.BindTransform);
-                }
-                arrayMembers.Add(new CodeBindArrayMemberInfo(name, firstBindData.BindType, transforms));
-            }
-            string code = s_Customizer.GenerateExtraCode(nameSpace, className, members, arrayMembers, indentation);
+            string code = s_Customizer.GenerateExtraCode(nameSpace, className, bindDatas, bindArrayDataDict, indentation);
             return string.IsNullOrEmpty(code) ? string.Empty : code;
         }
     }
