@@ -18,9 +18,9 @@ namespace CodeBind.Editor
         private static readonly Regex s_ArrayIndexRegex = new Regex(@"\(-?\d*\)$", RegexOptions.Compiled);
 
         /// <summary>
-        /// 匹配有效的变量名格式
+        /// 匹配有效的 ASCII C# 标识符格式
         /// </summary>
-        private static readonly Regex s_VariableNameRegex = new Regex(@"^([A-Za-z0-9\._-]+/)*[A-Za-z0-9\._-]+$", RegexOptions.Compiled);
+        private static readonly Regex s_VariableNameRegex = new Regex(@"^[A-Za-z_][A-Za-z0-9_]*$", RegexOptions.Compiled);
 
         protected readonly char m_SeparatorChar;
         protected readonly Transform m_RootTransform;
