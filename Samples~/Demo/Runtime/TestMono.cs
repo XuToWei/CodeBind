@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace CodeBind.Demo
 {
-    [MonoCodeBind('_')]
+    [MonoBehaviourBinding('_')]
     public partial class TestMono : MonoBehaviour
     {
         // Start is called before the first frame update

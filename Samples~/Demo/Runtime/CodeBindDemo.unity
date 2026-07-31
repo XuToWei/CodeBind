@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 253148096}
   - component: {fileID: 253148095}
   m_Layer: 0
-  m_Name: Test_CSCodeBindMono_ReferenceBindMono
+  m_Name: Test_PlainClassBindingHost_NamedReferenceBindingHost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -221,25 +221,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 804d393d1d453f5448cd493372e9a1a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BindNames:
+  m_ManualKeys:
   - TestPrefab
-  m_BindGameObjects:
+  m_ManualGameObjects:
   - {fileID: 1163687246830712436, guid: 1bbd5ed9be130da43b3a37ae9bc5ff20, type: 3}
-  m_AutoBindComponentNames:
+  m_AutoKeys:
   - SelfTransform
   - OtherAnimation
   - ListAnimationArray
   - ListAnimationArray
   - ListAnimationArray
   - ListAnimationArray
-  m_AutoBindComponents:
+  m_AutoTargets:
   - {fileID: 1279417644}
   - {fileID: 517383984}
   - {fileID: 1640880387}
   - {fileID: 746566296}
   - {fileID: 1215201790}
   - {fileID: 1262308068}
-  m_SeparatorChar: 95
+  m_NameSeparator: 95
 --- !u!114 &253148096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,16 +252,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5452a0c3619826c4f889a047605eef79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BindComponents:
+  m_BindingTargets:
   - {fileID: 1279417644}
   - {fileID: 517383984}
   - {fileID: 1640880387}
   - {fileID: 746566296}
   - {fileID: 1215201790}
   - {fileID: 1262308068}
-  m_SeparatorChar: 95
-  m_BindScript: {fileID: 11500000, guid: af79efec0e6b8e44f8f95a0516e9784a, type: 3}
-  m_BindComponentNames:
+  m_NameSeparator: 95
+  m_BindingClassScript: {fileID: 11500000, guid: af79efec0e6b8e44f8f95a0516e9784a, type: 3}
+  m_BindingMemberNames:
   - SelfTransform
   - OtherAnimation
   - ListAnimationArray
@@ -669,8 +669,8 @@ MonoBehaviour:
   m_Test2GameObject: {fileID: 285049429}
   m_Test2Transform: {fileID: 285049430}
   m_Test2Animator: {fileID: 285049431}
-  m_TestCSCodeBindMono: {fileID: 253148096}
-  m_TestReferenceBindMono: {fileID: 253148095}
+  m_TestPlainClassBindingHost: {fileID: 253148096}
+  m_TestNamedReferenceBindingHost: {fileID: 253148095}
   m_Test3Transform: {fileID: 2095429737}
   m_Test3Slider: {fileID: 2095429738}
   m_Test4GameObject: {fileID: 1799480872}

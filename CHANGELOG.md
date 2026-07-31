@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.0] - 2026-7-30
+- 完整重构命名体系，不保留旧类型、旧成员或兼容别名；控制流、绑定顺序、数组索引和池化行为保持不变
+- Runtime 类型：`CodeBindAttribute` → `BindingRootAttribute`、`MonoCodeBindAttribute` → `MonoBehaviourBindingAttribute`、`CodeBindNameAttribute` → `BindingTargetTokenAttribute`
+- PlainClass 模式：`CSCodeBindMono` → `PlainClassBindingHost`、`ICSCodeBind` → `IPlainClassBinding`、`CSCodeBindPool` → `PlainClassBindingPool`、`CodeBindExtension` → `PlainClassBindingExtensions`
+- NamedReference 模式：`ReferenceBindMono` → `NamedReferenceBindingHost`
+- PlainClass 生成协议：`BindMono/CachedTransform/InitBind/ClearBind` → `BindingHost/RootTransform/Initialize/Reset`，获取入口改为 `GetPlainClassBinding<T>`
+- NamedReference 查询：`GetGameObject/GetAs/GetList` → `GetManualGameObject/GetAutoTarget/GetAutoTargets`
+- Editor 扩展 API：`CodeBindData` → `BindingDescriptor`、`ICodeBindCustomizer` → `IBindingCodeCustomizer`、`ICodeBindNameTypeConfig` → `IBindingTargetTokenConfig`
+- Editor 核心职责类型改为 `HierarchyBindingProcessor`、`ExistingScriptBindingGenerator`、`NewScriptBindingGenerator`、`BindingSourceBuilder`、各模式 Binder/Generator/Inspector/Window 与 Registry
+- Host 序列化字段、Inspector `FindProperty`、生成字段、反射字符串和 Demo Scene YAML 同步迁移；脚本 `.meta` GUID 与对象引用保持不变
+- Host Hierarchy token：`CSCodeBindMono` → `PlainClassBindingHost`、`ReferenceBindMono` → `NamedReferenceBindingHost`
+- EditorPrefs key 改为 `CodeBind.OutputPath`、`CodeBind.DefaultNamespace`、`CodeBind.NameSeparator`；SessionState key 改为 `CodeBind.PendingBindingSerialization`
+- 菜单统一为 MonoBehaviour/Plain Class Binding Generator，以及 Refresh All Binding Sources/Serialized Bindings
+- 修正文档中 wildcard、默认 PascalCase 和绑定描述数据的错误说明
+
 ## [1.1.0] - 2026-6-15
 - 精简ICodeBindCustomizer命名接口：GetFieldName/GetPropertyName直接接收拼好的组合名，数组后缀固定为Array由框架拼接，移除单独的数组命名方法
 - 公共字段与属性统一使用大写开头（PascalCase），生成的属性名也保持大写开头，私有字段保持 m_ 前缀
