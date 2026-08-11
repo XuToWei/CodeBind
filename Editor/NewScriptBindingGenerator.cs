@@ -22,7 +22,7 @@ namespace CodeBind.Editor
             m_TargetClassName = className;
         }
 
-        public void TryGenerateScripts()
+        public void GenerateScripts()
         {
             if (File.Exists(m_TargetScriptPath))
             {
@@ -35,10 +35,7 @@ namespace CodeBind.Editor
             }
             BindingTargetTokenRegistry.EnsureInitialized();
             NormalizeBindingNodeNames();
-            if (!TryCollectBindings())
-            {
-                return;
-            }
+            CollectBindings();
             string targetSource = BuildTargetSource().Replace("\t", "    ");
             using StreamWriter targetWriter = new StreamWriter(m_TargetScriptPath);
             targetWriter.Write(targetSource);

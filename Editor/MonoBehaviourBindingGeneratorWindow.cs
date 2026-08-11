@@ -87,7 +87,7 @@ namespace CodeBind.Editor
         private void GenerateAndAttachScript()
         {
             MonoBehaviourBindingGenerator generator = new MonoBehaviourBindingGenerator(m_OutputPath, m_ClassName, m_NamespaceName, m_SelectedGameObject.transform, m_NameSeparator);
-            generator.TryGenerateScripts();
+            generator.GenerateScripts();
             MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(Path.Combine(m_OutputPath, $"{m_ClassName}.cs"));
             m_AddScriptComponentMethod.Invoke(null, new object[] { m_SelectedGameObject, script });
         }

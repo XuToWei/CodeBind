@@ -225,14 +225,14 @@ MonoBehaviour:
   - TestPrefab
   m_ManualGameObjects:
   - {fileID: 1163687246830712436, guid: 1bbd5ed9be130da43b3a37ae9bc5ff20, type: 3}
-  m_AutoKeys:
+  m_GeneratedReferenceKeys:
   - SelfTransform
   - OtherAnimation
   - ListAnimationArray
   - ListAnimationArray
   - ListAnimationArray
   - ListAnimationArray
-  m_AutoTargets:
+  m_GeneratedReferences:
   - {fileID: 1279417644}
   - {fileID: 517383984}
   - {fileID: 1640880387}

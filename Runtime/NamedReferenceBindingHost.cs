@@ -5,7 +5,7 @@ using UnityEngine;
 namespace CodeBind
 {
     /// <summary>
-    /// Hosts manual and automatically collected references addressable by name.
+    /// Hosts manual and generated references addressable by name.
     /// </summary>
     [BindingRoot]
     [BindingTargetToken("NamedReferenceBindingHost")]
@@ -14,11 +14,11 @@ namespace CodeBind
     {
         [SerializeField] private string[] m_ManualKeys;
         [SerializeField] private GameObject[] m_ManualGameObjects;
-        [SerializeField] private string[] m_AutoKeys;
-        [SerializeField] private UnityEngine.Object[] m_AutoTargets;
+        [SerializeField] private string[] m_GeneratedReferenceKeys;
+        [SerializeField] private UnityEngine.Object[] m_GeneratedReferences;
 
         public GameObject[] ManualGameObjects => m_ManualGameObjects;
-        public UnityEngine.Object[] AutoTargets => m_AutoTargets;
+        public UnityEngine.Object[] GeneratedReferences => m_GeneratedReferences;
 
 #if UNITY_EDITOR
         [SerializeField]
@@ -30,22 +30,22 @@ namespace CodeBind
             set => m_NameSeparator = value;
         }
 
-        public void SetAutoTargets(string[] keys, UnityEngine.Object[] targets)
+        public void SetGeneratedReferences(string[] keys, UnityEngine.Object[] references)
         {
-            if (keys == null && targets != null)
+            if (keys == null && references != null)
             {
                 throw new ArgumentException("Names cannot be null when components are provided!");
             }
-            if (keys != null && targets == null)
+            if (keys != null && references == null)
             {
                 throw new ArgumentException("Components cannot be null when names are provided!");
             }
-            if (keys != null && targets != null && keys.Length != targets.Length)
+            if (keys != null && references != null && keys.Length != references.Length)
             {
                 throw new ArgumentException("Name count must be same with component count!");
             }
-            m_AutoKeys = keys;
-            m_AutoTargets = targets;
+            m_GeneratedReferenceKeys = keys;
+            m_GeneratedReferences = references;
         }
 
         public bool HasMissingReferences()
@@ -60,11 +60,11 @@ namespace CodeBind
                     }
                 }
             }
-            if (m_AutoTargets != null)
+            if (m_GeneratedReferences != null)
             {
-                for (int i = 0; i < m_AutoTargets.Length; i++)
+                for (int i = 0; i < m_GeneratedReferences.Length; i++)
                 {
-                    if (m_AutoTargets[i] == null)
+                    if (m_GeneratedReferences[i] == null)
                     {
                         return true;
                     }
@@ -75,9 +75,9 @@ namespace CodeBind
 #endif
 
         private readonly Dictionary<string, GameObject> m_ManualGameObjectsByKey = new Dictionary<string, GameObject>();
-        private readonly Dictionary<string, UnityEngine.Object> m_AutoTargetByKey = new Dictionary<string, UnityEngine.Object>();
-        private readonly Dictionary<string, object> m_AutoTargetListsByKey = new Dictionary<string, object>();
-        private readonly HashSet<string> m_RepeatedAutoKeys = new HashSet<string>();
+        private readonly Dictionary<string, UnityEngine.Object> m_GeneratedReferenceByKey = new Dictionary<string, UnityEngine.Object>();
+        private readonly Dictionary<string, object> m_GeneratedReferenceListsByKey = new Dictionary<string, object>();
+        private readonly HashSet<string> m_RepeatedGeneratedReferenceKeys = new HashSet<string>();
 
         private void Awake()
         {
@@ -85,17 +85,17 @@ namespace CodeBind
             {
                 m_ManualGameObjectsByKey.Add(m_ManualKeys[i], m_ManualGameObjects[i]);
             }
-            for (int i = 0; i < m_AutoKeys.Length; i++)
+            for (int i = 0; i < m_GeneratedReferenceKeys.Length; i++)
             {
-                var key = m_AutoKeys[i];
-                if (!m_AutoTargetByKey.TryAdd(key, m_AutoTargets[i]))
+                string key = m_GeneratedReferenceKeys[i];
+                if (!m_GeneratedReferenceByKey.TryAdd(key, m_GeneratedReferences[i]))
                 {
-                    m_RepeatedAutoKeys.Add(key);
+                    m_RepeatedGeneratedReferenceKeys.Add(key);
                 }
             }
-            foreach (var key in m_RepeatedAutoKeys)
+            foreach (string key in m_RepeatedGeneratedReferenceKeys)
             {
-                m_AutoTargetByKey.Remove(key);
+                m_GeneratedReferenceByKey.Remove(key);
             }
         }
 
@@ -105,39 +105,39 @@ namespace CodeBind
             return gameObject;
         }
 
-        public T GetAutoTarget<T>(string key) where T : UnityEngine.Object
+        public T GetGeneratedReference<T>(string key) where T : UnityEngine.Object
         {
-            if (m_AutoTargetByKey.TryGetValue(key, out UnityEngine.Object target))
+            if (m_GeneratedReferenceByKey.TryGetValue(key, out UnityEngine.Object generatedReference))
             {
-                return target as T;
+                return generatedReference as T;
             }
             return null;
         }
 
-        public List<T> GetAutoTargets<T>(string key) where T : UnityEngine.Object
+        public List<T> GetGeneratedReferences<T>(string key) where T : UnityEngine.Object
         {
-            if (m_AutoTargetListsByKey.TryGetValue(key, out object targetList))
+            if (m_GeneratedReferenceListsByKey.TryGetValue(key, out object generatedReferenceList))
             {
-                return targetList as List<T>;
+                return generatedReferenceList as List<T>;
             }
-            if (m_RepeatedAutoKeys.Contains(key))
+            if (m_RepeatedGeneratedReferenceKeys.Contains(key))
             {
-                List<T> targets = null;
-                for (int i = 0; i < m_AutoKeys.Length; i++)
+                List<T> generatedReferences = null;
+                for (int i = 0; i < m_GeneratedReferenceKeys.Length; i++)
                 {
-                    if (m_AutoKeys[i] == key && m_AutoTargets[i] is T target)
+                    if (m_GeneratedReferenceKeys[i] == key && m_GeneratedReferences[i] is T generatedReference)
                     {
-                        if (targets == null)
+                        if (generatedReferences == null)
                         {
-                            targets = new List<T>();
+                            generatedReferences = new List<T>();
                         }
-                        targets.Add(target);
+                        generatedReferences.Add(generatedReference);
                     }
                 }
-                if (targets != null)
+                if (generatedReferences != null)
                 {
-                    m_AutoTargetListsByKey.Add(key, targets);
-                    return targets;
+                    m_GeneratedReferenceListsByKey.Add(key, generatedReferences);
+                    return generatedReferences;
                 }
             }
             return null;

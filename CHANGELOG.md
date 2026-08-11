@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.1] - 2026-8-11
+- 继续优化命名体系，不保留旧成员、兼容别名或序列化迁移特性；控制流、绑定顺序、数组索引和池化行为保持不变
+- PlainClass 生成协议：`Initialize/Reset` → `Bind/Unbind`
+- NamedReference 查询：`GetAutoTarget/GetAutoTargets` → `GetGeneratedReference/GetGeneratedReferences`，自动生成引用统一使用 `GeneratedReference` 术语
+- Editor 扩展 API：`BindingDescriptor.VariableName` → `BindingDescriptor.MemberNamePrefix`
+- 移除不符合 Try 模式的方法前缀：`TryGenerateBindingSource/TryGenerateScripts/TrySerializeBindings/TryCollectBindings` 改为语义明确的生成、更新和收集方法
+- NamedReference Host 序列化字段、Inspector `FindProperty` 和 Demo Scene YAML 同步迁移；脚本 `.meta` GUID 与对象引用保持不变
+- 清理层级绑定处理流程中的含糊缩写和临时变量名
+
 ## [2.0.0] - 2026-7-30
 - 完整重构命名体系，不保留旧类型、旧成员或兼容别名；控制流、绑定顺序、数组索引和池化行为保持不变
 - Runtime 类型：`CodeBindAttribute` → `BindingRootAttribute`、`MonoCodeBindAttribute` → `MonoBehaviourBindingAttribute`、`CodeBindNameAttribute` → `BindingTargetTokenAttribute`

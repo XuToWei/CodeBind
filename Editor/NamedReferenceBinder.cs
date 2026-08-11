@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace CodeBind.Editor
 {
     /// <summary>
-    /// Serializes automatically discovered targets for a named reference host.
+    /// Serializes generated references for a named reference host.
     /// </summary>
     internal sealed class NamedReferenceBinder : HierarchyBindingProcessor
     {
@@ -17,27 +17,27 @@ namespace CodeBind.Editor
 
         protected override void SerializeBindings()
         {
-            List<string> keys = new List<string>();
-            List<UnityEngine.Object> targets = new List<UnityEngine.Object>();
+            List<string> generatedReferenceKeys = new List<string>();
+            List<UnityEngine.Object> generatedReferences = new List<UnityEngine.Object>();
             foreach (BindingDescriptor binding in m_SingleBindings)
             {
-                keys.Add(BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.VariableName, binding.TargetToken));
+                generatedReferenceKeys.Add(BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.MemberNamePrefix, binding.TargetToken));
                 if(!TryGetBindingTarget(binding.SourceTransform, binding.TargetType, out var target))
                 {
                     throw new Exception($"Bind '{binding.SourceTransform} - {binding.TargetType}' fail!");
                 }
-                targets.Add(target);
+                generatedReferences.Add(target);
             }
             foreach (BindingDescriptor binding in m_ArrayBindingElements)
             {
-                keys.Add(BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.VariableName, binding.TargetToken));
+                generatedReferenceKeys.Add(BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.MemberNamePrefix, binding.TargetToken));
                 if(!TryGetBindingTarget(binding.SourceTransform, binding.TargetType, out var target))
                 {
                     throw new Exception($"Bind '{binding.SourceTransform} - {binding.TargetType}' fail!");
                 }
-                targets.Add(target);
+                generatedReferences.Add(target);
             }
-            m_Host.SetAutoTargets(keys.ToArray(), targets.ToArray());
+            m_Host.SetGeneratedReferences(generatedReferenceKeys.ToArray(), generatedReferences.ToArray());
         }
     }
 }

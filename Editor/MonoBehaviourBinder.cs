@@ -37,7 +37,7 @@ namespace CodeBind.Editor
             Type targetType = m_TargetBehaviour.GetType();
             foreach (BindingDescriptor binding in m_SingleBindings)
             {
-                FieldInfo targetField = targetType.GetField(BindingCodeCustomizerRegistry.GetSerializedFieldName(binding.VariableName, binding.TargetToken), BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo targetField = targetType.GetField(BindingCodeCustomizerRegistry.GetSerializedFieldName(binding.MemberNamePrefix, binding.TargetToken), BindingFlags.NonPublic | BindingFlags.Instance);
                 if(!TryGetBindingTarget(binding.SourceTransform, binding.TargetType, out var target))
                 {
                     throw new Exception($"Bind '{binding.SourceTransform} - {binding.TargetType}' fail!");
@@ -45,23 +45,23 @@ namespace CodeBind.Editor
                 targetField.SetValue(m_TargetBehaviour, target);
             }
 
-            foreach (KeyValuePair<string, List<BindingDescriptor>> kv in m_ArrayBindingsByMemberName)
+            foreach (KeyValuePair<string, List<BindingDescriptor>> arrayBindingPair in m_ArrayBindingsByMemberName)
             {
-                List<object> boundTargets = new List<object>();
-                foreach (BindingDescriptor binding in kv.Value)
+                List<object> bindingTargets = new List<object>();
+                foreach (BindingDescriptor binding in arrayBindingPair.Value)
                 {
                     if(!TryGetBindingTarget(binding.SourceTransform, binding.TargetType, out var target))
                     {
                         throw new Exception($"Bind '{binding.SourceTransform} - {binding.TargetType}' fail!");
                     }
-                    boundTargets.Add(target);
+                    bindingTargets.Add(target);
                 }
-                BindingDescriptor firstArrayBinding = kv.Value[0];
-                FieldInfo targetField = targetType.GetField(BindingCodeCustomizerRegistry.GetSerializedArrayFieldName(firstArrayBinding.VariableName, firstArrayBinding.TargetToken), BindingFlags.NonPublic | BindingFlags.Instance);
-                Type type = targetField.FieldType.GetElementType();
-                Array filledArray = Array.CreateInstance(type, kv.Value.Count);
-                Array.Copy(boundTargets.ToArray(), filledArray, kv.Value.Count);
-                targetField.SetValue(m_TargetBehaviour, filledArray);
+                BindingDescriptor firstArrayBinding = arrayBindingPair.Value[0];
+                FieldInfo targetField = targetType.GetField(BindingCodeCustomizerRegistry.GetSerializedArrayFieldName(firstArrayBinding.MemberNamePrefix, firstArrayBinding.TargetToken), BindingFlags.NonPublic | BindingFlags.Instance);
+                Type elementType = targetField.FieldType.GetElementType();
+                Array targetArray = Array.CreateInstance(elementType, arrayBindingPair.Value.Count);
+                Array.Copy(bindingTargets.ToArray(), targetArray, arrayBindingPair.Value.Count);
+                targetField.SetValue(m_TargetBehaviour, targetArray);
             }
         }
     }

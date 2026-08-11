@@ -75,7 +75,7 @@ namespace CodeBind.Editor
         private void GenerateAndAssignScript()
         {
             PlainClassBindingGenerator generator = new PlainClassBindingGenerator(m_OutputPath, m_ClassName, m_NamespaceName, m_Host.transform, m_Host.NameSeparator);
-            generator.TryGenerateScripts();
+            generator.GenerateScripts();
             MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(Path.Combine(m_OutputPath, $"{m_ClassName}.cs"));
             FieldInfo bindingClassScriptField = m_Host.GetType().GetField("m_BindingClassScript", BindingFlags.NonPublic | BindingFlags.Instance);
             bindingClassScriptField.SetValue(m_Host, script);

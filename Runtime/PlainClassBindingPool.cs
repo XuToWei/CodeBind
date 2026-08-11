@@ -30,13 +30,13 @@ namespace CodeBind
                     binding = (T)bindings.Dequeue();
                 }
             }
-            binding.Initialize(host);
+            binding.Bind(host);
             return binding;
         }
 
         internal void Release(IPlainClassBinding binding)
         {
-            binding.Reset();
+            binding.Unbind();
             Type bindingType = binding.GetType();
             if (!m_QueuesByType.TryGetValue(bindingType, out var bindings))
             {

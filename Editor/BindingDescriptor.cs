@@ -5,7 +5,7 @@ namespace CodeBind.Editor
 {
     public sealed class BindingDescriptor : IComparable<BindingDescriptor>
     {
-        public string VariableName
+        public string MemberNamePrefix
         {
             get;
         }
@@ -25,9 +25,9 @@ namespace CodeBind.Editor
             get;
         }
 
-        public BindingDescriptor(string variableName, Type targetType, string targetToken, Transform sourceTransform)
+        public BindingDescriptor(string memberNamePrefix, Type targetType, string targetToken, Transform sourceTransform)
         {
-            this.VariableName = variableName;
+            this.MemberNamePrefix = memberNamePrefix;
             this.TargetType = targetType;
             this.TargetToken = targetToken;
             this.SourceTransform = sourceTransform;
@@ -35,7 +35,7 @@ namespace CodeBind.Editor
 
         public int CompareTo(BindingDescriptor other)
         {
-            int compare = String.CompareOrdinal(VariableName, other.VariableName);
+            int compare = String.CompareOrdinal(MemberNamePrefix, other.MemberNamePrefix);
             if (compare != 0)
             {
                 return compare;

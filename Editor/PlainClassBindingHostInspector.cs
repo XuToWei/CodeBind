@@ -56,15 +56,15 @@ namespace CodeBind.Editor
                             {
                                 PlainClassBindingHost host = (PlainClassBindingHost)t;
                                 PlainClassBinder binder = new PlainClassBinder(host.BindingClassScript, host.transform, host.NameSeparator);
-                                binder.TryGenerateBindingSource();
-                                binder.TrySerializeBindings();
+                                binder.GenerateBindingSource();
+                                binder.UpdateSerializedBindings();
                             }
                         }
                         else
                         {
                             PlainClassBinder binder = new PlainClassBinder((MonoScript)m_BindingClassScriptProperty.objectReferenceValue, ((MonoBehaviour)target).transform, (char)m_NameSeparatorProperty.intValue);
-                            binder.TryGenerateBindingSource();
-                            binder.TrySerializeBindings();
+                            binder.GenerateBindingSource();
+                            binder.UpdateSerializedBindings();
                         }
                     }
                 }

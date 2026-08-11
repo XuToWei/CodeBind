@@ -20,7 +20,7 @@ namespace CodeBind.Editor
         /// <summary>
         /// 匹配有效的 ASCII C# 标识符格式
         /// </summary>
-        private static readonly Regex s_VariableNameRegex = new Regex(@"^[A-Za-z_][A-Za-z0-9_]*$", RegexOptions.Compiled);
+        private static readonly Regex s_MemberNamePrefixRegex = new Regex(@"^[A-Za-z_][A-Za-z0-9_]*$", RegexOptions.Compiled);
 
         protected readonly char m_NameSeparator;
         protected readonly Transform m_RootTransform;
@@ -40,9 +40,9 @@ namespace CodeBind.Editor
             m_ComponentBuffer = new List<Component>();
         }
 
-        protected bool TryCollectBindings()
+        protected void CollectBindings()
         {
-            bool TryCollectNodeBindings(Transform child, string[] strArray, ref List<BindingDescriptor> singleBindings)
+            void CollectNodeBindings(Transform child, string[] nameSegments, List<BindingDescriptor> nodeBindings)
             {
                 m_ComponentBuffer.Clear();
                 child.GetComponents(m_ComponentBuffer);
@@ -53,18 +53,18 @@ namespace CodeBind.Editor
                         m_ComponentBuffer.RemoveAt(i);
                     }
                 }
-                string variableName = strArray[0];
-                for (int i = 1; i < strArray.Length; i++)
+                string memberNamePrefix = nameSegments[0];
+                for (int i = 1; i < nameSegments.Length; i++)
                 {
-                    string typeStr = strArray[i];
-                    if (string.Equals(typeStr, "*", StringComparison.OrdinalIgnoreCase))
+                    string targetTokenCandidate = nameSegments[i];
+                    if (string.Equals(targetTokenCandidate, "*", StringComparison.OrdinalIgnoreCase))
                     {
                         //自动补齐所有存在的脚本，如果存在继承关系的保留子类即可
                         Type targetType = typeof(GameObject);
                         if (BindingTargetTokenRegistry.TokensByTargetType.TryGetValue(targetType, out var targetToken))
                         {
-                            BindingDescriptor binding = new BindingDescriptor(variableName, targetType, targetToken, child);
-                            singleBindings.Add(binding);
+                            BindingDescriptor binding = new BindingDescriptor(memberNamePrefix, targetType, targetToken, child);
+                            nodeBindings.Add(binding);
                         }
                         foreach (var component in m_ComponentBuffer)
                         {
@@ -72,78 +72,71 @@ namespace CodeBind.Editor
                             //有继承关系的脚本，脚本部分重名，先判断有没有直接能匹配的
                             if (BindingTargetTokenRegistry.TokensByTargetType.TryGetValue(targetType, out targetToken))
                             {
-                                BindingDescriptor binding = new BindingDescriptor(variableName, targetType, targetToken, child);
-                                singleBindings.Add(binding);
+                                BindingDescriptor binding = new BindingDescriptor(memberNamePrefix, targetType, targetToken, child);
+                                nodeBindings.Add(binding);
                             }
                             else
                             {
                                 //没有直接匹配，可以找父类可以绑定的
-                                foreach (var kv in BindingTargetTokenRegistry.TargetTypesByToken)
+                                foreach (KeyValuePair<string, Type> targetTypeByToken in BindingTargetTokenRegistry.TargetTypesByToken)
                                 {
-                                    if (targetType.IsSubclassOf(kv.Value) && TryGetBindingTarget(child, kv.Value, out _))
+                                    if (targetType.IsSubclassOf(targetTypeByToken.Value) && TryGetBindingTarget(child, targetTypeByToken.Value, out _))
                                     {
-                                        BindingDescriptor binding = new BindingDescriptor(variableName, kv.Value, kv.Key, child);
-                                        singleBindings.Add(binding);
+                                        BindingDescriptor binding = new BindingDescriptor(memberNamePrefix, targetTypeByToken.Value, targetTypeByToken.Key, child);
+                                        nodeBindings.Add(binding);
                                         break;
                                     }
                                 }
                             }
                         }
                     }
-                    else if (BindingTargetTokenRegistry.TargetTypesByToken.TryGetValue(typeStr, out Type type) && TryGetBindingTarget(child, type, out _))
+                    else if (BindingTargetTokenRegistry.TargetTypesByToken.TryGetValue(targetTokenCandidate, out Type configuredTargetType) && TryGetBindingTarget(child, configuredTargetType, out _))
                     {
-                        BindingDescriptor binding = new BindingDescriptor(variableName, type, typeStr, child);
-                        singleBindings.Add(binding);
+                        BindingDescriptor binding = new BindingDescriptor(memberNamePrefix, configuredTargetType, targetTokenCandidate, child);
+                        nodeBindings.Add(binding);
                     }
                     else
                     {
-                        throw new Exception($"{child.name}的命名中{typeStr}不存在对应的组件类型，绑定失败！");
+                        throw new Exception($"{child.name}的命名中{targetTokenCandidate}不存在对应的组件类型，绑定失败！");
                     }
                 }
                 m_ComponentBuffer.Clear();
-                if (singleBindings.Count <= 0)
+                if (nodeBindings.Count <= 0)
                 {
                     throw new Exception("获取的Bind对象个数为0，绑定失败！");
                 }
+            }
+
+            bool TryCollectSingleBindings(Transform child, out List<BindingDescriptor> nodeBindings)
+            {
+                nodeBindings = new List<BindingDescriptor>();
+                string[] nameSegments = child.name.Split(m_NameSeparator);
+                string lastSegment = nameSegments[^1];
+                MatchCollection arrayIndexMatches = s_ArrayIndexRegex.Matches(lastSegment);
+                if (arrayIndexMatches.Count > 0)
+                {
+                    return false;
+                }
+                CollectNodeBindings(child, nameSegments, nodeBindings);
                 return true;
             }
             
-            bool TryCollectSingleBindings(Transform child, out List<BindingDescriptor> singleBindings)
+            bool TryCollectArrayBindings(Transform child, out List<BindingDescriptor> nodeBindings)
             {
-                singleBindings = new List<BindingDescriptor>();
-                string[] strArray = child.name.Split(m_NameSeparator);
-                string lastStr = strArray[^1];
-                MatchCollection matchCollection = s_ArrayIndexRegex.Matches(lastStr);
-                if (matchCollection.Count > 0)
+                nodeBindings = new List<BindingDescriptor>();
+                string[] nameSegments = child.name.Split(m_NameSeparator);
+                string lastSegment = nameSegments[^1];
+                MatchCollection arrayIndexMatches = s_ArrayIndexRegex.Matches(lastSegment);
+                if (arrayIndexMatches.Count < 1)
                 {
                     return false;
                 }
-                if (!TryCollectNodeBindings(child, strArray, ref singleBindings))
+                for (int i = 0; i < arrayIndexMatches.Count; i++)
                 {
-                    return false;
+                    lastSegment = lastSegment.Replace(arrayIndexMatches[i].Value, string.Empty);
                 }
-                return true;
-            }
-            
-            bool TryCollectArrayBindings(Transform child, out List<BindingDescriptor> singleBindings)
-            {
-                singleBindings = new List<BindingDescriptor>();
-                string[] strArray = child.name.Split(m_NameSeparator);
-                string lastStr = strArray[^1];
-                MatchCollection matchCollection = s_ArrayIndexRegex.Matches(lastStr);
-                if (matchCollection.Count < 1)
-                {
-                    return false;
-                }
-                for (int i = 0; i < matchCollection.Count; i++)
-                {
-                    lastStr = lastStr.Replace(matchCollection[i].Value, string.Empty);
-                }
-                strArray[^1] = lastStr.Replace(" ", string.Empty);
-                if (!TryCollectNodeBindings(child, strArray, ref singleBindings))
-                {
-                    return false;
-                }
+                nameSegments[^1] = lastSegment.Replace(" ", string.Empty);
+                CollectNodeBindings(child, nameSegments, nodeBindings);
                 return true;
             }
             
@@ -156,14 +149,14 @@ namespace CodeBind.Editor
                 {
                     continue;
                 }
-                if (TryCollectSingleBindings(child, out List<BindingDescriptor> singleBindings))
+                if (TryCollectSingleBindings(child, out List<BindingDescriptor> nodeBindings))
                 {
-                    foreach (BindingDescriptor binding in singleBindings)
+                    foreach (BindingDescriptor binding in nodeBindings)
                     {
-                        if (m_SingleBindings.Find(data => data.VariableName == binding.VariableName && data.TargetToken == binding.TargetToken) != null)
+                        if (m_SingleBindings.Find(existingBinding => existingBinding.MemberNamePrefix == binding.MemberNamePrefix && existingBinding.TargetToken == binding.TargetToken) != null)
                         {
                             m_SingleBindings.Clear();
-                            throw new Exception($"绑定对象中存在同名[{binding.VariableName}]-[{binding.TargetToken}]-[{binding.SourceTransform}],请修改后重新生成。");
+                            throw new Exception($"绑定对象中存在同名[{binding.MemberNamePrefix}]-[{binding.TargetToken}]-[{binding.SourceTransform}],请修改后重新生成。");
                         }
                         m_SingleBindings.Add(binding);
                     }
@@ -172,10 +165,10 @@ namespace CodeBind.Editor
                 {
                     foreach (BindingDescriptor binding in arrayBindings)
                     {
-                        if (m_ArrayBindingElements.Find(data => data.VariableName == binding.VariableName && data.TargetToken == binding.TargetToken && data.SourceTransform == binding.SourceTransform) != null)
+                        if (m_ArrayBindingElements.Find(existingBinding => existingBinding.MemberNamePrefix == binding.MemberNamePrefix && existingBinding.TargetToken == binding.TargetToken && existingBinding.SourceTransform == binding.SourceTransform) != null)
                         {
                             m_ArrayBindingElements.Clear();
-                            throw new Exception($"绑定数组对象中存在重复[{binding.VariableName}]-[{binding.TargetToken}]-[{binding.SourceTransform}],请修改后重新生成。");
+                            throw new Exception($"绑定数组对象中存在重复[{binding.MemberNamePrefix}]-[{binding.TargetToken}]-[{binding.SourceTransform}],请修改后重新生成。");
                         }
                         m_ArrayBindingElements.Add(binding);
                     }
@@ -188,84 +181,83 @@ namespace CodeBind.Editor
             for (int i = 0; i < m_ArrayBindingElements.Count - 1; i++)
             {
                 BindingDescriptor firstArrayBinding = m_ArrayBindingElements[i];
-                string arrayName = firstArrayBinding.VariableName + firstArrayBinding.TargetToken;
-                if (m_ArrayBindingsByMemberName.TryGetValue(arrayName, out List<BindingDescriptor> singleBindings))
+                string arrayMemberName = firstArrayBinding.MemberNamePrefix + firstArrayBinding.TargetToken;
+                if (m_ArrayBindingsByMemberName.TryGetValue(arrayMemberName, out List<BindingDescriptor> nodeBindings))
                 {
                     continue;
                 }
-                singleBindings = new List<BindingDescriptor>() { firstArrayBinding };
-                m_ArrayBindingsByMemberName.Add(arrayName, singleBindings);
+                nodeBindings = new List<BindingDescriptor>() { firstArrayBinding };
+                m_ArrayBindingsByMemberName.Add(arrayMemberName, nodeBindings);
                 for (int j = i + 1; j < m_ArrayBindingElements.Count; j++)
                 {
                     BindingDescriptor binding = m_ArrayBindingElements[j];
-                    if (!string.Equals(binding.VariableName + binding.TargetToken, arrayName, StringComparison.Ordinal))
+                    if (!string.Equals(binding.MemberNamePrefix + binding.TargetToken, arrayMemberName, StringComparison.Ordinal))
                     {
                         continue;
                     }
-                    singleBindings.Add(binding);
+                    nodeBindings.Add(binding);
                 }
             }
             //进行排序，保证不同名字相同节点顺序不同的预制可以公用绑定脚本
             m_SingleBindings.Sort();
-            return true;
         }
 
         protected void NormalizeBindingNodeNames()
         {
             ValidateBindingConfiguration();
-            Dictionary<Transform, string> transformNameDict = new Dictionary<Transform, string>();
-            Dictionary<string, List<Transform>> arrayTransformDict = new Dictionary<string, List<Transform>>();
+            Dictionary<Transform, string> normalizedNamesByTransform = new Dictionary<Transform, string>();
+            Dictionary<string, List<Transform>> arrayElementsByMemberNamePrefix = new Dictionary<string, List<Transform>>();
             foreach (Transform child in m_RootTransform.GetComponentsInChildren<Transform>(true))
             {
                 if (child == m_RootTransform || !child.name.Contains(m_NameSeparator) || IsNestedUnderAnotherBindingRoot(child))
                 {
                     continue;
                 }
-                List<string> strList = child.name.Split(m_NameSeparator).ToList();
-                if(string.IsNullOrEmpty(strList[0]))
+                List<string> nameSegments = child.name.Split(m_NameSeparator).ToList();
+                if(string.IsNullOrEmpty(nameSegments[0]))
                 {
-                    throw new Exception($"变量名为空：{child.name}");
+                    throw new Exception($"成员名前缀为空：{child.name}");
                 }
-                if (!s_VariableNameRegex.IsMatch(strList[0]))
+                if (!s_MemberNamePrefixRegex.IsMatch(nameSegments[0]))
                 {
-                    throw new Exception($"{child.name}的变量名格式不对：{strList[0]}");
+                    throw new Exception($"{child.name}的成员名前缀格式不对：{nameSegments[0]}");
                 }
                 //(xxx)结尾的识别为数组，方便复制
-                string lastStr = strList[^1];
-                MatchCollection matchCollection = s_ArrayIndexRegex.Matches(lastStr);
-                if (matchCollection.Count > 0)
+                string lastSegment = nameSegments[^1];
+                MatchCollection arrayIndexMatches = s_ArrayIndexRegex.Matches(lastSegment);
+                if (arrayIndexMatches.Count > 0)
                 {
-                    if (arrayTransformDict.TryGetValue(strList[0], out List<Transform> transforms))
+                    if (arrayElementsByMemberNamePrefix.TryGetValue(nameSegments[0], out List<Transform> transforms))
                     {
                         transforms.Add(child);
                     }
                     else
                     {
-                        arrayTransformDict[strList[0]] = new List<Transform>() { child };
+                        arrayElementsByMemberNamePrefix[nameSegments[0]] = new List<Transform>() { child };
                     }
-                    for (int i = 0; i < matchCollection.Count; i++)
+                    for (int i = 0; i < arrayIndexMatches.Count; i++)
                     {
-                        lastStr = lastStr.Replace(matchCollection[i].Value, string.Empty);
+                        lastSegment = lastSegment.Replace(arrayIndexMatches[i].Value, string.Empty);
                     }
-                    strList[^1] = lastStr.Replace(" ", string.Empty);
+                    nameSegments[^1] = lastSegment.Replace(" ", string.Empty);
                 }
                 bool hasAll = false;
-                for (int i = 1; i < strList.Count; i++)
+                for (int i = 1; i < nameSegments.Count; i++)
                 {
-                    if (string.IsNullOrEmpty(strList[i]))
+                    if (string.IsNullOrEmpty(nameSegments[i]))
                     {
                         throw new Exception($"不支持自动补齐名字为空的脚本：{child.name}");
                     }
-                    if (string.Equals(strList[1], "*", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(nameSegments[1], "*", StringComparison.OrdinalIgnoreCase))
                     {
                         hasAll = true;
                     }
                 }
                 if (hasAll)
                 {
-                    strList = new List<string>
+                    nameSegments = new List<string>
                     {
-                        strList[0],
+                        nameSegments[0],
                         "*"
                     };
                 }
@@ -281,89 +273,89 @@ namespace CodeBind.Editor
                         }
                     }
                     //自动补齐名字残缺的
-                    for (int i = 1; i < strList.Count; i++)
+                    for (int i = 1; i < nameSegments.Count; i++)
                     {
-                        string typeStr = strList[i];
+                        string targetTokenCandidate = nameSegments[i];
                         //有的命名会有局部重复，这里如果脚本存在了就不参加模糊匹配
-                        if (BindingTargetTokenRegistry.TargetTypesByToken.TryGetValue(typeStr, out var comType) && TryGetBindingTarget(child, comType, out _))
+                        if (BindingTargetTokenRegistry.TargetTypesByToken.TryGetValue(targetTokenCandidate, out var componentType) && TryGetBindingTarget(child, componentType, out _))
                         {
                             continue;
                         }
                         Type targetType = typeof(GameObject);
                         if (BindingTargetTokenRegistry.TokensByTargetType.TryGetValue(targetType, out var targetToken) &&
-                            (targetToken.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(targetToken, StringComparison.OrdinalIgnoreCase)))
+                            (targetToken.Contains(targetTokenCandidate, StringComparison.OrdinalIgnoreCase) || targetTokenCandidate.Contains(targetToken, StringComparison.OrdinalIgnoreCase)))
                         {
-                            strList[i] = targetToken;
+                            nameSegments[i] = targetToken;
                             continue;
                         }
                         //有继承关系的脚本，脚本部分重名，先判断有没有直接能匹配的
-                        bool isContinue = false;
+                        bool targetTokenResolved = false;
                         foreach (var component in m_ComponentBuffer)
                         {
                             targetType = component.GetType();
                             if (BindingTargetTokenRegistry.TokensByTargetType.TryGetValue(targetType, out targetToken) &&
-                                (targetToken.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(targetToken, StringComparison.OrdinalIgnoreCase)))
+                                (targetToken.Contains(targetTokenCandidate, StringComparison.OrdinalIgnoreCase) || targetTokenCandidate.Contains(targetToken, StringComparison.OrdinalIgnoreCase)))
                             {
-                                strList[i] = targetToken;
-                                isContinue = true;
+                                nameSegments[i] = targetToken;
+                                targetTokenResolved = true;
                                 break;
                             }
                         }
-                        if (isContinue)
+                        if (targetTokenResolved)
                         {
                             continue;
                         }
                         //有继承关系的脚本，可以找到父类节点绑定
-                        foreach (var kv in BindingTargetTokenRegistry.TargetTypesByToken)
+                        foreach (KeyValuePair<string, Type> targetTypeByToken in BindingTargetTokenRegistry.TargetTypesByToken)
                         {
-                            if ((kv.Key.Contains(typeStr, StringComparison.OrdinalIgnoreCase) || typeStr.Contains(kv.Key, StringComparison.OrdinalIgnoreCase)) && TryGetBindingTarget(child, kv.Value, out _))
+                            if ((targetTypeByToken.Key.Contains(targetTokenCandidate, StringComparison.OrdinalIgnoreCase) || targetTokenCandidate.Contains(targetTypeByToken.Key, StringComparison.OrdinalIgnoreCase)) && TryGetBindingTarget(child, targetTypeByToken.Value, out _))
                             {
-                                strList[i] = kv.Key;
+                                nameSegments[i] = targetTypeByToken.Key;
                                 break;
                             }
                         }
                     }
                     m_ComponentBuffer.Clear();
                 }
-                for (int i = 1; i < strList.Count - 1; i++)
+                for (int i = 1; i < nameSegments.Count - 1; i++)
                 {
-                    for (int j = i + 1; j < strList.Count; j++)
+                    for (int j = i + 1; j < nameSegments.Count; j++)
                     {
-                        if (string.Equals(strList[i], strList[j], StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(nameSegments[i], nameSegments[j], StringComparison.OrdinalIgnoreCase))
                         {
                             throw new Exception($"Child:{child} component name is repeated or auto fix repeated!");
                         }
                     }
                 }
-                transformNameDict.Add(child, string.Join(m_NameSeparator, strList));
+                normalizedNamesByTransform.Add(child, string.Join(m_NameSeparator, nameSegments));
             }
             //处理Array
-            foreach (KeyValuePair<string, List<Transform>> kv in arrayTransformDict)
+            foreach (KeyValuePair<string, List<Transform>> arrayElementsByPrefix in arrayElementsByMemberNamePrefix)
             {
-                if (kv.Value.Count < 2)
+                if (arrayElementsByPrefix.Value.Count < 2)
                 {
                     continue;
                 }
-                Transform first = kv.Value[0];
-                string firstName = transformNameDict[first];
-                for (int i = 1; i < kv.Value.Count; i++)
+                Transform firstArrayElement = arrayElementsByPrefix.Value[0];
+                string firstElementName = normalizedNamesByTransform[firstArrayElement];
+                for (int i = 1; i < arrayElementsByPrefix.Value.Count; i++)
                 {
-                    if (transformNameDict[kv.Value[i]] != firstName)
+                    if (normalizedNamesByTransform[arrayElementsByPrefix.Value[i]] != firstElementName)
                     {
-                        throw new Exception($"Child:{kv.Value[i]} has different component ({transformNameDict[kv.Value[i]]}:{firstName}) in array!");
+                        throw new Exception($"Child:{arrayElementsByPrefix.Value[i]} has different component ({normalizedNamesByTransform[arrayElementsByPrefix.Value[i]]}:{firstElementName}) in array!");
                     }
                 }
-                transformNameDict[first] = $"{firstName} ({0})";
-                for (int i = 1; i < kv.Value.Count; i++)
+                normalizedNamesByTransform[firstArrayElement] = $"{firstElementName} ({0})";
+                for (int i = 1; i < arrayElementsByPrefix.Value.Count; i++)
                 {
-                    string name = transformNameDict[kv.Value[i]];
-                    transformNameDict[kv.Value[i]] = $"{name} ({i})";
+                    string elementName = normalizedNamesByTransform[arrayElementsByPrefix.Value[i]];
+                    normalizedNamesByTransform[arrayElementsByPrefix.Value[i]] = $"{elementName} ({i})";
                 }
             }
 
-            foreach (KeyValuePair<Transform, string> kv in transformNameDict)
+            foreach (KeyValuePair<Transform, string> normalizedNameByTransform in normalizedNamesByTransform)
             {
-                kv.Key.name = kv.Value;
+                normalizedNameByTransform.Key.name = normalizedNameByTransform.Value;
             }
         }
 
@@ -411,14 +403,11 @@ namespace CodeBind.Editor
             return false;
         }
 
-        public void TrySerializeBindings()
+        public void UpdateSerializedBindings()
         {
             BindingTargetTokenRegistry.EnsureInitialized();
             NormalizeBindingNodeNames();
-            if (!TryCollectBindings())
-            {
-                return;
-            }
+            CollectBindings();
             SerializeBindings();
             EditorUtility.SetDirty(m_RootTransform);
             AssetDatabase.SaveAssets();

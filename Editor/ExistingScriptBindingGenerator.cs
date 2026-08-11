@@ -37,14 +37,11 @@ namespace CodeBind.Editor
             m_TargetClassName = script.GetClass().Name;
         }
 
-        public void TryGenerateBindingSource()
+        public void GenerateBindingSource()
         {
             BindingTargetTokenRegistry.EnsureInitialized();
             NormalizeBindingNodeNames();
-            if (!TryCollectBindings())
-            {
-                return;
-            }
+            CollectBindings();
             string generatedSource = BuildBindingSource().Replace("\t", "    ");
             if (File.Exists(m_GeneratedScriptPath) && string.Equals(generatedSource, File.ReadAllText(m_GeneratedScriptPath)))
             {

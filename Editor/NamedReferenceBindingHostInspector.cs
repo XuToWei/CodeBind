@@ -12,14 +12,14 @@ namespace CodeBind.Editor
         private SerializedProperty m_ManualKeysProperty;
         private SerializedProperty m_ManualGameObjectsProperty;
 
-        private SerializedProperty m_AutoKeysProperty;
-        private SerializedProperty m_AutoTargetsProperty;
+        private SerializedProperty m_GeneratedReferenceKeysProperty;
+        private SerializedProperty m_GeneratedReferencesProperty;
 
         private string m_NewManualKey;
         private GameObject m_NewManualGameObject;
 
         private bool m_ManualReferencesExpanded = true;
-        private bool m_AutoReferencesExpanded = true;
+        private bool m_GeneratedReferencesExpanded = true;
 
         private void OnEnable()
         {
@@ -31,8 +31,8 @@ namespace CodeBind.Editor
             }
             m_ManualKeysProperty = serializedObject.FindProperty("m_ManualKeys");
             m_ManualGameObjectsProperty = serializedObject.FindProperty("m_ManualGameObjects");
-            m_AutoKeysProperty = serializedObject.FindProperty("m_AutoKeys");
-            m_AutoTargetsProperty = serializedObject.FindProperty("m_AutoTargets");
+            m_GeneratedReferenceKeysProperty = serializedObject.FindProperty("m_GeneratedReferenceKeys");
+            m_GeneratedReferencesProperty = serializedObject.FindProperty("m_GeneratedReferences");
         }
 
         public override void OnInspectorGUI()
@@ -120,21 +120,21 @@ namespace CodeBind.Editor
 
                 SirenixEditorGUI.BeginBox();
                 SirenixEditorGUI.BeginBoxHeader();
-                string autoReferencesLabel = $"Automatic References (count:{m_AutoTargetsProperty.arraySize})";
-                m_AutoReferencesExpanded = SirenixEditorGUI.Foldout(m_AutoReferencesExpanded, autoReferencesLabel);
+                string generatedReferencesLabel = $"Generated References (count:{m_GeneratedReferencesProperty.arraySize})";
+                m_GeneratedReferencesExpanded = SirenixEditorGUI.Foldout(m_GeneratedReferencesExpanded, generatedReferencesLabel);
                 SirenixEditorGUI.EndBoxHeader();
-                if (SirenixEditorGUI.BeginFadeGroup(autoReferencesLabel, m_AutoReferencesExpanded))
+                if (SirenixEditorGUI.BeginFadeGroup(generatedReferencesLabel, m_GeneratedReferencesExpanded))
                 {
                     GUILayout.BeginHorizontal();
                     if (GUILayout.Button("Generate Serialization"))
                     {
                         NamedReferenceBinder binder = new NamedReferenceBinder((NamedReferenceBindingHost)target, (char)m_NameSeparatorProperty.intValue);
-                        binder.TrySerializeBindings();
+                        binder.UpdateSerializedBindings();
                     }
                     if (GUILayout.Button("Clear Serialization"))
                     {
-                        m_AutoKeysProperty.ClearArray();
-                        m_AutoTargetsProperty.ClearArray();
+                        m_GeneratedReferenceKeysProperty.ClearArray();
+                        m_GeneratedReferencesProperty.ClearArray();
                     }
                     GUILayout.EndHorizontal();
 
@@ -151,11 +151,11 @@ namespace CodeBind.Editor
                         EditorGUILayout.LabelField("Key");
                         EditorGUILayout.LabelField("Target");
                         GUILayout.EndHorizontal();
-                        for (int i = 0; i < m_AutoTargetsProperty.arraySize; i++)
+                        for (int i = 0; i < m_GeneratedReferencesProperty.arraySize; i++)
                         {
                             GUILayout.BeginHorizontal();
-                            EditorGUILayout.TextField(m_AutoKeysProperty.GetArrayElementAtIndex(i).stringValue);
-                            EditorGUILayout.ObjectField(m_AutoTargetsProperty.GetArrayElementAtIndex(i).objectReferenceValue, typeof (UnityEngine.Object), true);
+                            EditorGUILayout.TextField(m_GeneratedReferenceKeysProperty.GetArrayElementAtIndex(i).stringValue);
+                            EditorGUILayout.ObjectField(m_GeneratedReferencesProperty.GetArrayElementAtIndex(i).objectReferenceValue, typeof (UnityEngine.Object), true);
                             GUILayout.EndHorizontal();
                         }
                     }
@@ -168,8 +168,8 @@ namespace CodeBind.Editor
                 {
                     m_ManualKeysProperty.ClearArray();
                     m_ManualGameObjectsProperty.ClearArray();
-                    m_AutoKeysProperty.ClearArray();
-                    m_AutoTargetsProperty.ClearArray();
+                    m_GeneratedReferenceKeysProperty.ClearArray();
+                    m_GeneratedReferencesProperty.ClearArray();
                 }
             }
             EditorGUI.EndDisabledGroup();

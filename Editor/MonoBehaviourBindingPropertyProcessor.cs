@@ -26,17 +26,17 @@ namespace CodeBind.Editor
 
         private void GenerateBindingSource()
         {
-            foreach (T t in ValueEntry.Values)
+            foreach (T targetValue in ValueEntry.Values)
             {
                 MonoBehaviourBindingAttribute attribute = Property.GetAttribute<MonoBehaviourBindingAttribute>();
-                MonoBehaviour mono = t as MonoBehaviour;
-                if (mono == null)
+                MonoBehaviour targetBehaviour = targetValue as MonoBehaviour;
+                if (targetBehaviour == null)
                 {
-                    throw new Exception($"{t.GetType()} is not inherit from MonoBehaviour!");
+                    throw new Exception($"{targetValue.GetType()} is not inherit from MonoBehaviour!");
                 }
-                MonoScript script = MonoScript.FromMonoBehaviour(mono);
-                MonoBehaviourBinder binder = new MonoBehaviourBinder(script, mono.transform, attribute.NameSeparator);
-                binder.TryGenerateBindingSource();
+                MonoScript script = MonoScript.FromMonoBehaviour(targetBehaviour);
+                MonoBehaviourBinder binder = new MonoBehaviourBinder(script, targetBehaviour.transform, attribute.NameSeparator);
+                binder.GenerateBindingSource();
             }
 
             if (ValueEntry.Values.Count > 0)
@@ -47,17 +47,17 @@ namespace CodeBind.Editor
 
         private void SerializeBindings()
         {
-            foreach (T t in ValueEntry.Values)
+            foreach (T targetValue in ValueEntry.Values)
             {
                 MonoBehaviourBindingAttribute attribute = Property.GetAttribute<MonoBehaviourBindingAttribute>();
-                MonoBehaviour mono = t as MonoBehaviour;
-                if (mono == null)
+                MonoBehaviour targetBehaviour = targetValue as MonoBehaviour;
+                if (targetBehaviour == null)
                 {
-                    throw new Exception($"{t.GetType()} is not inherit from MonoBehaviour!");
+                    throw new Exception($"{targetValue.GetType()} is not inherit from MonoBehaviour!");
                 }
-                MonoScript script = MonoScript.FromMonoBehaviour(mono);
-                MonoBehaviourBinder binder = new MonoBehaviourBinder(script, mono.transform, attribute.NameSeparator);
-                binder.TrySerializeBindings();
+                MonoScript script = MonoScript.FromMonoBehaviour(targetBehaviour);
+                MonoBehaviourBinder binder = new MonoBehaviourBinder(script, targetBehaviour.transform, attribute.NameSeparator);
+                binder.UpdateSerializedBindings();
             }
         }
     }
@@ -75,18 +75,18 @@ namespace CodeBind.Editor
 
             foreach (GameObject gameObject in Selection.gameObjects)
             {
-                foreach (MonoBehaviour mono in gameObject.GetComponents<MonoBehaviour>())
+                foreach (MonoBehaviour targetBehaviour in gameObject.GetComponents<MonoBehaviour>())
                 {
-                    foreach (var customAttribute in mono.GetType().GetCustomAttributes(typeof(MonoBehaviourBindingAttribute), false))
+                    foreach (var customAttribute in targetBehaviour.GetType().GetCustomAttributes(typeof(MonoBehaviourBindingAttribute), false))
                     {
                         MonoBehaviourBindingAttribute attribute = customAttribute as MonoBehaviourBindingAttribute;
                         if (attribute == null)
                         {
                             continue;
                         }
-                        MonoScript script = MonoScript.FromMonoBehaviour(mono);
-                        MonoBehaviourBinder binder = new MonoBehaviourBinder(script, mono.transform, attribute.NameSeparator);
-                        binder.TrySerializeBindings();
+                        MonoScript script = MonoScript.FromMonoBehaviour(targetBehaviour);
+                        MonoBehaviourBinder binder = new MonoBehaviourBinder(script, targetBehaviour.transform, attribute.NameSeparator);
+                        binder.UpdateSerializedBindings();
                     }
                 }
             }

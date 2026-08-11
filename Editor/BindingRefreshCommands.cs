@@ -29,7 +29,7 @@ namespace CodeBind.Editor
                         }
                         MonoScript script = MonoScript.FromMonoBehaviour(behaviour);
                         MonoBehaviourBinder binder = new MonoBehaviourBinder(script, behaviour.transform, attribute.NameSeparator);
-                        binder.TryGenerateBindingSource();
+                        binder.GenerateBindingSource();
                         Debug.Log($"[CodeBind] Refresh '{behaviour.name}({behaviour})' binding source successfully.");
                     }
                 }
@@ -37,7 +37,7 @@ namespace CodeBind.Editor
                 foreach (PlainClassBindingHost host in hosts)
                 {
                     PlainClassBinder binder = new PlainClassBinder(host.BindingClassScript, host.transform, host.NameSeparator);
-                    binder.TryGenerateBindingSource();
+                    binder.GenerateBindingSource();
                 }
             }
         }
@@ -64,7 +64,7 @@ namespace CodeBind.Editor
                         }
                         MonoScript script = MonoScript.FromMonoBehaviour(behaviour);
                         MonoBehaviourBinder binder = new MonoBehaviourBinder(script, behaviour.transform, attribute.NameSeparator);
-                        binder.TrySerializeBindings();
+                        binder.UpdateSerializedBindings();
                         Debug.Log($"[CodeBind] Refresh '{behaviour.name}({behaviour})' serialization successfully.");
                     }
                 }
@@ -72,7 +72,7 @@ namespace CodeBind.Editor
                 foreach (PlainClassBindingHost host in hosts)
                 {
                     PlainClassBinder binder = new PlainClassBinder(host.BindingClassScript, host.transform, host.NameSeparator);
-                    binder.TrySerializeBindings();
+                    binder.UpdateSerializedBindings();
                     Debug.Log($"[CodeBind] Refresh '{host.name}({host})' serialization successfully.");
                 }
             }

@@ -42,28 +42,28 @@ namespace CodeBind.Editor
 
         private const string ArraySuffix = "Array";
 
-        internal static string GetSerializedFieldName(string variableName, string targetToken)
+        internal static string GetSerializedFieldName(string memberNamePrefix, string targetToken)
         {
             EnsureInitialized();
-            return s_ActiveCustomizer.GetSerializedFieldName($"{variableName}{targetToken}");
+            return s_ActiveCustomizer.GetSerializedFieldName($"{memberNamePrefix}{targetToken}");
         }
 
-        internal static string GetPublicPropertyName(string variableName, string targetToken)
+        internal static string GetPublicPropertyName(string memberNamePrefix, string targetToken)
         {
             EnsureInitialized();
-            return s_ActiveCustomizer.GetPublicPropertyName($"{variableName}{targetToken}");
+            return s_ActiveCustomizer.GetPublicPropertyName($"{memberNamePrefix}{targetToken}");
         }
 
-        internal static string GetSerializedArrayFieldName(string variableName, string targetToken)
+        internal static string GetSerializedArrayFieldName(string memberNamePrefix, string targetToken)
         {
             EnsureInitialized();
-            return s_ActiveCustomizer.GetSerializedFieldName($"{variableName}{targetToken}{ArraySuffix}");
+            return s_ActiveCustomizer.GetSerializedFieldName($"{memberNamePrefix}{targetToken}{ArraySuffix}");
         }
 
-        internal static string GetPublicArrayPropertyName(string variableName, string targetToken)
+        internal static string GetPublicArrayPropertyName(string memberNamePrefix, string targetToken)
         {
             EnsureInitialized();
-            return s_ActiveCustomizer.GetPublicPropertyName($"{variableName}{targetToken}{ArraySuffix}");
+            return s_ActiveCustomizer.GetPublicPropertyName($"{memberNamePrefix}{targetToken}{ArraySuffix}");
         }
 
         internal static string BuildAdditionalSource(string namespaceName, string className, List<BindingDescriptor> singleBindings, SortedDictionary<string, List<BindingDescriptor>> arrayBindingsByMemberName, string indentation)

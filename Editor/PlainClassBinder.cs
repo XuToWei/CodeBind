@@ -29,7 +29,7 @@ namespace CodeBind.Editor
             List<UnityEngine.Object> targets = new List<UnityEngine.Object>();
             foreach (BindingDescriptor binding in m_SingleBindings)
             {
-                memberNames.Add(BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.VariableName, binding.TargetToken));
+                memberNames.Add(BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.MemberNamePrefix, binding.TargetToken));
                 if(!TryGetBindingTarget(binding.SourceTransform, binding.TargetType, out var target))
                 {
                     throw new Exception($"Bind '{binding.SourceTransform} - {binding.TargetType}' fail!");
@@ -38,7 +38,7 @@ namespace CodeBind.Editor
             }
             foreach (BindingDescriptor binding in m_ArrayBindingElements)
             {
-                memberNames.Add(BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.VariableName, binding.TargetToken));
+                memberNames.Add(BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.MemberNamePrefix, binding.TargetToken));
                 if(!TryGetBindingTarget(binding.SourceTransform, binding.TargetType, out var target))
                 {
                     throw new Exception($"Bind '{binding.SourceTransform} - {binding.TargetType}' fail!");

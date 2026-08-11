@@ -9,7 +9,7 @@ namespace CodeBind
     {
         PlainClassBindingHost BindingHost { get; }
         Transform RootTransform { get; }
-        void Initialize(PlainClassBindingHost host);
-        void Reset();
+        void Bind(PlainClassBindingHost host);
+        void Unbind();
     }
 }

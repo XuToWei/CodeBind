@@ -10,7 +10,7 @@ public partial class TestCS : CodeBind.IPlainClassBinding
 
     public UnityEngine.Animation[] ListAnimationArray { get; private set; }
 
-    public void Initialize(CodeBind.PlainClassBindingHost host)
+    public void Bind(CodeBind.PlainClassBindingHost host)
     {
         this.BindingHost = host;
         this.RootTransform = host.transform;
@@ -25,7 +25,7 @@ public partial class TestCS : CodeBind.IPlainClassBinding
         };
     }
 
-    public void Reset()
+    public void Unbind()
     {
         this.BindingHost = null;
         this.RootTransform = null;

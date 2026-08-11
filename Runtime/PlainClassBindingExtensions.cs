@@ -31,19 +31,19 @@ namespace CodeBind
         }
 
         /// <summary>
-        /// Initializes a plain class binding without using the shared pool.
+        /// Binds a plain class binding without using the shared pool.
         /// </summary>
-        public static void Initialize(this IPlainClassBinding binding, GameObject gameObject)
+        public static void Bind(this IPlainClassBinding binding, GameObject gameObject)
         {
-            binding.Initialize(gameObject.GetComponent<PlainClassBindingHost>());
+            binding.Bind(gameObject.GetComponent<PlainClassBindingHost>());
         }
 
         /// <summary>
-        /// Initializes a plain class binding without using the shared pool.
+        /// Binds a plain class binding without using the shared pool.
         /// </summary>
-        public static void Initialize(this IPlainClassBinding binding, Transform transform)
+        public static void Bind(this IPlainClassBinding binding, Transform transform)
         {
-            binding.Initialize(transform.GetComponent<PlainClassBindingHost>());
+            binding.Bind(transform.GetComponent<PlainClassBindingHost>());
         }
     }
 }

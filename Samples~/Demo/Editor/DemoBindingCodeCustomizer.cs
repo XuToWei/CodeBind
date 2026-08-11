@@ -29,12 +29,12 @@ namespace CodeBind.Demo.Editor
             StringBuilder sourceBuilder = new StringBuilder();
             foreach (BindingDescriptor binding in singleBindings)
             {
-                sourceBuilder.AppendLine($"{indentation}// member: {GetPublicPropertyName($"{binding.VariableName}{binding.TargetToken}")} ({binding.TargetType.Name})");
+                sourceBuilder.AppendLine($"{indentation}// member: {GetPublicPropertyName($"{binding.MemberNamePrefix}{binding.TargetToken}")} ({binding.TargetType.Name})");
             }
             foreach (KeyValuePair<string, List<BindingDescriptor>> kv in arrayBindingsByMemberName)
             {
                 BindingDescriptor firstArrayBinding = kv.Value[0];
-                sourceBuilder.AppendLine($"{indentation}// array member: {GetPublicPropertyName($"{firstArrayBinding.VariableName}{firstArrayBinding.TargetToken}Array")} ({firstArrayBinding.TargetType.Name}[{kv.Value.Count}])");
+                sourceBuilder.AppendLine($"{indentation}// array member: {GetPublicPropertyName($"{firstArrayBinding.MemberNamePrefix}{firstArrayBinding.TargetToken}Array")} ({firstArrayBinding.TargetType.Name}[{kv.Value.Count}])");
             }
             return sourceBuilder.ToString();
         }

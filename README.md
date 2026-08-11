@@ -145,8 +145,8 @@ presenter.Show();
 ```csharp
 public PlainClassBindingHost BindingHost { get; private set; }
 public Transform RootTransform { get; private set; }
-public void Initialize(PlainClassBindingHost host);
-public void Reset();
+public void Bind(PlainClassBindingHost host);
+public void Unbind();
 ```
 
 新建 PlainClass 脚本可以使用：
@@ -166,8 +166,8 @@ GameObject > CodeBind > Plain Class Binding Generator
 
 ```csharp
 GameObject panel = host.GetManualGameObject("Panel");
-Button submit = host.GetAutoTarget<Button>("SubmitButton");
-List<Image> icons = host.GetAutoTargets<Image>("IconImageArray");
+Button submit = host.GetGeneratedReference<Button>("SubmitButton");
+List<Image> icons = host.GetGeneratedReferences<Image>("IconImageArray");
 ```
 
 ## 自定义 BindingTargetToken
@@ -234,12 +234,12 @@ public sealed class ProjectBindingCodeCustomizer : IBindingCodeCustomizer
 }
 ```
 
-框架传入的 `memberName` 已经是 `VariableName + TargetToken`；数组还会预先追加固定的 `Array` 后缀。不要在 customizer 中再次拼接 token 或数组后缀。
+框架传入的 `memberName` 已经是 `MemberNamePrefix + TargetToken`；数组还会预先追加固定的 `Array` 后缀。不要在 customizer 中再次拼接 token 或数组后缀。
 
 `BindingDescriptor` 提供：
 
 ```csharp
-public string VariableName { get; }
+public string MemberNamePrefix { get; }
 public Type TargetType { get; }
 public string TargetToken { get; }
 public Transform SourceTransform { get; }

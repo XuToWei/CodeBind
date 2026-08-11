@@ -23,23 +23,23 @@ namespace CodeBind.Editor
             foreach (BindingDescriptor binding in singleBindings)
             {
                 sourceBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup(\"Binding Targets\"), Sirenix.OdinInspector.ReadOnly]");
-                sourceBuilder.AppendLine($"{indentation}\tprivate {binding.TargetType.FullName} {BindingCodeCustomizerRegistry.GetSerializedFieldName(binding.VariableName, binding.TargetToken)};");
+                sourceBuilder.AppendLine($"{indentation}\tprivate {binding.TargetType.FullName} {BindingCodeCustomizerRegistry.GetSerializedFieldName(binding.MemberNamePrefix, binding.TargetToken)};");
             }
             foreach (KeyValuePair<string, List<BindingDescriptor>> kv in arrayBindingsByMemberName)
             {
                 BindingDescriptor binding = kv.Value[0];
                 sourceBuilder.AppendLine($"{indentation}\t[UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup(\"Binding Targets\"), Sirenix.OdinInspector.ReadOnly]");
-                sourceBuilder.AppendLine($"{indentation}\tprivate {binding.TargetType.FullName}[] {BindingCodeCustomizerRegistry.GetSerializedArrayFieldName(binding.VariableName, binding.TargetToken)};");
+                sourceBuilder.AppendLine($"{indentation}\tprivate {binding.TargetType.FullName}[] {BindingCodeCustomizerRegistry.GetSerializedArrayFieldName(binding.MemberNamePrefix, binding.TargetToken)};");
             }
             sourceBuilder.AppendLine("");
             foreach (BindingDescriptor binding in singleBindings)
             {
-                sourceBuilder.AppendLine($"{indentation}\tpublic {binding.TargetType.FullName} {BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.VariableName, binding.TargetToken)} => this.{BindingCodeCustomizerRegistry.GetSerializedFieldName(binding.VariableName, binding.TargetToken)};");
+                sourceBuilder.AppendLine($"{indentation}\tpublic {binding.TargetType.FullName} {BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.MemberNamePrefix, binding.TargetToken)} => this.{BindingCodeCustomizerRegistry.GetSerializedFieldName(binding.MemberNamePrefix, binding.TargetToken)};");
             }
             foreach (KeyValuePair<string, List<BindingDescriptor>> kv in arrayBindingsByMemberName)
             {
                 BindingDescriptor binding = kv.Value[0];
-                sourceBuilder.AppendLine($"{indentation}\tpublic {binding.TargetType.FullName}[] {BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.VariableName, binding.TargetToken)} => this.{BindingCodeCustomizerRegistry.GetSerializedArrayFieldName(binding.VariableName, binding.TargetToken)};");
+                sourceBuilder.AppendLine($"{indentation}\tpublic {binding.TargetType.FullName}[] {BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.MemberNamePrefix, binding.TargetToken)} => this.{BindingCodeCustomizerRegistry.GetSerializedArrayFieldName(binding.MemberNamePrefix, binding.TargetToken)};");
             }
             sourceBuilder.AppendLine("");
             sourceBuilder.AppendLine("#if UNITY_EDITOR");
@@ -53,12 +53,12 @@ namespace CodeBind.Editor
             sourceBuilder.AppendLine($"{indentation}\t{{");
             foreach (BindingDescriptor binding in singleBindings)
             {
-                sourceBuilder.AppendLine($"{indentation}\t\tif (this.{BindingCodeCustomizerRegistry.GetSerializedFieldName(binding.VariableName, binding.TargetToken)} == null) return true;");
+                sourceBuilder.AppendLine($"{indentation}\t\tif (this.{BindingCodeCustomizerRegistry.GetSerializedFieldName(binding.MemberNamePrefix, binding.TargetToken)} == null) return true;");
             }
             foreach (KeyValuePair<string, List<BindingDescriptor>> kv in arrayBindingsByMemberName)
             {
                 BindingDescriptor binding = kv.Value[0];
-                string arrayFieldName = BindingCodeCustomizerRegistry.GetSerializedArrayFieldName(binding.VariableName, binding.TargetToken);
+                string arrayFieldName = BindingCodeCustomizerRegistry.GetSerializedArrayFieldName(binding.MemberNamePrefix, binding.TargetToken);
                 sourceBuilder.AppendLine($"{indentation}\t\tif (this.{arrayFieldName} == null || this.{arrayFieldName}.Length == 0) return true;");
                 sourceBuilder.AppendLine($"{indentation}\t\tfor (int i = 0; i < this.{arrayFieldName}.Length; i++)");
                 sourceBuilder.AppendLine($"{indentation}\t\t\tif (this.{arrayFieldName}[i] == null) return true;");
@@ -96,27 +96,27 @@ namespace CodeBind.Editor
             sourceBuilder.AppendLine("");
             foreach (BindingDescriptor binding in singleBindings)
             {
-                sourceBuilder.AppendLine($"{indentation}\tpublic {binding.TargetType.FullName} {BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.VariableName, binding.TargetToken)} {{ get; private set; }}");
+                sourceBuilder.AppendLine($"{indentation}\tpublic {binding.TargetType.FullName} {BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.MemberNamePrefix, binding.TargetToken)} {{ get; private set; }}");
             }
             foreach (KeyValuePair<string, List<BindingDescriptor>> kv in arrayBindingsByMemberName)
             {
                 BindingDescriptor binding = kv.Value[0];
-                sourceBuilder.AppendLine($"{indentation}\tpublic {binding.TargetType.FullName}[] {BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.VariableName, binding.TargetToken)} {{ get; private set; }}");
+                sourceBuilder.AppendLine($"{indentation}\tpublic {binding.TargetType.FullName}[] {BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.MemberNamePrefix, binding.TargetToken)} {{ get; private set; }}");
             }
             sourceBuilder.AppendLine("");
-            sourceBuilder.AppendLine($"{indentation}\tpublic void Initialize(CodeBind.PlainClassBindingHost host)");
+            sourceBuilder.AppendLine($"{indentation}\tpublic void Bind(CodeBind.PlainClassBindingHost host)");
             sourceBuilder.AppendLine($"{indentation}\t{{");
             sourceBuilder.AppendLine($"{indentation}\t\tthis.BindingHost = host;");
             sourceBuilder.AppendLine($"{indentation}\t\tthis.RootTransform = host.transform;");
             for (int i = 0; i < singleBindings.Count; i++)
             {
                 BindingDescriptor binding = singleBindings[i];
-                sourceBuilder.AppendLine($"{indentation}\t\tthis.{BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.VariableName, binding.TargetToken)} = this.BindingHost.BindingTargets[{i}] as {binding.TargetType.FullName};");
+                sourceBuilder.AppendLine($"{indentation}\t\tthis.{BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.MemberNamePrefix, binding.TargetToken)} = this.BindingHost.BindingTargets[{i}] as {binding.TargetType.FullName};");
             }
             foreach (KeyValuePair<string, List<BindingDescriptor>> kv in arrayBindingsByMemberName)
             {
                 BindingDescriptor firstArrayBinding = kv.Value[0];
-                sourceBuilder.AppendLine($"{indentation}\t\tthis.{BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(firstArrayBinding.VariableName, firstArrayBinding.TargetToken)} = new {firstArrayBinding.TargetType.FullName}[{kv.Value.Count}]");
+                sourceBuilder.AppendLine($"{indentation}\t\tthis.{BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(firstArrayBinding.MemberNamePrefix, firstArrayBinding.TargetToken)} = new {firstArrayBinding.TargetType.FullName}[{kv.Value.Count}]");
                 sourceBuilder.AppendLine($"{indentation}\t\t{{");
                 for (int i = 0; i < kv.Value.Count; i++)
                 {
@@ -127,19 +127,19 @@ namespace CodeBind.Editor
             }
             sourceBuilder.AppendLine($"{indentation}\t}}");
             sourceBuilder.AppendLine("");
-            sourceBuilder.AppendLine($"{indentation}\tpublic void Reset()");
+            sourceBuilder.AppendLine($"{indentation}\tpublic void Unbind()");
             sourceBuilder.AppendLine($"{indentation}\t{{");
             sourceBuilder.AppendLine($"{indentation}\t\tthis.BindingHost = null;");
             sourceBuilder.AppendLine($"{indentation}\t\tthis.RootTransform = null;");
             for (int i = 0; i < singleBindings.Count; i++)
             {
                 BindingDescriptor binding = singleBindings[i];
-                sourceBuilder.AppendLine($"{indentation}\t\tthis.{BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.VariableName, binding.TargetToken)} = null;");
+                sourceBuilder.AppendLine($"{indentation}\t\tthis.{BindingCodeCustomizerRegistry.GetPublicPropertyName(binding.MemberNamePrefix, binding.TargetToken)} = null;");
             }
             foreach (KeyValuePair<string, List<BindingDescriptor>> kv in arrayBindingsByMemberName)
             {
                 BindingDescriptor binding = kv.Value[0];
-                sourceBuilder.AppendLine($"{indentation}\t\tthis.{BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.VariableName, binding.TargetToken)} = null;");
+                sourceBuilder.AppendLine($"{indentation}\t\tthis.{BindingCodeCustomizerRegistry.GetPublicArrayPropertyName(binding.MemberNamePrefix, binding.TargetToken)} = null;");
             }
             sourceBuilder.AppendLine($"{indentation}\t}}");
             sourceBuilder.AppendLine("");
