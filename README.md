@@ -32,6 +32,8 @@ https://github.com/XuToWei/CodeBind.git
 
 CodeBind 需要 [Odin Inspector](https://assetstore.unity.com/packages/tools/utilities/odin-inspector-and-serializer-89041)。
 
+CodeBind 本身不依赖 UGUI。导入 Demo 前，请先在项目中安装 **Unity UI**（`com.unity.ugui`）；UGUI 的 `UnityEngine.UI` 程序集引用仅配置在 Demo 的 Runtime 和 Editor asmdef 中。
+
 ## Hierarchy 命名规则
 
 默认格式：
@@ -49,7 +51,7 @@ CodeBind 需要 [Odin Inspector](https://assetstore.unity.com/packages/tools/uti
 | `Panel_*` | `PanelGameObject`、`PanelTransform` 及该节点上其他已映射组件 | wildcard 使用实际目标 token，不生成 `PanelStar` |
 | `Item_Transform (0)`、`Item_Transform (1)` | `ItemTransformArray` | 按索引后缀收集数组 |
 
-类型 token 支持模糊补全，例如 `Self_Tr` 可规范化为 `Self_Transform`。常见内置 token 包括 `GameObject`、`Transform`、`RectTransform`、`Button`、`Text`、`Image` 和 `Slider`。
+类型 token 支持模糊补全，例如 `Self_Tr` 可规范化为 `Self_Transform`。默认配置仅包含 `GameObject` 和 `Transform`。Demo 的 `DemoBindingTargetTokenConfig` 补充了 `RectTransform`、`Button`、`Text`、`Image`、`Slider` 等 UI token，以及 `Animation`、`Animator`、`SpriteRenderer` 等组件映射。本文的 UI 示例需要导入 Demo，或在项目中通过 `IBindingTargetTokenConfig` 注册相应映射。
 
 > CodeBind 直接将 `变量名 + 目标 token` 交给当前 `IBindingCodeCustomizer`。默认实现不会自动转换大小写；若希望生成 PascalCase，请在 Hierarchy 变量名或 customizer 中明确实现。
 
